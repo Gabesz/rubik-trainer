@@ -1,0 +1,128 @@
+[
+  {
+    "name": "Aa",
+    "type": "Adj Swap",
+    "setup": "x R2' D2' R U R' D2' R U' R x'",
+    "standard_alg": "x (R' U R') D2 (R U' R') D2 R2 x'"
+  },
+  {
+    "name": "Ab",
+    "type": "Adj Swap",
+    "setup": "x R' U R' D2' R U' R' D2' R2' x'",
+    "standard_alg": "x R2 D2 (R U R') D2 (R U' R) x'"
+  },
+  {
+    "name": "E",
+    "type": "Opp Swap",
+    "setup": "x' D R U R' D' R U' R' D R U' R' D' R U R' x y'",
+    "standard_alg": "y x' (R U' R' D) (R U R' D') (R U R' D) (R U' R' D') x"
+  },
+  {
+    "name": "F",
+    "type": "Adj Swap",
+    "setup": "R' U' R U' R' U R U R2' F' R U R U' R' F U R y'",
+    "standard_alg": "y (R' U' F') (R U R' U') R' F R2 (U' R' U') (R U R' U) R"
+  },
+  {
+    "name": "Ga",
+    "type": "Adj Swap",
+    "setup": "R' U' R D' U R2' U R' U R U' R U' R2' D",
+    "standard_alg": "R2 (U R' U R' U' R U') R2 D (U' R' U R) D'"
+  },
+  {
+    "name": "Gb",
+    "type": "Adj Swap",
+    "setup": "R2' U R' U R' U' R U' R2' D U' R' U R D'",
+    "standard_alg": "(R' U' R U) D' R2 (U R' U R U' R U') R2 D"
+  },
+  {
+    "name": "Gc",
+    "type": "Adj Swap",
+    "setup": "D' R U R' U' D R2' U' R U' R' U R' U R2'",
+    "standard_alg": "R2 (U' R U' R U R' U) R2 D' (U R U' R') D"
+  },
+  {
+    "name": "Gd",
+    "type": "Adj Swap",
+    "setup": "R2' U' R U' R U R' U R2' D' U R U' R' D",
+    "standard_alg": "(R U R' U') D R2 (U' R U' R' U R' U) R2 D'"
+  },
+  {
+    "name": "H",
+    "type": "EPLL",
+    "setup": "M2' U' M2' U2' M2' U' M2'",
+    "standard_alg": "(M2 U' M2) U2 (M2 U' M2)"
+  },
+  {
+    "name": "Ja",
+    "type": "Adj Swap",
+    "setup": "L' R' U2' R U R' U2' L U' R y'",
+    "standard_alg": "y (R' U L') U2 (R U' R') U2 R L"
+  },
+  {
+    "name": "Jb",
+    "type": "Adj Swap",
+    "setup": "R U R2' F' R U R U' R' F R U' R'",
+    "standard_alg": "(R U R' F') (R U R' U') R' F R2 U' R'"
+  },
+  {
+    "name": "Na",
+    "type": "Opp Swap",
+    "setup": "R U R' U2' R U R2' F' R U R U' R' F R U' R' U' R U' R'",
+    "standard_alg": "(R U R' U) (R U R' F') (R U R' U') R' F R2 U' R' U2 (R U' R')"
+  },
+  {
+    "name": "Nb",
+    "type": "Opp Swap",
+    "setup": "F r' F' r U r U' r2' D' F r U r' F' D r",
+    "standard_alg": "(R' U R U' R') (F' U' F) (R U R') (F R' F') (R U' R)"
+  },
+  {
+    "name": "Ra",
+    "type": "Adj Swap",
+    "setup": "R U2' R D R' U R D' R' U' R' U R U R' y'",
+    "standard_alg": "y (R U' R' U') (R U R D) (R' U' R D') (R' U2 R')"
+  },
+  {
+    "name": "Rb",
+    "type": "Adj Swap",
+    "setup": "R' U R U R' U' R' D' R U R' D R U2' R",
+    "standard_alg": "(R' U2) (R U2) (R' F R) (U R' U' R') F' R2"
+  },
+  {
+    "name": "T",
+    "type": "Adj Swap",
+    "setup": "F R U' R' U R U R2' F' R U R U' R'",
+    "standard_alg": "(R U R' U') (R' F R2) (U' R' U') (R U R' F')"
+  },
+  {
+    "name": "Ua",
+    "type": "EPLL",
+    "setup": "M2' U' M' U2' M U' M2'",
+    "standard_alg": "y2 (M2 U M) U2 (M' U M2)"
+  },
+  {
+    "name": "Ub",
+    "type": "EPLL",
+    "setup": "M2' U M' U2' M U M2'",
+    "standard_alg": "y2 (M2 U' M) U2 (M' U' M2)"
+  },
+  {
+    "name": "V",
+    "type": "Opp Swap",
+    "setup": "D2' R' U R D' R2' U' R' U R' U R' D' R U2' R'",
+    "standard_alg": "(R' U R' U') (R D' R' D) (R' U D') (R2 U' R2) D R2"
+  },
+  {
+    "name": "Y",
+    "type": "Opp Swap",
+    "setup": "F R' F' R U R U' R' F R U' R' U R U R' F'",
+    "standard_alg": "F R (U' R' U') (R U R' F') (R U R' U') (R' F R F')"
+  },
+  {
+    "name": "Z",
+    "type": "EPLL",
+    "setup": "M U2' M2' U2' M U' M2' U' M2'",
+    "standard_alg": "(M2 U) (M2 U) (M' U2) M2 (U2 M')"
+  }
+]

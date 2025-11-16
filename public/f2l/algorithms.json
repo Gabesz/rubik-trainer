@@ -1,0 +1,248 @@
+[
+  {
+    "name": "F2L 1",
+    "type": "Free Pairs",
+    "setup": "F R' F' R",
+    "standard_alg": "U R U' R'"
+  },
+  {
+    "name": "F2L 2",
+    "type": "Free Pairs",
+    "setup": "R' F R F'",
+    "standard_alg": "F R' F' R"
+  },
+  {
+    "name": "F2L 3",
+    "type": "Free Pairs",
+    "setup": "F' U F",
+    "standard_alg": "F' U' F"
+  },
+  {
+    "name": "F2L 4",
+    "type": "Free Pairs",
+    "setup": "R U' R'",
+    "standard_alg": "R U R'"
+  },
+  {
+    "name": "F2L 5",
+    "type": "Disconnected Pairs",
+    "setup": "R U R' U2' R U' R' U",
+    "standard_alg": "U' R U R' U2 R U' R'"
+  },
+  {
+    "name": "F2L 6",
+    "type": "Disconnected Pairs",
+    "setup": "F' U' F U2' F' U F U'",
+    "standard_alg": "U' r U' R' U R U r'"
+  },
+  {
+    "name": "F2L 7",
+    "type": "Disconnected Pairs",
+    "setup": "R U R' U2' R U2' R' U",
+    "standard_alg": "U' R U2 R' U' R U2 R'"
+  },
+  {
+    "name": "F2L 8",
+    "type": "Disconnected Pairs",
+    "setup": "r' U' R2 U' R2' U2' r",
+    "standard_alg": "d R' U2 R U R' U2 R"
+  },
+  {
+    "name": "F2L 9",
+    "type": "Disconnected Pairs",
+    "setup": "F' U F U' R U R' U",
+    "standard_alg": "U' R U' R' U F' U' F"
+  },
+  {
+    "name": "F2L 10",
+    "type": "Disconnected Pairs",
+    "setup": "R U' R' U' R U' R' U",
+    "standard_alg": "U' R U R' U R U R'"
+  },
+  {
+    "name": "F2L 11",
+    "type": "Connected Pairs",
+    "setup": "F' U F U' R U2' R' U",
+    "standard_alg": "U' R U2 R' U F' U' F"
+  },
+  {
+    "name": "F2L 12",
+    "type": "Connected Pairs",
+    "setup": "R U R' U2' R U R' U' R U R'",
+    "standard_alg": "R U' R' U R U' R' U2 R U' R'"
+  },
+  {
+    "name": "F2L 13",
+    "type": "Connected Pairs",
+    "setup": "r U2' R' U R U' R' U M",
+    "standard_alg": "y' U R' U R U' R' U' R"
+  },
+  {
+    "name": "F2L 14",
+    "type": "Connected Pairs",
+    "setup": "R U' R' U' R U R' U",
+    "standard_alg": "U' R U' R' U R U R'"
+  },
+  {
+    "name": "F2L 15",
+    "type": "Connected Pairs",
+    "setup": "R U R' U' R U R' U2' R U' R'",
+    "standard_alg": "R' D' R U' R' D R U R U' R'"
+  },
+  {
+    "name": "F2L 16",
+    "type": "Connected Pairs",
+    "setup": "F' U F U2' R U R'",
+    "standard_alg": "R U' R' U2 F' U' F"
+  },
+  {
+    "name": "F2L 17",
+    "type": "Connected Pairs",
+    "setup": "R U' R' U R U2' R'",
+    "standard_alg": "R U2 R' U' R U R'"
+  },
+  {
+    "name": "F2L 18",
+    "type": "Connected Pairs",
+    "setup": "R U R' U' R U R' F R' F' R",
+    "standard_alg": "y' R' U2 R U R' U' R"
+  },
+  {
+    "name": "F2L 19",
+    "type": "Disconnected Pairs",
+    "setup": "R U R' U' R U2' R' U'",
+    "standard_alg": "U R U2 R' U R U' R'"
+  },
+  {
+    "name": "F2L 20",
+    "type": "Disconnected Pairs",
+    "setup": "R U R' F R' F' R2' U R' U",
+    "standard_alg": "y' U' R' U2 R U' R' U R"
+  },
+  {
+    "name": "F2L 21",
+    "type": "Disconnected Pairs",
+    "setup": "R U' R' U2' R U R'",
+    "standard_alg": "U2 R U R' U R U' R'"
+  },
+  {
+    "name": "F2L 22",
+    "type": "Disconnected Pairs",
+    "setup": "F' L' U2' L F",
+    "standard_alg": "r U' r' U2 r U r'"
+  },
+  {
+    "name": "F2L 23",
+    "type": "Connected Pairs",
+    "setup": "R U' R' U R U' R' U2' R U' R'",
+    "standard_alg": "U R U' R' U' R U' R' U R U' R'"
+  },
+  {
+    "name": "F2L 24",
+    "type": "Connected Pairs",
+    "setup": "R U R' F R U R' U' F'",
+    "standard_alg": "F U R U' R' F' R U' R'"
+  },
+  {
+    "name": "F2L 25",
+    "type": "Corner In Slot",
+    "setup": "F' R U R' U' R' F R",
+    "standard_alg": "U' R' F R F' R U R'"
+  },
+  {
+    "name": "F2L 26",
+    "type": "Corner In Slot",
+    "setup": "F' U' F U R U R' U'",
+    "standard_alg": "U R U' R' F R' F' R"
+  },
+  {
+    "name": "F2L 27",
+    "type": "Corner In Slot",
+    "setup": "R U R' U' R U R'",
+    "standard_alg": "R U' R' U R U' R'"
+  },
+  {
+    "name": "F2L 28",
+    "type": "Corner In Slot",
+    "setup": "R' F R F' U R U' R'",
+    "standard_alg": "R U R' U' F R' F' R"
+  },
+  {
+    "name": "F2L 29",
+    "type": "Corner In Slot",
+    "setup": "F R' F' R F R' F' R",
+    "standard_alg": "R' F R F' U R U' R'"
+  },
+  {
+    "name": "F2L 30",
+    "type": "Corner In Slot",
+    "setup": "R U' R' U R U' R'",
+    "standard_alg": "R U R' U' R U R'"
+  },
+  {
+    "name": "F2L 31",
+    "type": "Edge In Slot",
+    "setup": "R U R' F R' F' R U",
+    "standard_alg": "U' R' F R F' R U' R'"
+  },
+  {
+    "name": "F2L 32",
+    "type": "Edge In Slot",
+    "setup": "R U' R' U R U' R' U R U' R'",
+    "standard_alg": "U R U' R' U R U' R' U R U' R'"
+  },
+  {
+    "name": "F2L 33",
+    "type": "Edge In Slot",
+    "setup": "R U R' U2' R U R' U",
+    "standard_alg": "U' R U' R' U2 R U' R'"
+  },
+  {
+    "name": "F2L 34",
+    "type": "Edge In Slot",
+    "setup": "R U' R' U2' R U' R' U'",
+    "standard_alg": "U R U R' U2 R U R'"
+  },
+  {
+    "name": "F2L 35",
+    "type": "Edge In Slot",
+    "setup": "F' U F U' R U' R' U",
+    "standard_alg": "U' R U R' U F' U' F"
+  },
+  {
+    "name": "F2L 36",
+    "type": "Edge In Slot",
+    "setup": "R U' R' U2' F R' F' R U2'",
+    "standard_alg": "U F' U' F U' R U R'"
+  },
+  {
+    "name": "F2L 37",
+    "type": "Pieces In Slot",
+    "setup": "R U' R U2' F R2' F' U2' R2'",
+    "standard_alg": "R2 U2 F R2 F' U2 R' U R'"
+  },
+  {
+    "name": "F2L 38",
+    "type": "Pieces In Slot",
+    "setup": "R U' R' U R U2' R' U R U' R'",
+    "standard_alg": "R U' R' U' R U R' U2 R U' R'"
+  },
+  {
+    "name": "F2L 39",
+    "type": "Pieces In Slot",
+    "setup": "R U' R' U' R U R' U2' R U' R'",
+    "standard_alg": "R U' R' U R U2 R' U R U' R'"
+  },
+  {
+    "name": "F2L 40",
+    "type": "Pieces In Slot",
+    "setup": "R U R' F U R U' R' F' R U R'",
+    "standard_alg": "r U' r' U2 r U r' R U R'"
+  },
+  {
+    "name": "F2L 41",
+    "type": "Pieces In Slot",
+    "setup": "R F U R U' R' F' U' R'",
+    "standard_alg": "R U' R' r U' r' U2 r U r'"
+  }
+]

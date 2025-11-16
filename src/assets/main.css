@@ -1,0 +1,313 @@
+.heart-icon {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.my-alg-display.placeholder {
+  color: #adb5bd;
+  font-style: italic;
+}
+
+.edit-hint {
+  font-size: 0.75rem;
+}
+
+.check-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.scroll-top-btn {
+  position: fixed;
+  bottom: 1.75rem;
+  right: 1.75rem;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 0.75rem 1.5rem rgba(13, 110, 253, 0.25);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, opacity 0.2s ease-in-out;
+  z-index: 1100;
+}
+
+.scroll-top-btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.scroll-top-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 1rem 2rem rgba(13, 110, 253, 0.35);
+}
+
+.scroll-top-btn:focus-visible {
+  outline: 3px solid rgba(13, 110, 253, 0.4);
+  outline-offset: 3px;
+}
+
+.filter-fab {
+  position: fixed;
+  bottom: 1.75rem;
+  left: 1.75rem;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 0.75rem 1.5rem rgba(108, 117, 125, 0.25);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, opacity 0.2s ease-in-out;
+  z-index: 1100;
+}
+
+.filter-fab:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 1rem 2rem rgba(108, 117, 125, 0.35);
+}
+
+.filter-fab:focus-visible {
+  outline: 3px solid rgba(108, 117, 125, 0.4);
+  outline-offset: 3px;
+}
+
+.badge-filter-item.list-filter {
+  border-color: rgba(25, 135, 84, 0.2);
+  background-color: rgba(25, 135, 84, 0.08);
+  color: #157347;
+}
+
+.badge-filter-item.list-filter.active {
+  background-color: #198754;
+  color: #fff;
+  box-shadow: 0 0.5rem 1rem rgba(25, 135, 84, 0.2);
+}
+
+.badge-filter-item.list-filter.active .count {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+.badge-filter-item.list-filter:hover {
+  border-color: rgba(25, 135, 84, 0.45);
+  background-color: rgba(25, 135, 84, 0.15);
+}
+
+.badge-filter-item.list-filter.active:hover {
+  background-color: #157347;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+:root {
+  color-scheme: light dark;
+  font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #f8f9fa;
+}
+
+body {
+  margin: 0;
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+.app-container {
+  padding: 0 1rem 3rem;
+}
+
+.fixed-action-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  padding-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.fixed-action-bar .btn {
+  margin-bottom: 0.5rem;
+}
+
+.training-only {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.training-panel {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.training-stage {
+  min-height: 60vh;
+}
+
+.badge-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.badge-filter-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(13, 110, 253, 0.15);
+  background-color: rgba(13, 110, 253, 0.05);
+  color: #0b5ed7;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.badge-filter-item .count {
+  background-color: rgba(13, 110, 253, 0.15);
+  border-radius: 999px;
+  padding: 0.15rem 0.45rem;
+  font-size: 0.75rem;
+}
+
+.badge-filter-item.active {
+  background-color: #0d6efd;
+  color: #fff;
+  box-shadow: 0 0.5rem 1rem rgba(13, 110, 253, 0.2);
+}
+
+.badge-filter-item.active .count {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.badge-filter-item:hover {
+  border-color: rgba(13, 110, 253, 0.45);
+  background-color: rgba(13, 110, 253, 0.12);
+}
+
+.badge-filter-item.active:hover {
+  background-color: #0a53be;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.badge-filter-item:focus-visible {
+  outline: 2px solid rgba(13, 110, 253, 0.45);
+  outline-offset: 2px;
+}
+
+
+.algorithm-card {
+  position: relative;
+  transition: opacity 0.25s ease-in-out, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.algorithm-card.display-card {
+  max-width: 760px;
+  margin: 0 auto;
+  border: none;
+  box-shadow: 0 1.5rem 4rem rgba(13, 110, 253, 0.25);
+  transform: scale(1.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.algorithm-card.display-card .card-body {
+  padding: 3rem 2.5rem;
+}
+
+.display-image {
+  max-width: 340px;
+  width: 100%;
+  height: auto;
+}
+
+.display-standard {
+  font-size: clamp(1.1rem, 1.6vw + 0.8rem, 1.9rem);
+  line-height: 1.5;
+  word-break: normal;
+  white-space: nowrap;
+}
+
+.algorithm-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 576px) {
+  .algorithm-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 992px) {
+  .algorithm-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.algorithm-card.learned {
+  border-color: #198754;
+  box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.3);
+}
+
+.algorithm-card img {
+  max-width: 120px;
+  height: auto;
+}
+
+/* F2L trainer: larger SVG images */
+.trainer-f2l .algorithm-card img {
+  max-width: 110px;
+  max-height: 110px;
+  width: 110px;
+  height: 110px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .algorithm-grid:has(.algorithm-card:hover) .algorithm-card {
+    opacity: 0.65;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  .algorithm-grid:has(.algorithm-card:hover) .algorithm-card:hover {
+    opacity: 1;
+  }
+
+  .algorithm-grid .algorithm-card:hover {
+    opacity: 1;
+  }
+}
+
+.case-type-badge {
+  font-size: 0.75rem;
+}
+
+/* Mobile: remove bottom spacing on header description */
+@media (max-width: 575.98px) {
+  .fixed-action-bar p.text-muted {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+}
+
+/* Dropdown menu active item styling */
+.dropdown-item.active {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+.dropdown-item.active:hover {
+  background-color: #0a53be;
+  color: #fff;
+}
+
