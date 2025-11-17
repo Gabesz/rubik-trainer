@@ -1,114 +1,165 @@
 <template>
   <div class="app-container" :class="`trainer-${mode}`">
-    <header class="fixed-action-bar">
+    <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-light border-bottom">
       <div class="container">
-        <div
-          class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3"
-        >
-          <div>
-            <div class="d-flex align-items-baseline gap-2 mb-1">
-              <h1 class="h3 mb-0">
-                {{ modeTitle }} Trainer
-              </h1>
-              <div class="dropdown" style="margin-top: 0.125rem;">
-                <button
-                  class="btn btn-sm btn-outline-secondary dropdown-toggle"
-                  type="button"
-                  :id="`trainerDropdown-${mode}`"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                  title="Switch trainer"
-                >
-                  Switch
-                </button>
-                <ul class="dropdown-menu" :aria-labelledby="`trainerDropdown-${mode}`">
-                  <li>
-                    <router-link to="/" class="dropdown-item">
-                      <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" class="me-2">
-                        <path fill="currentColor" d="M8 0L0 8h2v8h4v-6h4v6h4V8h2z"/>
-                      </svg>
-                      Home
-                    </router-link>
-                  </li>
-                  <li><hr class="dropdown-divider" /></li>
-                  <li>
-                    <router-link to="/f2l" class="dropdown-item" :class="{ active: mode === 'f2l' }">
-                      F2L Trainer
-                    </router-link>
-                  </li>
-                  <li>
-                    <router-link to="/oll" class="dropdown-item" :class="{ active: mode === 'oll' }">
-                      OLL Trainer
-                    </router-link>
-                  </li>
-                  <li>
-                    <router-link to="/pll" class="dropdown-item" :class="{ active: mode === 'pll' }">
-                      PLL Trainer
-                    </router-link>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <p class="text-muted">
-              Track the algorithms you know and drill them with focused practice sessions.
-            </p>
+        <!-- Left side: Home icon and title -->
+        <div class="d-flex align-items-center gap-2">
+          <router-link
+            to="/"
+            class="home-icon-link"
+            title="Home"
+          >
+            <svg aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+              <path fill="currentColor" d="M8 0L0 8h2v8h4v-6h4v6h4V8h2z"/>
+            </svg>
+          </router-link>
+          <h1 class="h5 mb-0">
+            {{ modeTitle }} Trainer
+          </h1>
+        </div>
+
+        <!-- Right side: Toggler and Dropdown - always visible outside collapse -->
+        <div class="d-flex align-items-center gap-2">
+          <!-- Dropdown - always visible on mobile -->
+          <div class="dropdown d-lg-none">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              :id="`trainerDropdownMobile-${mode}`"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Other trainers
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" :aria-labelledby="`trainerDropdownMobile-${mode}`">
+              <li>
+                <router-link to="/f2l" class="dropdown-item" :class="{ active: mode === 'f2l' }">
+                  F2L Trainer
+                </router-link>
+              </li>
+              <li>
+                <router-link to="/oll" class="dropdown-item" :class="{ active: mode === 'oll' }">
+                  OLL Trainer
+                </router-link>
+              </li>
+              <li>
+                <router-link to="/pll" class="dropdown-item" :class="{ active: mode === 'pll' }">
+                  PLL Trainer
+                </router-link>
+              </li>
+            </ul>
           </div>
-          <div class="d-flex gap-2 flex-wrap">
+
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+
+        <!-- Collapsible navbar content -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-2">
             <template v-if="isTraining">
-              <button class="btn btn-outline-secondary" type="button" @click="stopTraining">
-                Back
-              </button>
-              <button
-                class="btn btn-primary"
-                type="button"
-                @click="nextTraining"
-                :disabled="!currentTraining || learnedCount <= 1"
-              >
-                New Training
-              </button>
+              <li class="nav-item">
+                <a class="nav-link" href="#" @click.prevent="stopTraining">Back</a>
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link"
+                  href="#"
+                  @click.prevent="nextTraining"
+                  :class="{ disabled: !currentTraining || learnedCount <= 1 }"
+                >
+                  New Training
+                </a>
+              </li>
             </template>
             <template v-else>
-              <button
-                class="btn btn-outline-danger"
-                type="button"
-                @click="confirmResetAlgs"
-                :disabled="Object.keys(myAlgsMap).length === 0"
-                :class="['position-relative']"
-              >
-                Reset algs
-                <span
-                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              <li class="nav-item">
+                <a
+                  class="nav-link text-danger position-relative"
+                  href="#"
+                  @click.prevent="confirmResetAlgs"
+                  :class="{ disabled: Object.keys(myAlgsMap).length === 0 }"
                 >
-                  {{ Object.keys(myAlgsMap).length }}
-                </span>
-              </button>
-              <button
-                class="btn btn-outline-secondary"
-                type="button"
-                @click="confirmReset"
-                :disabled="learnedCount === 0"
-              >
-                Reset Progress
-              </button>
-              <button
-                class="btn btn-primary position-relative"
-                type="button"
-                @click="startTraining"
-                :disabled="learnedCount === 0"
-              >
-                Training
-                <span
-                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success"
+                  Reset algs
+                  <span
+                    class="position-absolute badge rounded-pill bg-danger"
+                  >
+                    {{ Object.keys(myAlgsMap).length }}
+                  </span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link"
+                  href="#"
+                  @click.prevent="confirmReset"
+                  :class="{ disabled: learnedCount === 0 }"
                 >
-                  {{ learnedCount }}
-                </span>
-              </button>
+                  Reset Progress
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link position-relative"
+                  href="#"
+                  @click.prevent="startTraining"
+                  :class="{ disabled: learnedCount === 0 }"
+                >
+                  Training
+                  <span
+                    class="position-absolute badge rounded-pill bg-success"
+                  >
+                    {{ learnedCount }}
+                  </span>
+                </a>
+              </li>
             </template>
-          </div>
+
+            <!-- Dropdown - only visible on desktop -->
+            <li class="nav-item dropdown d-none d-lg-block">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                :id="`trainerDropdown-${mode}`"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Other trainers
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" :aria-labelledby="`trainerDropdown-${mode}`">
+                <li>
+                  <router-link to="/f2l" class="dropdown-item" :class="{ active: mode === 'f2l' }">
+                    F2L Trainer
+                  </router-link>
+                </li>
+                <li>
+                  <router-link to="/oll" class="dropdown-item" :class="{ active: mode === 'oll' }">
+                    OLL Trainer
+                  </router-link>
+                </li>
+                <li>
+                  <router-link to="/pll" class="dropdown-item" :class="{ active: mode === 'pll' }">
+                    PLL Trainer
+                  </router-link>
+                </li>
+              </ul>
+            </li>
+          </ul>
         </div>
       </div>
-    </header>
-    <div class="container">
+    </nav>
+    <div class="container" :class="{ 'training-container': isTraining }">
       <!-- Offcanvas Filters -->
       <div
         class="offcanvas offcanvas-end"
@@ -265,6 +316,7 @@
             :my-alg="getMyAlg(algorithm.id)"
             @toggle="toggleLearned"
             @update-my-alg="setMyAlg"
+            class="algorithm-grid-item"
           />
         </div>
       </section>
@@ -302,6 +354,7 @@
 
 <script setup>
 import { computed, onMounted, onBeforeUnmount, ref, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import AlgorithmCard from '../components/AlgorithmCard.vue';
 import TrainingPanel from '../components/TrainingPanel.vue';
 import { useLearned } from '../composables/useLearned';
@@ -312,9 +365,17 @@ const props = defineProps({
     required: true,
     validator: (value) => ['oll', 'pll', 'f2l'].includes(value),
   },
+  algorithmId: {
+    type: String,
+    default: null,
+  },
 });
 
+const router = useRouter();
+const route = useRoute();
+
 const modeTitle = computed(() => props.mode.toUpperCase());
+
 
 // Function to get fetchAlgorithms based on mode
 async function getFetchAlgorithms() {
@@ -463,6 +524,7 @@ async function loadAlgorithms() {
         activeType.value = null;
       }
     });
+    
   }
 }
 
@@ -472,16 +534,34 @@ function startTraining() {
   }
   pickRandomTraining(true);
   isTraining.value = true;
+  // Update URL with algorithm ID
+  if (currentTraining.value) {
+    previousAlgorithmId = currentTraining.value.id;
+    router.push({ 
+      path: `/${props.mode}/${currentTraining.value.id}` 
+    });
+  }
 }
 
 function nextTraining() {
   pickRandomTraining();
+  // Update URL with new algorithm ID
+  if (currentTraining.value) {
+    previousAlgorithmId = currentTraining.value.id;
+    router.push({ 
+      path: `/${props.mode}/${currentTraining.value.id}` 
+    });
+  }
 }
 
 function stopTraining() {
   isTraining.value = false;
   currentTraining.value = null;
   lastTrainingId.value = null;
+  // Remove algorithm ID from URL
+  router.push({ 
+    path: `/${props.mode}` 
+  });
 }
 
 function toggleLearned(id) {
@@ -566,11 +646,14 @@ function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+
 onMounted(() => {
   loadAlgorithms();
+  
   window.addEventListener('keydown', handleKeydown);
   window.addEventListener('scroll', handleScroll, { passive: true });
   handleScroll();
+  
 
   try {
     const savedType = localStorage.getItem(STORAGE_KEYS.value.filterType);
@@ -602,6 +685,7 @@ onMounted(() => {
       sortObserver.observe(sortControlsRef.value);
     }
   }
+  
 });
 
 onBeforeUnmount(() => {
@@ -627,6 +711,71 @@ watch(isTraining, (val) => {
     });
   }
 });
+
+// Track previous algorithmId to detect refresh
+let previousAlgorithmId = null;
+
+// Watch for algorithmId parameter in URL (e.g., on refresh or direct navigation)
+watch(() => [route.params.algorithmId, algorithms.value.length], ([algorithmId, algLength], oldValue) => {
+  // Wait for algorithms to load before processing
+  if (algLength === 0) {
+    return;
+  }
+  
+  if (algorithmId && learnedCount.value > 0) {
+    // On refresh (same algorithmId as before), always generate new random element
+    if (algorithmId === previousAlgorithmId && previousAlgorithmId !== null) {
+      pickRandomTraining(true);
+      isTraining.value = true;
+      if (currentTraining.value) {
+        router.replace({ 
+          path: `/${props.mode}/${currentTraining.value.id}` 
+        });
+      }
+      previousAlgorithmId = currentTraining.value?.id || null;
+      return;
+    }
+    
+    // Find algorithm by ID
+    const algorithm = algorithms.value.find(alg => alg.id === algorithmId);
+    
+    if (algorithm && learnedIds.value.includes(algorithm.id)) {
+      // Algorithm found and is learned, set it as current training
+      currentTraining.value = algorithm;
+      lastTrainingId.value = algorithm.id;
+      isTraining.value = true;
+      previousAlgorithmId = algorithm.id;
+    } else if (algorithm && !learnedIds.value.includes(algorithm.id)) {
+      // Algorithm found but not learned, generate new random
+      pickRandomTraining(true);
+      isTraining.value = true;
+      if (currentTraining.value) {
+        router.replace({ 
+          path: `/${props.mode}/${currentTraining.value.id}` 
+        });
+      }
+      previousAlgorithmId = currentTraining.value?.id || null;
+    } else {
+      // Algorithm not found, generate new random
+      pickRandomTraining(true);
+      isTraining.value = true;
+      if (currentTraining.value) {
+        router.replace({ 
+          path: `/${props.mode}/${currentTraining.value.id}` 
+        });
+      }
+      previousAlgorithmId = currentTraining.value?.id || null;
+    }
+  } else if (algorithmId && learnedCount.value === 0) {
+    // Algorithm ID exists but no learned items, remove it
+    router.replace({ path: `/${props.mode}` });
+    previousAlgorithmId = null;
+  } else if (!algorithmId && isTraining.value) {
+    // Algorithm ID removed, exit training mode
+    stopTraining();
+    previousAlgorithmId = null;
+  }
+}, { immediate: true });
 
 watch(sortMode, (val) => {
   try {
@@ -662,6 +811,7 @@ watch(() => props.mode, (newMode) => {
   lastTrainingId.value = null;
   showScrollTop.value = false;
   showFilterShortcut.value = false;
+  previousAlgorithmId = null;
   
   // Reload learned data for the new mode
   reloadFromStorage(newMode);
@@ -702,4 +852,102 @@ watch(() => props.mode, (newMode) => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 </script>
+
+<style scoped>
+.home-icon-link {
+  display: inline-flex;
+  align-items: center;
+  color: #6c757d;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+  line-height: 1;
+  padding: 0.25rem;
+  margin-right: 0.5rem;
+}
+
+.home-icon-link:hover {
+  color: #0d6efd;
+  transform: translateY(-1px);
+}
+
+.home-icon-link:focus-visible {
+  outline: 2px solid rgba(13, 110, 253, 0.4);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+.app-container {
+  padding-top: 4.5rem;
+}
+
+/* Training mode: center content vertically */
+.training-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 4.5rem);
+}
+
+.nav-link.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Badge positioning for desktop */
+.nav-link.position-relative {
+  padding-right: 1.5rem !important;
+}
+
+.nav-link.position-relative .badge {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  font-size: 0.65rem;
+  padding: 0.15rem 0.4rem;
+  min-width: 1.25rem;
+  text-align: center;
+}
+
+/* Mobile navbar fixes */
+@media (max-width: 991.98px) {
+  .navbar-nav {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  
+  .navbar-nav .nav-item {
+    margin-bottom: 0.25rem;
+  }
+  
+  .navbar-nav .nav-link {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  /* Badge positioning fix for mobile */
+  .nav-link.position-relative .badge {
+    position: absolute;
+    top: -0.25rem;
+    right: -0.5rem;
+    font-size: 0.65rem;
+    padding: 0.15rem 0.35rem;
+  }
+  
+  /* Ensure dropdown doesn't overflow */
+  .dropdown-menu {
+    max-width: 100%;
+  }
+  
+  /* Dropdown outside collapse styling */
+  .navbar .dropdown .nav-link {
+    padding: 0.5rem 0.75rem;
+    color: #6c757d;
+  }
+  
+  .navbar .dropdown .nav-link:hover {
+    color: #0d6efd;
+  }
+  
+}
+</style>
 

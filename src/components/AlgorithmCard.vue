@@ -1,5 +1,5 @@
 <template>
-  <div class="card algorithm-card h-100" :class="{ learned }">
+  <div class="card algorithm-card" :class="{ learned }">
     <div class="card-body d-flex flex-column">
       <div class="text-center mb-3">
         <a

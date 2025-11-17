@@ -112,6 +112,7 @@ body {
   margin: 0;
   background-color: #f8f9fa;
   color: #212529;
+  overflow-x: hidden;
 }
 
 #app {
@@ -120,6 +121,15 @@ body {
 
 .app-container {
   padding: 0 1rem 3rem;
+  overflow-x: hidden;
+}
+
+section {
+  overflow-x: hidden;
+}
+
+.container {
+  overflow-x: hidden;
 }
 
 .fixed-action-bar {
@@ -207,10 +217,6 @@ body {
 }
 
 
-.algorithm-card {
-  position: relative;
-  transition: opacity 0.25s ease-in-out, transform 0.3s ease, box-shadow 0.3s ease;
-}
 
 .algorithm-card.display-card {
   max-width: 760px;
@@ -238,21 +244,38 @@ body {
   white-space: nowrap;
 }
 
+/* Grid layout with equal height cards */
 .algorithm-grid {
   display: grid;
+  grid-template-columns: 1fr;
   gap: 1.25rem;
+  position: relative;
+  overflow-x: hidden;
 }
 
-@media (min-width: 576px) {
+@media (min-width: 768px) {
   .algorithm-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (min-width: 992px) {
   .algorithm-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, 1fr);
   }
+}
+
+.algorithm-grid-item {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.algorithm-card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .algorithm-card.learned {
@@ -273,20 +296,6 @@ body {
   height: 110px;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .algorithm-grid:has(.algorithm-card:hover) .algorithm-card {
-    opacity: 0.65;
-    transition: opacity 0.2s ease-in-out;
-  }
-
-  .algorithm-grid:has(.algorithm-card:hover) .algorithm-card:hover {
-    opacity: 1;
-  }
-
-  .algorithm-grid .algorithm-card:hover {
-    opacity: 1;
-  }
-}
 
 .case-type-badge {
   font-size: 0.75rem;

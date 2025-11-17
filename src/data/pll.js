@@ -23,7 +23,7 @@ function deriveDetailUrl(name) {
 }
 
 export async function fetchAlgorithms() {
-  const response = await fetch(DATA_URL, { cache: 'no-store' });
+  const response = await fetch(DATA_URL);
   if (!response.ok) {
     throw new Error('Unable to load PLL algorithms.');
   }

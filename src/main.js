@@ -12,9 +12,21 @@ const router = createRouter({
   history: createWebHistory('/rubik-trainer/'),
   routes: [
     { path: '/', component: Home },
-    { path: '/oll', component: Trainer, props: { mode: 'oll' } },
-    { path: '/pll', component: Trainer, props: { mode: 'pll' } },
-    { path: '/f2l', component: Trainer, props: { mode: 'f2l' } },
+    { 
+      path: '/oll/:algorithmId?', 
+      component: Trainer, 
+      props: (route) => ({ mode: 'oll', algorithmId: route.params.algorithmId }) 
+    },
+    { 
+      path: '/pll/:algorithmId?', 
+      component: Trainer, 
+      props: (route) => ({ mode: 'pll', algorithmId: route.params.algorithmId }) 
+    },
+    { 
+      path: '/f2l/:algorithmId?', 
+      component: Trainer, 
+      props: (route) => ({ mode: 'f2l', algorithmId: route.params.algorithmId }) 
+    },
   ],
 });
 

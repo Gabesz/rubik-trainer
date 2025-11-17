@@ -12,9 +12,9 @@ Demo: [https://vps.elisnails.hu/rubik-trainer/](https://vps.elisnails.hu/rubik-t
 - **Sort toggle**: "Default" or "Short algs" (shortest standard algorithms first). Filter and sort choices persist per trainer in `localStorage`.
 - **Editable algorithms**: Case cards show SVG diagrams, setup moves, and a single editable "Alg" field (defaults to the standard). Your edits are saved per trainer in `localStorage`.
 - **Learned tracking**: One-click "Mark as learned" tracking; data persists between sessions and is separated per trainer (F2L, OLL, PLL).
-- **Training mode**: Surfaces random learned cases only, supports quick re-rolls, and exits with `Esc` on desktop.
+- **Training mode**: Surfaces random learned cases only, supports quick re-rolls, and exits with `Esc` on desktop. Each training session has a unique URL with the algorithm ID (e.g., `/oll/oll-1`), allowing direct linking and automatic regeneration of a new random element on browser refresh.
 - **Responsive design**: Tuned for mobile, tablet, and desktop; optional hover-only dimming effects for large screens.
-- **Installable PWA**: Offline caching for algorithms and SVG assets.
+- **Installable PWA**: Full offline support with service worker caching for algorithms and SVG assets. The app works completely offline after the first visit.
 - **Reset options**: "Reset Progress" clears learned items; "Reset algs" (with badge count) restores all edited algs to defaults after confirmation.
 - **F2L-specific styling**: F2L trainer displays larger SVG images (110x110px) compared to OLL/PLL (120px max-width).
 
@@ -56,7 +56,12 @@ The build output lives in `rubik-trainer/dist/`. Copy that directory to your hos
 
 ## UI Notes
 
-- The header includes a "Switch" dropdown menu to navigate between trainers or return home.
+- The header includes a Bootstrap navbar with:
+  - Home icon on the left (links to home page)
+  - Trainer title (e.g., "OLL Trainer")
+  - "Other trainers" dropdown menu (desktop: in navbar, mobile: always visible next to hamburger)
+  - Action buttons (Reset algs, Reset Progress, Training/Back, New Training) in collapsible menu
+- Training mode URLs use path parameters (e.g., `/oll/oll-1`) instead of query parameters, making them shareable and refreshable.
 - Filters and sorting are duplicated in the offcanvas panel for mobile/scrolling; open it via the floating filter button at the bottom-left.
 - The Standard Algorithm is emphasized in training; in cards, the editable "Alg" text is bold when displayed.
 - Filter (type vs learned) is mutually exclusive by design; sort and filter selections are restored per trainer on reload.
@@ -73,7 +78,7 @@ The build output lives in `rubik-trainer/dist/`. Copy that directory to your hos
 
 - Algorithm metadata lives in `public/{trainer}/algorithms.json`. To change categories or add cases, edit the JSON file and match SVG filenames. The fetch helpers derive IDs from the `name` field.
 - Styling changes can go in `src/assets/main.css`. Bootstrap classes are available globally.
-- Training-mode behavior is centralized in `src/views/Trainer.vue` (`startTraining`, `nextTraining`, `stopTraining`); extend these helpers to adjust selection logic or add spaced repetition rules.
+- Training-mode behavior is centralized in `src/views/Trainer.vue` (`startTraining`, `nextTraining`, `stopTraining`); extend these helpers to adjust selection logic or add spaced repetition rules. The training mode uses Vue Router path parameters to maintain unique URLs for each training session, enabling direct linking and automatic regeneration on refresh.
 - To add a new trainer type, create a new data module in `src/data/`, add a route in `src/main.js`, and update the Trainer component's mode validator.
 
 ## License
