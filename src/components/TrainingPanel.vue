@@ -2,7 +2,7 @@
   <section class="training-panel">
     <div v-if="algorithm" class="training-stage d-flex justify-content-center align-items-center">
       <div class="algorithm-card display-card">
-        <div class="card-body text-center">
+        <div class="card-body text-center d-flex flex-column">
           <div class="mb-4">
             <img
               :src="algorithm.imageUrl"
@@ -20,7 +20,33 @@
           </div>
           <div v-if="showStandard">
             <p class="text-muted mb-1">Standard Algorithm</p>
-            <p class="font-monospace display-standard fw-bold" v-html="formattedStandard"></p>
+            <p 
+              class="font-monospace display-standard fw-bold" 
+              :class="{ 
+                'standard-alg-blur': shouldBlur,
+                'blur-revealed': isBlurRevealed 
+              }"
+              @click="shouldBlur && revealBlur()"
+              v-html="formattedStandard"
+            ></p>
+          </div>
+          <div class="mt-auto pt-4 d-flex gap-2 justify-content-center">
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm"
+              @click="$emit('back')"
+            >
+              Back
+            </button>
+            <a
+              v-if="algorithm.detailUrl"
+              :href="algorithm.detailUrl"
+              target="_blank"
+              rel="noopener"
+              class="btn btn-outline-primary btn-sm text-decoration-none"
+            >
+              More details
+            </a>
           </div>
         </div>
       </div>
@@ -32,7 +58,7 @@
 </template>
 
 <script setup>
-import { computed, toRefs } from 'vue';
+import { computed, ref, toRefs, watch } from 'vue';
 
 const props = defineProps({
   algorithm: {
@@ -47,11 +73,25 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  shouldBlur: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 defineEmits(['new', 'back']);
 
 const { algorithm } = toRefs(props);
+const isBlurRevealed = ref(false);
+
+// Reset blur when algorithm changes
+watch(algorithm, () => {
+  isBlurRevealed.value = false;
+});
+
+function revealBlur() {
+  isBlurRevealed.value = !isBlurRevealed.value;
+}
 
 const formattedStandard = computed(() => {
   const text = algorithm.value?.standardAlg ?? '';

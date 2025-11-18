@@ -3,6 +3,9 @@
 </template>
 
 <script setup>
-// Root component with router-view
+import { useTheme } from './composables/useTheme';
+
+// Initialize theme - the composable handles everything
+useTheme();
 </script>
 

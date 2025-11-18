@@ -2,25 +2,20 @@
   <div class="card algorithm-card" :class="{ learned }">
     <div class="card-body d-flex flex-column">
       <div class="text-center mb-3">
-        <a
-          class="d-inline-block"
-          :href="algorithm.detailUrl"
-          target="_blank"
-          rel="noopener"
-        >
+        <router-link :to="`/${mode}/${algorithm.id}`" class="d-inline-block">
           <img
-          :src="algorithm.imageUrl"
-          :alt="`Diagram for ${algorithm.name}`"
-          class="img-fluid"
-          loading="lazy"
-        />
-        </a>
+            :src="algorithm.imageUrl"
+            :alt="`Diagram for ${algorithm.name}`"
+            class="img-fluid"
+            loading="lazy"
+          />
+        </router-link>
       </div>
       <div class="d-flex justify-content-between align-items-start">
         <h5 class="card-title">
-          <a :href="algorithm.detailUrl" target="_blank" rel="noopener" class="text-decoration-none">
+          <router-link :to="`/${mode}/${algorithm.id}`" class="text-decoration-none">
             {{ algorithm.name }}
-          </a>
+          </router-link>
         </h5>
         <span class="badge bg-secondary case-type-badge">{{ algorithm.type }}</span>
       </div>
@@ -97,11 +92,17 @@
 
 <script setup>
 import { ref, watch, nextTick, onBeforeUnmount, computed } from 'vue';
+import { RouterLink } from 'vue-router';
 
 const props = defineProps({
   algorithm: {
     type: Object,
     required: true,
+  },
+  mode: {
+    type: String,
+    required: true,
+    validator: (value) => ['oll', 'pll', 'f2l'].includes(value),
   },
   learned: {
     type: Boolean,

@@ -7,13 +7,16 @@ Demo: [https://vps.elisnails.hu/rubik-trainer/](https://vps.elisnails.hu/rubik-t
 ## Features
 
 - **Three trainers in one app**: F2L (41 cases), OLL (57 cases), and PLL (21 cases) with unified UX.
-- **Easy navigation**: Switch between trainers via dropdown menu in the header, or return to the home page.
+- **Dark theme support**: Toggle between light and dark themes with a theme switcher in the navbar. Theme preference is saved in `localStorage` and persists across sessions.
+- **Easy navigation**: Switch between trainers via dropdown menu in the header, or return to the home page. Click on algorithm names or images in list view to navigate directly to training mode for that specific algorithm.
 - **Filterable lists**: Filter by case type or learned state. Offcanvas filter panel accessible via floating button (bottom-left) when filters are off-screen.
 - **Sort toggle**: "Default" or "Short algs" (shortest standard algorithms first). Filter and sort choices persist per trainer in `localStorage`.
 - **Editable algorithms**: Case cards show SVG diagrams, setup moves, and a single editable "Alg" field (defaults to the standard). Your edits are saved per trainer in `localStorage`.
 - **Learned tracking**: One-click "Mark as learned" tracking; data persists between sessions and is separated per trainer (F2L, OLL, PLL).
 - **Training mode**: Surfaces random learned cases only, supports quick re-rolls, and exits with `Esc` on desktop. Each training session has a unique URL with the algorithm ID (e.g., `/oll/oll-1`), allowing direct linking and automatic regeneration of a new random element on browser refresh.
-- **Responsive design**: Tuned for mobile, tablet, and desktop; optional hover-only dimming effects for large screens.
+  - **Blur effect**: When starting training via the "Training" button, the standard algorithm is blurred by default. Click to reveal/hide. This effect is not applied when navigating from list view.
+  - **Quick actions**: "Back" button returns to list view, "More details" opens external algorithm details in a new tab.
+- **Responsive design**: Tuned for mobile, tablet, and desktop. Mobile navbar automatically closes when clicking menu items. No animation on mobile menu collapse for instant feedback.
 - **Installable PWA**: Full offline support with service worker caching for algorithms and SVG assets. The app works completely offline after the first visit.
 - **Reset options**: "Reset Progress" clears learned items; "Reset algs" (with badge count) restores all edited algs to defaults after confirmation.
 - **F2L-specific styling**: F2L trainer displays larger SVG images (110x110px) compared to OLL/PLL (120px max-width).
@@ -59,14 +62,23 @@ The build output lives in `rubik-trainer/dist/`. Copy that directory to your hos
 - The header includes a Bootstrap navbar with:
   - Home icon on the left (links to home page)
   - Trainer title (e.g., "OLL Trainer")
+  - Theme toggle button (sun/moon icon) for switching between light and dark themes
   - "Other trainers" dropdown menu (desktop: in navbar, mobile: always visible next to hamburger)
   - Action buttons (Reset algs, Reset Progress, Training/Back, New Training) in collapsible menu
+  - Mobile menu automatically closes when clicking any menu item
+- **Navigation**: Click on algorithm names or images in list view to navigate directly to training mode for that specific algorithm. The algorithm name and image are both clickable router links.
 - Training mode URLs use path parameters (e.g., `/oll/oll-1`) instead of query parameters, making them shareable and refreshable.
+- **Training mode features**:
+  - Standard algorithm blur effect (only when started via "Training" button, not from list view)
+  - "Back" button to return to list view
+  - "More details" button to open external algorithm details
+  - Clean card design without box-shadow for focused presentation
 - Filters and sorting are duplicated in the offcanvas panel for mobile/scrolling; open it via the floating filter button at the bottom-left.
 - The Standard Algorithm is emphasized in training; in cards, the editable "Alg" text is bold when displayed.
 - Filter (type vs learned) is mutually exclusive by design; sort and filter selections are restored per trainer on reload.
 - "Reset algs" shows a badge with the number of cases that have edited algs.
 - Each trainer maintains separate `localStorage` keys (e.g., `oll-learned`, `pll-learned`, `f2l-learned`) to prevent data conflicts.
+- Theme preference is stored in `localStorage` with key `theme-preference` and persists across sessions.
 
 ## Deployment Notes
 
