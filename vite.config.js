@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { VitePWA } from 'vite-plugin-pwa';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   base: '/rubik-trainer/',
   plugins: [
     vue(),
@@ -30,38 +30,42 @@ export default defineConfig({
           },
         ],
       },
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest,json}'],
-        runtimeCaching: [
-          {
-            urlPattern: /\/.*\/algorithms\.json$/,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'algorithms-cache',
-              expiration: {
-                maxEntries: 3,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
-              },
-              networkTimeoutSeconds: 3,
-            },
-          },
-          {
-            urlPattern: /\/.*\/svg\/.*\.svg$/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'svg-cache',
-              expiration: {
-                maxEntries: 200,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+      ...(mode === 'production' && {
+        workbox: {
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest,json}'],
+          globIgnores: ['**/node_modules/**/*', 'sw.js', 'workbox-*.js'],
+          runtimeCaching: [
+            {
+              urlPattern: /\/.*\/algorithms\.json$/,
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'algorithms-cache',
+                expiration: {
+                  maxEntries: 3,
+                  maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+                },
+                networkTimeoutSeconds: 3,
               },
             },
-          },
-        ],
-      },
+            {
+              urlPattern: /\/.*\/svg\/.*\.svg$/,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'svg-cache',
+                expiration: {
+                  maxEntries: 200,
+                  maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+                },
+              },
+            },
+          ],
+        },
+      }),
       devOptions: {
         enabled: true,
+        type: 'module',
       },
     }),
   ],
-});
+}));
 
