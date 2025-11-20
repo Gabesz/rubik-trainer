@@ -17,7 +17,13 @@
             {{ algorithm.name }}
           </router-link>
         </h5>
-        <span class="badge bg-secondary case-type-badge">{{ algorithm.type }}</span>
+        <span 
+          class="badge bg-secondary case-type-badge" 
+          role="button"
+          @click.stop="$emit('filter-by-type', algorithm.type)"
+          style="cursor: pointer;"
+          :title="`Filter by ${algorithm.type}`"
+        >{{ algorithm.type }}</span>
       </div>
       <p class="mb-2 small">
         <strong>Setup:</strong>
@@ -118,7 +124,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['toggle', 'update-my-alg']);
+const emit = defineEmits(['toggle', 'update-my-alg', 'filter-by-type']);
 
 const localAlg = ref(props.myAlg || props.algorithm.standardAlg);
 const editing = ref(false);

@@ -367,6 +367,7 @@
             :my-alg="getMyAlg(algorithm.id)"
             @toggle="toggleLearned"
             @update-my-alg="setMyAlg"
+            @filter-by-type="setActiveType"
             class="algorithm-grid-item"
           />
         </div>

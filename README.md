@@ -9,7 +9,7 @@ Demo: [https://vps.elisnails.hu/rubik-trainer/](https://vps.elisnails.hu/rubik-t
 - **Three trainers in one app**: F2L (41 cases), OLL (57 cases), and PLL (21 cases) with unified UX.
 - **Dark theme support**: Toggle between light and dark themes with a theme switcher in the navbar. Theme preference is saved in `localStorage` and persists across sessions.
 - **Easy navigation**: Switch between trainers via dropdown menu in the header, or return to the home page. Click on algorithm names or images in list view to navigate directly to training mode for that specific algorithm.
-- **Filterable lists**: Filter by case type or learned state. Offcanvas filter panel accessible via floating button (bottom-left) when filters are off-screen.
+- **Filterable lists**: Filter by case type or learned state. Offcanvas filter panel accessible via floating button (bottom-left) when filters are off-screen. Click on case type badges in algorithm cards to quickly filter by that type.
 - **Sort toggle**: "Default" or "Short algs" (shortest standard algorithms first). Filter and sort choices persist per trainer in `localStorage`.
 - **Editable algorithms**: Case cards show SVG diagrams, setup moves, and a single editable "Alg" field (defaults to the standard). Your edits are saved per trainer in `localStorage`.
 - **Learned tracking**: One-click "Mark as learned" tracking; data persists between sessions and is separated per trainer (F2L, OLL, PLL).
