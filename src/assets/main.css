@@ -76,6 +76,56 @@
   outline-offset: 3px;
 }
 
+.floating-action-group {
+  position: fixed;
+  top: 1.75rem;
+  right: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 1100;
+}
+
+.floating-action-btn {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 0.75rem 1.5rem rgba(13, 110, 253, 0.25);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+.floating-action-btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.floating-action-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 1rem 2rem rgba(13, 110, 253, 0.35);
+}
+
+.floating-action-btn:focus-visible {
+  outline: 3px solid rgba(13, 110, 253, 0.4);
+  outline-offset: 3px;
+}
+
+/* Smaller size on desktop */
+@media (min-width: 992px) {
+  .floating-action-btn {
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+
+  .floating-action-btn svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
 .badge-filter-item.list-filter {
   border-color: rgba(25, 135, 84, 0.2);
   background-color: rgba(25, 135, 84, 0.08);
@@ -165,15 +215,6 @@ html.dark-theme .navbar h1 {
   color: #e0e0e0;
 }
 
-html[data-bs-theme="dark"] .theme-toggle,
-html.dark-theme .theme-toggle {
-  color: #e0e0e0;
-}
-
-html[data-bs-theme="dark"] .theme-toggle:hover,
-html.dark-theme .theme-toggle:hover {
-  color: #4a9eff;
-}
 
 html[data-bs-theme="dark"] .card,
 html.dark-theme .card {
@@ -378,6 +419,18 @@ html.dark-theme .filter-fab:hover {
   background-color: #3d3d3d;
 }
 
+html[data-bs-theme="dark"] .floating-action-btn,
+html.dark-theme .floating-action-btn {
+  background-color: #4a9eff;
+  box-shadow: 0 0.75rem 1.5rem rgba(74, 158, 255, 0.3);
+}
+
+html[data-bs-theme="dark"] .floating-action-btn:hover,
+html.dark-theme .floating-action-btn:hover {
+  background-color: #3a8eef;
+  box-shadow: 0 1rem 2rem rgba(74, 158, 255, 0.4);
+}
+
 html[data-bs-theme="dark"] .algorithm-card.learned,
 html.dark-theme .algorithm-card.learned {
   border-color: #198754;
@@ -570,6 +623,29 @@ section {
   padding: 3rem 2.5rem;
 }
 
+/* Reduce padding on mobile for buttons to fit in one row */
+@media (max-width: 767.98px) {
+  .algorithm-card.display-card .card-body {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  .algorithm-card.display-card .card-body .d-flex.gap-2 {
+    gap: 0.5rem !important;
+    flex-wrap: nowrap;
+  }
+  
+  .algorithm-card.display-card .card-body .btn-sm {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .algorithm-card.display-card .card-body .btn-sm svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
 .display-image {
   max-width: 340px;
   width: 100%;
@@ -671,5 +747,135 @@ section {
 .dropdown-item.active:hover {
   background-color: #0a53be;
   color: #fff;
+}
+
+/* Print styles - only show algorithm cards */
+@page {
+  margin: 0;
+  /* Remove browser header and footer (date, title, page numbers, URL) */
+  size: auto;
+}
+
+@media print {
+  /* Hide scrollbar on all containers */
+  html,
+  body,
+  #app,
+  .app-container,
+  .container,
+  section,
+  .algorithm-grid {
+    overflow: hidden !important;
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+    height: auto !important;
+  }
+
+  /* Hide all UI elements */
+  .navbar,
+  .badge-filter,
+  .btn-group,
+  .scroll-top-btn,
+  .filter-fab,
+  .floating-action-group,
+  .offcanvas,
+  .spinner-border,
+  .alert {
+    display: none !important;
+  }
+
+  /* Hide alert in training panel if no algorithm */
+  .training-panel .alert {
+    display: none !important;
+  }
+
+  /* Hide buttons in training panel */
+  .training-panel .btn,
+  .training-panel a.btn {
+    display: none !important;
+  }
+
+  /* Show training panel for printing */
+  .training-panel {
+    display: block !important;
+  }
+
+  .training-panel .training-stage {
+    min-height: auto !important;
+  }
+
+  /* Remove blur effect for printing */
+  .standard-alg-blur {
+    filter: none !important;
+  }
+
+  /* Training panel print styles */
+  .training-panel {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .training-panel .algorithm-card.display-card {
+    transform: none !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  .training-panel .card-body {
+    padding: 1.5rem !important;
+  }
+
+  /* Remove padding from app-container (no navbar) */
+  .app-container {
+    padding-top: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* Show only algorithm grid and cards */
+  .algorithm-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 1rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .algorithm-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Remove padding and margins */
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .container {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  section {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Ensure cards print properly */
+  .algorithm-card img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Remove shadows and borders for cleaner print */
+  .algorithm-card {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
 }
 

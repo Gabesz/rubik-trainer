@@ -20,21 +20,6 @@
 
         <!-- Right side: Toggler and Dropdown - always visible outside collapse -->
         <div class="d-flex align-items-center gap-2">
-          <!-- Theme toggle button -->
-          <button
-            type="button"
-            class="btn btn-link nav-link p-1 theme-toggle"
-            @click="toggleTheme"
-            :title="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
-            aria-label="Toggle theme"
-          >
-            <svg v-if="isDark" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
-              <path fill="currentColor" d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
-            </svg>
-            <svg v-else aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
-              <path fill="currentColor" d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
-            </svg>
-          </button>
           <!-- Dropdown - always visible on mobile -->
           <div class="dropdown d-lg-none">
             <a
@@ -84,28 +69,39 @@
           <ul class="navbar-nav ms-auto d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-2">
             <template v-if="isTraining">
               <li class="nav-item">
-                <a class="nav-link" href="#" @click.prevent="handleNavClick(stopTraining)">Back</a>
+                <a class="nav-link d-flex align-items-center gap-2 d-lg-inline-flex" href="#" @click.prevent="handleNavClick(stopTraining)">
+                  <svg class="d-lg-none" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+                    <path fill="currentColor" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                  </svg>
+                  <span>Back</span>
+                </a>
               </li>
               <li class="nav-item">
                 <a
-                  class="nav-link"
+                  class="nav-link d-flex align-items-center gap-2 d-lg-inline-flex"
                   href="#"
                   @click.prevent="handleNavClick(nextTraining)"
                   :class="{ disabled: !currentTraining || learnedCount <= 1 }"
                 >
-                  New Training
+                  <svg class="d-lg-none" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+                    <path fill="currentColor" d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
+                  </svg>
+                  <span>New Training</span>
                 </a>
               </li>
             </template>
             <template v-else>
               <li class="nav-item">
                 <a
-                  class="nav-link text-danger position-relative"
+                  class="nav-link text-danger position-relative d-flex align-items-center gap-2 d-lg-inline-flex"
                   href="#"
                   @click.prevent="handleNavClick(confirmResetAlgs)"
                   :class="{ disabled: Object.keys(myAlgsMap).length === 0 }"
                 >
-                  Reset algs
+                  <svg class="d-lg-none" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+                    <path fill="currentColor" d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                  </svg>
+                  <span>Reset algs</span>
                   <span
                     class="position-absolute badge rounded-pill bg-danger"
                   >
@@ -115,22 +111,29 @@
               </li>
               <li class="nav-item">
                 <a
-                  class="nav-link"
+                  class="nav-link d-flex align-items-center gap-2 d-lg-inline-flex"
                   href="#"
                   @click.prevent="handleNavClick(confirmReset)"
                   :class="{ disabled: learnedCount === 0 }"
                 >
-                  Reset Progress
+                  <svg class="d-lg-none" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+                    <path fill="currentColor" d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"/>
+                  </svg>
+                  <span>Reset Progress</span>
                 </a>
               </li>
               <li class="nav-item">
                 <a
-                  class="nav-link position-relative"
+                  class="nav-link position-relative d-flex align-items-center gap-2 d-lg-inline-flex"
                   href="#"
                   @click.prevent="handleNavClick(startTraining)"
                   :class="{ disabled: learnedCount === 0 }"
                 >
-                  Training
+                  <svg class="d-lg-none" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+                    <path fill="currentColor" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                    <path fill="currentColor" d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.255 1.287-.39 1.287-1.243 0-1.08-.92-1.144-1.416-.165a.75.75 0 0 1-1.25.154z"/>
+                  </svg>
+                  <span>Training</span>
                   <span
                     class="position-absolute badge rounded-pill bg-success"
                   >
@@ -169,6 +172,37 @@
                   </router-link>
                 </li>
               </ul>
+            </li>
+            <!-- Theme toggle and Print buttons - only visible on mobile/tablet -->
+            <li class="nav-item d-lg-none">
+              <a
+                class="nav-link d-flex align-items-center gap-2"
+                href="#"
+                @click.prevent="handleNavClick(toggleTheme)"
+                :title="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
+              >
+                <svg v-if="isDark" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+                  <path fill="currentColor" d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+                </svg>
+                <svg v-else aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+                  <path fill="currentColor" d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+                </svg>
+                <span>{{ isDark ? 'Light theme' : 'Dark theme' }}</span>
+              </a>
+            </li>
+            <li class="nav-item d-lg-none">
+              <a
+                class="nav-link d-flex align-items-center gap-2"
+                href="#"
+                @click.prevent="handleNavClick(handlePrint)"
+                title="Print"
+              >
+                <svg aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+                  <path fill="currentColor" d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2H5zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1z"/>
+                  <path fill="currentColor" d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2V7zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+                </svg>
+                <span>Print</span>
+              </a>
             </li>
           </ul>
         </div>
@@ -366,6 +400,35 @@
         <path fill="currentColor" d="M6 10.5V15l4-2v-2.5l4.854-4.854A.5.5 0 0 0 14.5 4h-13a.5.5 0 0 0-.354.854z"/>
       </svg>
     </button>
+    <!-- Floating action buttons group - only visible on desktop -->
+    <div class="floating-action-group d-none d-lg-flex">
+      <button
+        type="button"
+        class="btn btn-primary floating-action-btn"
+        @click="toggleTheme"
+        :title="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
+        aria-label="Toggle theme"
+      >
+        <svg v-if="isDark" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+          <path fill="currentColor" d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+        </svg>
+        <svg v-else aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+          <path fill="currentColor" d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary floating-action-btn"
+        @click="handlePrint"
+        title="Print"
+        aria-label="Print"
+      >
+        <svg aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+          <path fill="currentColor" d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2H5zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1z"/>
+          <path fill="currentColor" d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2V7zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+        </svg>
+      </button>
+    </div>
   </div>
 </template>
 
@@ -647,9 +710,21 @@ function setSortMode(mode) {
 }
 
 function handleKeydown(event) {
-  if (event.key === 'Escape' && isTraining.value) {
-    event.preventDefault();
-    stopTraining();
+  if (event.key === 'Escape') {
+    // Close hamburger menu if open (mobile/tablet)
+    if (window.innerWidth < 992) {
+      const navbarCollapse = document.getElementById('navbarNav');
+      if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+        event.preventDefault();
+        closeNavbar();
+        return;
+      }
+    }
+    // Exit training mode if in training
+    if (isTraining.value) {
+      event.preventDefault();
+      stopTraining();
+    }
   }
 }
 
@@ -700,12 +775,30 @@ function handleNavClick(callback) {
   closeNavbar();
 }
 
+function handlePrint() {
+  window.print();
+}
+
+function handleContentClick(event) {
+  // Only close navbar on mobile/tablet (when navbar is collapsed)
+  if (window.innerWidth < 992) {
+    const navbarCollapse = document.getElementById('navbarNav');
+    if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+      // Check if click is outside navbar
+      const navbar = document.querySelector('.navbar');
+      if (navbar && !navbar.contains(event.target)) {
+        closeNavbar();
+      }
+    }
+  }
+}
 
 onMounted(() => {
   loadAlgorithms();
   
   window.addEventListener('keydown', handleKeydown);
   window.addEventListener('scroll', handleScroll, { passive: true });
+  window.addEventListener('click', handleContentClick);
   handleScroll();
   
 
@@ -745,6 +838,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleKeydown);
   window.removeEventListener('scroll', handleScroll);
+  window.removeEventListener('click', handleContentClick);
   if (sortObserver && sortControlsRef.value) {
     try {
       sortObserver.unobserve(sortControlsRef.value);
@@ -945,6 +1039,8 @@ watch(() => props.mode, (newMode) => {
   align-items: center;
   justify-content: center;
   min-height: calc(100vh - 4.5rem);
+  padding-left: calc(var(--bs-gutter-x, 1.5rem) - 10px);
+  padding-right: calc(var(--bs-gutter-x, 1.5rem) - 10px);
 }
 
 .nav-link.disabled {

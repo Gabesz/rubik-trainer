@@ -15,8 +15,9 @@ Demo: [https://vps.elisnails.hu/rubik-trainer/](https://vps.elisnails.hu/rubik-t
 - **Learned tracking**: One-click "Mark as learned" tracking; data persists between sessions and is separated per trainer (F2L, OLL, PLL).
 - **Training mode**: Surfaces random learned cases only, supports quick re-rolls, and exits with `Esc` on desktop. Each training session has a unique URL with the algorithm ID (e.g., `/oll/oll-1`), allowing direct linking and automatic regeneration of a new random element on browser refresh.
   - **Blur effect**: When starting training via the "Training" button, the standard algorithm is blurred by default. Click to reveal/hide. This effect is not applied when navigating from list view.
-  - **Quick actions**: "Back" button returns to list view, "More details" opens external algorithm details in a new tab.
-- **Responsive design**: Tuned for mobile, tablet, and desktop. Mobile navbar automatically closes when clicking menu items. No animation on mobile menu collapse for instant feedback.
+  - **Quick actions**: "Back" button returns to list view, "New Training" button generates a new random case, and "Details" opens external algorithm details in a new tab. All buttons include icons for better visual recognition.
+- **Responsive design**: Tuned for mobile, tablet, and desktop. Mobile navbar automatically closes when clicking menu items or clicking outside the menu, and also closes on Escape key press. No animation on mobile menu collapse for instant feedback. Theme toggle and print buttons are in the hamburger menu on mobile/tablet, and in a floating action button group on desktop.
+- **Print support**: Print-friendly styles for both list view and training mode. Only algorithm cards/content are printed, with all UI elements hidden. Browser headers/footers can be disabled in print settings.
 - **Installable PWA**: Full offline support with service worker caching for algorithms and SVG assets. The app works completely offline after the first visit.
 - **Reset options**: "Reset Progress" clears learned items; "Reset algs" (with badge count) restores all edited algs to defaults after confirmation.
 - **F2L-specific styling**: F2L trainer displays larger SVG images (110x110px) compared to OLL/PLL (120px max-width).
@@ -62,17 +63,19 @@ The build output lives in `rubik-trainer/dist/`. Copy that directory to your hos
 - The header includes a Bootstrap navbar with:
   - Home icon on the left (links to home page)
   - Trainer title (e.g., "OLL Trainer")
-  - Theme toggle button (sun/moon icon) for switching between light and dark themes
   - "Other trainers" dropdown menu (desktop: in navbar, mobile: always visible next to hamburger)
-  - Action buttons (Reset algs, Reset Progress, Training/Back, New Training) in collapsible menu
-  - Mobile menu automatically closes when clicking any menu item
+  - Action buttons (Reset algs, Reset Progress, Training/Back, New Training) in collapsible menu with icons on mobile
+  - Theme toggle and Print buttons: in hamburger menu on mobile/tablet, in floating action button group on desktop (top-right)
+  - Mobile menu automatically closes when clicking any menu item, clicking outside the menu, or pressing Escape
 - **Navigation**: Click on algorithm names or images in list view to navigate directly to training mode for that specific algorithm. The algorithm name and image are both clickable router links.
 - Training mode URLs use path parameters (e.g., `/oll/oll-1`) instead of query parameters, making them shareable and refreshable.
 - **Training mode features**:
   - Standard algorithm blur effect (only when started via "Training" button, not from list view)
-  - "Back" button to return to list view
-  - "More details" button to open external algorithm details
+  - "Back" button (with icon) to return to list view
+  - "New Training" button (with icon) to generate a new random case
+  - "Details" button (with icon) to open external algorithm details
   - Clean card design without box-shadow for focused presentation
+  - Optimized button layout for mobile: buttons fit in one row with reduced padding and smaller sizes
 - Filters and sorting are duplicated in the offcanvas panel for mobile/scrolling; open it via the floating filter button at the bottom-left.
 - The Standard Algorithm is emphasized in training; in cards, the editable "Alg" text is bold when displayed.
 - Filter (type vs learned) is mutually exclusive by design; sort and filter selections are restored per trainer on reload.
