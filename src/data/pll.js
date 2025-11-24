@@ -14,6 +14,18 @@ function deriveImagePath(name) {
 }
 
 function deriveId(name) {
+  // Extract number or code from name (e.g., "PLL Aa" -> "pll-aa", "PLL 1" -> "pll-1")
+  // First try to match PLL codes (Aa, Ab, etc.)
+  const codeMatch = name.match(/PLL\s*([A-Za-z]+)/i);
+  if (codeMatch) {
+    return `pll-${codeMatch[1].toLowerCase()}`;
+  }
+  // Then try to match numbers
+  const numberMatch = name.match(/PLL\s*(\d+)/i);
+  if (numberMatch) {
+    return `pll-${numberMatch[1]}`;
+  }
+  // Fallback to original logic if no match found
   return name.trim().toLowerCase().replace(/\s+/g, '-');
 }
 

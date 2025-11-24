@@ -434,7 +434,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, onMounted, onBeforeUnmount, ref, watch, nextTick } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import AlgorithmCard from '../components/AlgorithmCard.vue';
 import TrainingPanel from '../components/TrainingPanel.vue';
@@ -592,6 +592,29 @@ async function loadAlgorithms() {
   try {
     const fetchAlgorithms = await getFetchAlgorithms();
     algorithms.value = await fetchAlgorithms();
+    // Ensure router-links are initialized after algorithms load
+    await nextTick();
+    // Use multiple attempts to ensure router-links are initialized in both dev and preview modes
+    const initRouterLinks = () => {
+      const routerLinks = document.querySelectorAll('.algorithm-card a[href], .algorithm-card router-link');
+      routerLinks.forEach(link => {
+        if (link.style) {
+          link.style.pointerEvents = 'auto';
+          link.style.zIndex = '100';
+          link.style.cursor = 'pointer';
+        }
+        // Also ensure the link element itself is clickable
+        if (link instanceof HTMLElement) {
+          link.setAttribute('tabindex', '0');
+        }
+      });
+    };
+    // Try multiple times with increasing delays for preview mode
+    setTimeout(initRouterLinks, 0);
+    setTimeout(initRouterLinks, 100);
+    setTimeout(initRouterLinks, 300);
+    setTimeout(initRouterLinks, 500);
+    setTimeout(initRouterLinks, 800);
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Failed to load algorithms.';
   } finally {
@@ -787,7 +810,15 @@ function handleContentClick(event) {
     if (navbarCollapse && navbarCollapse.classList.contains('show')) {
       // Check if click is outside navbar
       const navbar = document.querySelector('.navbar');
-      if (navbar && !navbar.contains(event.target)) {
+      // Don't close if clicking on algorithm card links or router-links
+      // Check for router-link elements more thoroughly
+      const clickedLink = event.target.closest('a[href*="/oll/"], a[href*="/pll/"], a[href*="/f2l/"], router-link, .router-link, .algorithm-card a, .algorithm-image-container a, .algorithm-title-container a');
+      // Also check if the click target itself is a link
+      const isLink = event.target.tagName === 'A' || event.target.closest('a') || event.target.closest('router-link');
+      // Check if clicking on algorithm card content (image or title)
+      const isAlgorithmCardClick = event.target.closest('.algorithm-card') && 
+        (event.target.closest('.algorithm-image-container') || event.target.closest('.algorithm-title-container'));
+      if (navbar && !navbar.contains(event.target) && !clickedLink && !isLink && !isAlgorithmCardClick) {
         closeNavbar();
       }
     }
@@ -799,9 +830,103 @@ onMounted(() => {
   
   window.addEventListener('keydown', handleKeydown);
   window.addEventListener('scroll', handleScroll, { passive: true });
-  window.addEventListener('click', handleContentClick);
+  // Delay adding click listener to ensure router-links are initialized
+  // Also ensure router-links are properly initialized
+  // This should work regardless of learned status
+  nextTick(() => {
+    const initRouterLinks = () => {
+      // Force router-link initialization by querying them
+      // Initialize ALL algorithm card links, regardless of learned status
+      const routerLinks = document.querySelectorAll('.algorithm-card a[href], .algorithm-card router-link, .algorithm-card .router-link');
+      routerLinks.forEach(link => {
+        // Ensure they are clickable
+        if (link.style) {
+          link.style.pointerEvents = 'auto';
+          link.style.zIndex = '100';
+          link.style.cursor = 'pointer';
+        }
+        // Also ensure the link element itself is clickable
+        if (link instanceof HTMLElement) {
+          link.setAttribute('tabindex', '0');
+        }
+      });
+    };
+    // Try multiple times with increasing delays for preview mode
+    initRouterLinks();
+    setTimeout(() => {
+      initRouterLinks();
+      window.addEventListener('click', handleContentClick, { capture: false });
+    }, 0);
+    setTimeout(initRouterLinks, 100);
+    setTimeout(initRouterLinks, 200);
+    setTimeout(initRouterLinks, 400);
+    setTimeout(initRouterLinks, 600);
+    setTimeout(initRouterLinks, 1000);
+  });
   handleScroll();
   
+  // Use MutationObserver to watch for DOM changes and initialize router-links
+  // This ensures router-links are initialized even when there are no learned elements
+  const algorithmGrid = document.querySelector('.algorithm-grid');
+  if (algorithmGrid) {
+    const initRouterLinks = () => {
+      const routerLinks = document.querySelectorAll('.algorithm-card a[href], .algorithm-card router-link, .algorithm-card .router-link');
+      routerLinks.forEach(link => {
+        if (link.style) {
+          link.style.pointerEvents = 'auto';
+          link.style.zIndex = '100';
+          link.style.cursor = 'pointer';
+        }
+        if (link instanceof HTMLElement) {
+          link.setAttribute('tabindex', '0');
+          const href = link.getAttribute('href') || link.href;
+          if (href) {
+            const clickHandler = (event) => {
+              const pathBeforeClick = router.currentRoute.value.path;
+              setTimeout(() => {
+                const pathAfterClick = router.currentRoute.value.path;
+                if (pathBeforeClick === pathAfterClick && pathAfterClick !== href && !event.defaultPrevented) {
+                  router.push(href).catch(err => {
+                    if (err.name !== 'NavigationDuplicated') {
+                      console.warn('Router navigation failed:', err);
+                      window.location.href = href;
+                    }
+                  });
+                }
+              }, 150);
+            };
+            link.removeEventListener('click', clickHandler);
+            link.addEventListener('click', clickHandler, { once: false, passive: true });
+          }
+        }
+      });
+    };
+    
+    const observer = new MutationObserver(() => {
+      nextTick(() => {
+        initRouterLinks();
+      });
+    });
+    
+    observer.observe(algorithmGrid, {
+      childList: true,
+      subtree: true
+    });
+    
+    // Also initialize immediately
+    nextTick(() => {
+      initRouterLinks();
+      setTimeout(initRouterLinks, 100);
+      setTimeout(initRouterLinks, 300);
+      setTimeout(initRouterLinks, 500);
+      setTimeout(initRouterLinks, 800);
+    });
+    
+    // Store observer for cleanup
+    onBeforeUnmount(() => {
+      observer.disconnect();
+    });
+  }
 
   try {
     const savedType = localStorage.getItem(STORAGE_KEYS.value.filterType);
@@ -889,6 +1014,15 @@ watch(() => [route.params.algorithmId, algorithms.value.length], ([algorithmId, 
     // Find algorithm by ID
     const algorithm = algorithms.value.find(alg => alg.id === algorithmId);
     
+    // Debug: log if algorithm not found
+    if (!algorithm) {
+      console.warn(`Algorithm not found with ID: ${algorithmId}. Available IDs:`, algorithms.value.map(a => a.id).slice(0, 10));
+      // Algorithm not found, just exit training mode instead of redirecting
+      stopTraining();
+      previousAlgorithmId = null;
+      return;
+    }
+    
     if (algorithm && learnedIds.value.includes(algorithm.id)) {
       // Algorithm found and is learned, set it as current training
       shouldBlurStandardAlg.value = false; // No blur when coming from list view
@@ -897,36 +1031,137 @@ watch(() => [route.params.algorithmId, algorithms.value.length], ([algorithmId, 
       isTraining.value = true;
       previousAlgorithmId = algorithm.id;
     } else if (algorithm && !learnedIds.value.includes(algorithm.id)) {
-      // Algorithm found but not learned, generate new random
+      // Algorithm found but not learned, just show it anyway (don't redirect)
       shouldBlurStandardAlg.value = false; // No blur when coming from list view
-      pickRandomTraining(true);
+      currentTraining.value = algorithm;
+      lastTrainingId.value = algorithm.id;
       isTraining.value = true;
-      if (currentTraining.value) {
-        router.replace({ 
-          path: `/${props.mode}/${currentTraining.value.id}` 
-        });
-      }
-      previousAlgorithmId = currentTraining.value?.id || null;
-    } else {
-      // Algorithm not found, generate new random
-      shouldBlurStandardAlg.value = false; // No blur when coming from list view
-      pickRandomTraining(true);
-      isTraining.value = true;
-      if (currentTraining.value) {
-        router.replace({ 
-          path: `/${props.mode}/${currentTraining.value.id}` 
-        });
-      }
-      previousAlgorithmId = currentTraining.value?.id || null;
+      previousAlgorithmId = algorithm.id;
     }
   } else if (algorithmId && learnedCount.value === 0) {
-    // Algorithm ID exists but no learned items, remove it
-    router.replace({ path: `/${props.mode}` });
-    previousAlgorithmId = null;
+    // Algorithm ID exists but no learned items - show it anyway (don't redirect)
+    const algorithm = algorithms.value.find(alg => alg.id === algorithmId);
+    if (algorithm) {
+      shouldBlurStandardAlg.value = false;
+      currentTraining.value = algorithm;
+      lastTrainingId.value = algorithm.id;
+      isTraining.value = true;
+      previousAlgorithmId = algorithm.id;
+    } else {
+      // Algorithm not found, just exit training mode
+      stopTraining();
+      previousAlgorithmId = null;
+    }
   } else if (!algorithmId && isTraining.value) {
     // Algorithm ID removed, exit training mode
     stopTraining();
     previousAlgorithmId = null;
+  }
+}, { immediate: true });
+
+// Watch for algorithms to be loaded and initialize router-links
+// This should work regardless of learned status
+watch(() => [algorithms.value.length, !loading.value], ([algLength, notLoading]) => {
+  if (algLength > 0 && notLoading) {
+    // Wait for DOM to update
+    nextTick(() => {
+      // Use multiple attempts to ensure router-links are initialized in both dev and preview modes
+      const initRouterLinks = () => {
+        // Initialize ALL algorithm card links, regardless of learned status
+        const routerLinks = document.querySelectorAll('.algorithm-card a[href], .algorithm-card router-link, .algorithm-card .router-link');
+        routerLinks.forEach(link => {
+          if (link.style) {
+            link.style.pointerEvents = 'auto';
+            link.style.zIndex = '100';
+            link.style.cursor = 'pointer';
+          }
+          // Also ensure the link element itself is clickable
+          if (link instanceof HTMLElement) {
+            link.setAttribute('tabindex', '0');
+            // Add click handler as fallback for preview mode
+            // Only use programmatic navigation if router-link doesn't work
+            const href = link.getAttribute('href') || link.href;
+            if (href) {
+              const clickHandler = (event) => {
+                // Don't prevent default - let router-link handle it normally
+                // Only use programmatic navigation as a last resort
+                const pathBeforeClick = router.currentRoute.value.path;
+                setTimeout(() => {
+                  const pathAfterClick = router.currentRoute.value.path;
+                  // Only navigate programmatically if path didn't change and we're not already on target
+                  if (pathBeforeClick === pathAfterClick && pathAfterClick !== href && !event.defaultPrevented) {
+                    // Router-link didn't work, use programmatic navigation
+                    router.push(href).catch(err => {
+                      if (err.name !== 'NavigationDuplicated') {
+                        console.warn('Router navigation failed:', err);
+                        // As last resort, use window.location
+                        window.location.href = href;
+                      }
+                    });
+                  }
+                }, 150);
+              };
+              // Remove existing listener if any, then add new one
+              link.removeEventListener('click', clickHandler);
+              link.addEventListener('click', clickHandler, { once: false, passive: true });
+            }
+          }
+        });
+      };
+      // Try multiple times with increasing delays for preview mode
+      setTimeout(initRouterLinks, 0);
+      setTimeout(initRouterLinks, 100);
+      setTimeout(initRouterLinks, 300);
+      setTimeout(initRouterLinks, 500);
+      setTimeout(initRouterLinks, 800);
+      setTimeout(initRouterLinks, 1200);
+    });
+  }
+}, { immediate: true });
+
+// Also watch for visibleAlgorithms changes to ensure router-links are initialized
+// This ensures router-links are initialized even when filters change
+watch(() => [visibleAlgorithms.value.length, !loading.value], ([length, notLoading]) => {
+  if (length > 0 && notLoading) {
+    nextTick(() => {
+      const initRouterLinks = () => {
+        const routerLinks = document.querySelectorAll('.algorithm-card a[href], .algorithm-card router-link, .algorithm-card .router-link');
+        routerLinks.forEach(link => {
+          if (link.style) {
+            link.style.pointerEvents = 'auto';
+            link.style.zIndex = '100';
+            link.style.cursor = 'pointer';
+          }
+          if (link instanceof HTMLElement) {
+            link.setAttribute('tabindex', '0');
+            const href = link.getAttribute('href') || link.href;
+            if (href) {
+              const clickHandler = (event) => {
+                const pathBeforeClick = router.currentRoute.value.path;
+                setTimeout(() => {
+                  const pathAfterClick = router.currentRoute.value.path;
+                  if (pathBeforeClick === pathAfterClick && pathAfterClick !== href && !event.defaultPrevented) {
+                    router.push(href).catch(err => {
+                      if (err.name !== 'NavigationDuplicated') {
+                        console.warn('Router navigation failed:', err);
+                        window.location.href = href;
+                      }
+                    });
+                  }
+                }, 150);
+              };
+              link.removeEventListener('click', clickHandler);
+              link.addEventListener('click', clickHandler, { once: false, passive: true });
+            }
+          }
+        });
+      };
+      setTimeout(initRouterLinks, 0);
+      setTimeout(initRouterLinks, 100);
+      setTimeout(initRouterLinks, 300);
+      setTimeout(initRouterLinks, 500);
+      setTimeout(initRouterLinks, 800);
+    });
   }
 }, { immediate: true });
 

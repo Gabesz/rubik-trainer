@@ -10,6 +10,74 @@
   font-style: italic;
 }
 
+.my-alg-field {
+  position: relative;
+  z-index: 0;
+}
+
+.algorithm-image-container,
+.algorithm-title-container {
+  position: relative;
+  z-index: 100;
+  pointer-events: auto !important;
+}
+
+.algorithm-image-container a,
+.algorithm-title-container a {
+  position: relative;
+  z-index: 100;
+  pointer-events: auto !important;
+  display: inline-block;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.algorithm-card .card-body {
+  position: relative;
+}
+
+.algorithm-card .card-body > * {
+  position: relative;
+}
+
+/* Ensure router-link elements are always clickable */
+.algorithm-card a[href],
+.algorithm-card router-link,
+.algorithm-card .router-link {
+  position: relative;
+  z-index: 100 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+}
+
+.algorithm-card a[href] img,
+.algorithm-card router-link img,
+.algorithm-card .router-link img {
+  pointer-events: auto;
+}
+
+/* Ensure algorithm card containers are clickable */
+.algorithm-image-container,
+.algorithm-title-container {
+  position: relative;
+  z-index: 100;
+  pointer-events: auto !important;
+}
+
+.algorithm-image-container a,
+.algorithm-title-container a {
+  position: relative;
+  z-index: 100;
+  pointer-events: auto !important;
+  display: inline-block;
+  cursor: pointer;
+  text-decoration: none;
+  width: 100%;
+}
+
 .edit-hint {
   font-size: 0.75rem;
 }
@@ -505,6 +573,11 @@ section {
   position: relative;
 }
 
+.container.training-container {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 /* Ensure dropdowns can overflow navbar */
 .navbar {
   overflow: visible !important;
@@ -546,8 +619,47 @@ section {
 
 .training-panel {
   max-width: 100%;
+  width: 100% !important;
   margin: 0 auto;
   overflow: hidden;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.training-only {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.container.training-container {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  max-width: 100% !important;
+}
+
+.container.training-container > * {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.training-container section {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* F2L specific: override padding for mobile */
+@media (max-width: 767.98px) {
+  .trainer-f2l.container.training-container,
+  .trainer-f2l .container.training-container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
 }
 
 .training-stage {
@@ -621,42 +733,160 @@ section {
 
 .algorithm-card.display-card .card-body {
   padding: 3rem 2.5rem;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.training-panel .algorithm-card.display-card .card-body {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.training-panel .card-body {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.training-panel .algorithm-card.display-card .card-body {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.training-panel .card-body {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Training panel buttons - general styles */
+.training-panel-buttons {
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.training-panel-buttons .btn-sm,
+.training-panel-buttons a.btn-sm {
+  flex: 0 0 auto;
+  min-width: fit-content;
+  max-width: fit-content;
+  display: inline-flex !important;
+  width: auto !important;
 }
 
 /* Reduce padding on mobile for buttons to fit in one row */
 @media (max-width: 767.98px) {
   .algorithm-card.display-card .card-body {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
   
-  .algorithm-card.display-card .card-body .d-flex.gap-2 {
-    gap: 0.5rem !important;
-    flex-wrap: nowrap;
+  .algorithm-card.display-card .card-body .training-panel-buttons {
+    gap: 0.4rem !important;
+    flex-wrap: nowrap !important;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    justify-content: center !important;
+    align-items: center !important;
   }
   
-  .algorithm-card.display-card .card-body .btn-sm {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
+  .algorithm-card.display-card .card-body .training-panel-buttons .btn-sm,
+  .algorithm-card.display-card .card-body .training-panel-buttons a.btn-sm {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+    flex: 0 0 auto;
+    min-width: fit-content;
+    max-width: fit-content;
+    white-space: nowrap;
+    display: inline-flex !important;
+    width: auto !important;
   }
   
-  .algorithm-card.display-card .card-body .btn-sm svg {
-    width: 14px;
-    height: 14px;
+  .algorithm-card.display-card .card-body .training-panel-buttons .btn-sm svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+  
+  .algorithm-card.display-card .card-body .training-panel-buttons .btn-sm span {
+    white-space: nowrap;
   }
 }
 
 .display-image {
-  max-width: 340px;
+  max-width: 408px;
   width: 100%;
   height: auto;
+}
+
+.display-standard-wrapper {
+  width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+@media (max-width: 767.98px) {
+  .training-panel .algorithm-card.display-card .card-body {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  .display-standard-wrapper {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .display-standard-wrapper {
+    margin-left: -2.5rem;
+    margin-right: -2.5rem;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
 }
 
 .display-standard {
   font-size: clamp(1.1rem, 1.6vw + 0.8rem, 1.9rem);
   line-height: 1.5;
-  word-break: normal;
-  white-space: nowrap;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.display-standard-wrapper .h5,
+.display-standard-wrapper p.h5,
+.display-standard-wrapper .font-monospace.h5,
+.training-panel .display-standard-wrapper .h5,
+.training-panel .display-standard-wrapper p.h5,
+.training-panel .display-standard-wrapper .font-monospace.h5 {
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  hyphens: auto;
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  white-space: normal !important;
+  overflow-x: hidden !important;
+  display: block !important;
+  line-height: 1.5 !important;
+}
+
+/* Ensure wrapper itself doesn't overflow */
+.training-panel .display-standard-wrapper {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
 }
 
 /* Blur effect for standard algorithm in training mode */
@@ -723,6 +953,89 @@ section {
   max-height: 110px;
   width: 110px;
   height: 110px;
+}
+
+
+.trainer-f2l .training-panel .algorithm-card.display-card .card-body {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.trainer-f2l .display-standard-wrapper {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+@media (max-width: 767.98px) {
+  .trainer-f2l .algorithm-card.display-card .card-body {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+  
+  .trainer-f2l .display-standard-wrapper {
+    margin-left: -0.5rem !important;
+    margin-right: -0.5rem !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  .trainer-f2l .algorithm-card.display-card .card-body .training-panel-buttons {
+    gap: 0.4rem !important;
+    flex-wrap: nowrap;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+  
+  .trainer-f2l .algorithm-card.display-card .card-body .training-panel-buttons .btn-sm {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+  
+  .trainer-f2l .algorithm-card.display-card .card-body .training-panel-buttons .btn-sm svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+  
+  .trainer-f2l .algorithm-card.display-card .card-body .training-panel-buttons .btn-sm span {
+    white-space: nowrap;
+  }
+}
+
+.trainer-f2l .container.training-container {
+  max-width: 100% !important;
+}
+
+@media (max-width: 767.98px) {
+  .trainer-f2l .container.training-container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+}
+
+.trainer-f2l .training-panel {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.trainer-f2l .training-only {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.trainer-f2l .training-panel .card-body {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
 
@@ -795,6 +1108,13 @@ section {
     display: none !important;
   }
 
+  /* Hide "Mark as Learned" / "Learned" button in list view */
+  .algorithm-card .mt-auto,
+  .algorithm-card button.btn-success,
+  .algorithm-card button.btn-outline-secondary {
+    display: none !important;
+  }
+
   /* Show training panel for printing */
   .training-panel {
     display: block !important;
@@ -840,7 +1160,8 @@ section {
     grid-template-columns: repeat(3, 1fr) !important;
     gap: 1rem !important;
     margin: 0 !important;
-    padding: 0 !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
   }
 
   .algorithm-card {
@@ -870,6 +1191,9 @@ section {
   .algorithm-card img {
     max-width: 100% !important;
     height: auto !important;
+    /* Improve visibility for black & white printing */
+    filter: grayscale(100%) contrast(200%) brightness(0.9) !important;
+    -webkit-filter: grayscale(100%) contrast(200%) brightness(0.9) !important;
   }
 
   /* Remove shadows and borders for cleaner print */

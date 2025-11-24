@@ -15,6 +15,12 @@ function deriveImagePath(name) {
 }
 
 function deriveId(name) {
+  // Extract number from name (e.g., "OLL 1" -> "1", "OLL 2" -> "2")
+  const match = name.match(/OLL\s*(\d+)/i);
+  if (match) {
+    return `oll-${match[1]}`;
+  }
+  // Fallback to original logic if no number found
   return name.trim().toLowerCase().replace(/\s+/g, '-');
 }
 

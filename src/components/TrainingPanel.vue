@@ -13,24 +13,28 @@
           <h3 class="mb-3">{{ algorithm.name }}</h3>
           <div class="mb-4">
             <p class="text-muted mb-1">Setup</p>
-            <p class="font-monospace h5">{{ algorithm.setup }}</p>
+            <div class="display-standard-wrapper">
+              <p class="font-monospace h5" v-html="formattedSetup"></p>
+            </div>
           </div>
           <div class="mb-4" v-if="showMyAlg">
             <p class="font-monospace display-standard" v-html="formattedMyAlg"></p>
           </div>
           <div v-if="showStandard">
             <p class="text-muted mb-1">Standard Algorithm</p>
-            <p 
-              class="font-monospace display-standard fw-bold" 
-              :class="{ 
-                'standard-alg-blur': shouldBlur,
-                'blur-revealed': isBlurRevealed 
-              }"
-              @click="shouldBlur && revealBlur()"
-              v-html="formattedStandard"
-            ></p>
+            <div class="display-standard-wrapper">
+              <p 
+                class="font-monospace display-standard fw-bold" 
+                :class="{ 
+                  'standard-alg-blur': shouldBlur,
+                  'blur-revealed': isBlurRevealed 
+                }"
+                @click="shouldBlur && revealBlur()"
+                v-html="formattedStandard"
+              ></p>
+            </div>
           </div>
-          <div class="mt-auto pt-4 d-flex gap-2 justify-content-center">
+          <div class="mt-auto pt-4 d-flex gap-2 justify-content-center align-items-center training-panel-buttons">
             <button
               type="button"
               class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"
@@ -113,6 +117,14 @@ function revealBlur() {
 
 const formattedStandard = computed(() => {
   const text = algorithm.value?.standardAlg ?? '';
+  if (!text) return '';
+  return text
+    .replace(/\)/g, ')<wbr>')
+    .replace(/\s+/g, '&nbsp;');
+});
+
+const formattedSetup = computed(() => {
+  const text = algorithm.value?.setup ?? '';
   if (!text) return '';
   return text
     .replace(/\)/g, ')<wbr>')

@@ -1,9 +1,23 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { VitePWA } from 'vite-plugin-pwa';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default defineConfig(({ mode }) => ({
   base: '/rubik-trainer/',
+  root: __dirname,
+  build: {
+    outDir: resolve(__dirname, 'dist'),
+  },
+  preview: {
+    port: 4173,
+    strictPort: true,
+    host: true,
+  },
   plugins: [
     vue(),
     VitePWA({

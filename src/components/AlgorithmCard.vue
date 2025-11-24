@@ -1,7 +1,7 @@
 <template>
-  <div class="card algorithm-card" :class="{ learned }">
+  <div class="card algorithm-card" :class="{ learned }" :data-algorithm-id="algorithm.id">
     <div class="card-body d-flex flex-column">
-      <div class="text-center mb-3">
+      <div class="text-center mb-3 algorithm-image-container">
         <router-link :to="`/${mode}/${algorithm.id}`" class="d-inline-block">
           <img
             :src="algorithm.imageUrl"
@@ -11,7 +11,7 @@
           />
         </router-link>
       </div>
-      <div class="d-flex justify-content-between align-items-start">
+      <div class="d-flex justify-content-between align-items-start algorithm-title-container">
         <h5 class="card-title">
           <router-link :to="`/${mode}/${algorithm.id}`" class="text-decoration-none">
             {{ algorithm.name }}
@@ -35,7 +35,7 @@
           <button
             type="button"
             class="btn btn-link p-0 text-decoration-none edit-hint"
-            @click="handleEditButton"
+            @click.stop="handleEditButton"
           >
             <template v-if="editing">
               <span class="text-primary">Save</span>
@@ -56,7 +56,7 @@
             </template>
           </button>
         </div>
-        <div class="my-alg-field" role="button" @click="activateEditing">
+        <div class="my-alg-field">
           <textarea
             v-if="editing"
             class="form-control form-control-sm font-monospace"
@@ -65,7 +65,7 @@
             @blur="commitEdit"
             ref="textareaRef"
           ></textarea>
-          <div v-else class="my-alg-display font-monospace">
+          <div v-else class="my-alg-display font-monospace" role="button" @click.stop="activateEditing">
             <span v-if="localAlg" class="fw-bold" v-html="formattedAlg"></span>
             <span v-else class="placeholder">Click to add your version</span>
           </div>
@@ -97,8 +97,10 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick, onBeforeUnmount, computed } from 'vue';
-import { RouterLink } from 'vue-router';
+import { ref, watch, nextTick, onBeforeUnmount, onMounted, computed } from 'vue';
+import { RouterLink, useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const props = defineProps({
   algorithm: {
@@ -160,6 +162,32 @@ watch(localAlg, (value, oldValue) => {
   emit('update-my-alg', props.algorithm.id, value || fallback);
 });
 
+// Watch for algorithm changes and re-initialize router-links
+watch(() => props.algorithm.id, () => {
+  nextTick(() => {
+    const initRouterLinks = () => {
+      const cardElement = document.querySelector(`.algorithm-card[data-algorithm-id="${props.algorithm.id}"]`);
+      if (cardElement) {
+        const routerLinks = cardElement.querySelectorAll('a[href], router-link, .router-link');
+        routerLinks.forEach(link => {
+          if (link.style) {
+            link.style.pointerEvents = 'auto';
+            link.style.zIndex = '100';
+            link.style.cursor = 'pointer';
+          }
+          if (link instanceof HTMLElement) {
+            link.setAttribute('tabindex', '0');
+            link.classList.add('router-link-active');
+          }
+        });
+      }
+    };
+    setTimeout(initRouterLinks, 0);
+    setTimeout(initRouterLinks, 100);
+    setTimeout(initRouterLinks, 300);
+  });
+});
+
 function commitEdit() {
   editing.value = false;
   const fallback = props.algorithm.standardAlg;
@@ -203,6 +231,59 @@ function handleEditButton() {
     activateEditing();
   }
 }
+
+onMounted(() => {
+  // Ensure router-links are clickable in preview mode
+  // Use multiple attempts with increasing delays for preview mode
+  // This should work regardless of learned status
+  const initRouterLinks = () => {
+    const cardElement = document.querySelector(`.algorithm-card[data-algorithm-id="${props.algorithm.id}"]`);
+    if (cardElement) {
+      const routerLinks = cardElement.querySelectorAll('a[href], router-link, .router-link');
+      routerLinks.forEach(link => {
+        if (link.style) {
+          link.style.pointerEvents = 'auto';
+          link.style.zIndex = '100';
+          link.style.cursor = 'pointer';
+        }
+        if (link instanceof HTMLElement) {
+          link.setAttribute('tabindex', '0');
+          
+          // Add click handler - always use programmatic navigation as primary method
+          const expectedPath = `/${props.mode}/${props.algorithm.id}`;
+          const clickHandler = (event) => {
+            // Always use programmatic navigation
+            event.preventDefault();
+            event.stopPropagation();
+            router.push(expectedPath).catch(err => {
+              if (err.name !== 'NavigationDuplicated') {
+                console.warn('Router navigation failed:', err);
+                window.location.href = expectedPath;
+              }
+            });
+          };
+          
+          // Remove existing listener if any, then add new one
+          link.removeEventListener('click', clickHandler);
+          link.addEventListener('click', clickHandler, { once: false, capture: true });
+        }
+      });
+    }
+  };
+  
+  // Initialize immediately and with delays for preview mode
+  nextTick(() => {
+    initRouterLinks();
+    setTimeout(initRouterLinks, 0);
+    setTimeout(initRouterLinks, 50);
+    setTimeout(initRouterLinks, 100);
+    setTimeout(initRouterLinks, 200);
+    setTimeout(initRouterLinks, 300);
+    setTimeout(initRouterLinks, 500);
+    setTimeout(initRouterLinks, 800);
+    setTimeout(initRouterLinks, 1200);
+  });
+});
 
 onBeforeUnmount(() => {
   if (savedTimer) {
