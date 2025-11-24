@@ -16,6 +16,7 @@ Demo: [https://vps.elisnails.hu/rubik-trainer/](https://vps.elisnails.hu/rubik-t
 - **Training mode**: Surfaces random learned cases only, supports quick re-rolls, and exits with `Esc` on desktop. Each training session has a unique URL with the algorithm ID (e.g., `/oll/oll-1`), allowing direct linking and automatic regeneration of a new random element on browser refresh.
   - **Blur effect**: When starting training via the "Training" button, the standard algorithm is blurred by default. Click to reveal/hide. This effect is not applied when navigating from list view.
   - **Quick actions**: "Back" button returns to list view, "New Training" button generates a new random case, and "Details" opens external algorithm details in a new tab. All buttons include icons for better visual recognition.
+  - **3D Cube Animation**: Interactive 3D Rubik's cube animation modal accessible via "Play" button next to algorithm names in both list view and training mode. The animation shows the setup and algorithm moves with real-time highlighting of the current move. Click on any move in the algorithm text to jump to that specific position in the animation.
 - **Responsive design**: Tuned for mobile, tablet, and desktop. Mobile navbar automatically closes when clicking menu items or clicking outside the menu, and also closes on Escape key press. No animation on mobile menu collapse for instant feedback. Theme toggle and print buttons are in the hamburger menu on mobile/tablet, and in a floating action button group on desktop.
 - **Print support**: Print-friendly styles for both list view and training mode. Only algorithm cards/content are printed, with all UI elements hidden. Browser headers/footers can be disabled in print settings.
 - **Installable PWA**: Full offline support with service worker caching for algorithms and SVG assets. The app works completely offline after the first visit.
@@ -48,8 +49,9 @@ The build output lives in `rubik-trainer/dist/`. Copy that directory to your hos
 - `src/main.js` – Vue app initialization, Vue Router setup, and service worker registration.
 - `src/views/Home.vue` – landing page with links to the three trainers.
 - `src/views/Trainer.vue` – universal trainer component that handles F2L, OLL, and PLL modes via props.
-- `src/components/AlgorithmCard.vue` – algorithm card with learned toggle and a unified editable "Alg" field.
-- `src/components/TrainingPanel.vue` – focused training presentation.
+- `src/components/AlgorithmCard.vue` – algorithm card with learned toggle, unified editable "Alg" field, and play button for 3D animation.
+- `src/components/TrainingPanel.vue` – focused training presentation with play button for 3D animation.
+- `src/components/RubikCube3D.vue` – 3D Rubik's cube animation component using twisty-player library with interactive move highlighting and clickable algorithm moves.
 - `src/composables/useLearned.js` – shared `localStorage` helpers for learned IDs and custom algorithms (mode-aware).
 - `src/data/oll.js`, `src/data/pll.js`, `src/data/f2l.js` – data fetching modules for each trainer type.
 - `public/oll/`, `public/pll/`, `public/f2l/` – trainer-specific data directories:
@@ -68,14 +70,24 @@ The build output lives in `rubik-trainer/dist/`. Copy that directory to your hos
   - Theme toggle and Print buttons: in hamburger menu on mobile/tablet, in floating action button group on desktop (top-right)
   - Mobile menu automatically closes when clicking any menu item, clicking outside the menu, or pressing Escape
 - **Navigation**: Click on algorithm names or images in list view to navigate directly to training mode for that specific algorithm. The algorithm name and image are both clickable router links.
+- **3D Cube Animation**: 
+  - Play button appears next to algorithm names in both list view cards and training mode
+  - Opens a modal with interactive 3D Rubik's cube animation using the twisty-player library
+  - Shows setup and algorithm moves with real-time highlighting of the currently executing move
+  - Click on any move in the algorithm text to jump to that specific position and continue playback
+  - Modal header displays trainer type (OLL/PLL/F2L), algorithm name, and case type in parentheses
+  - Algorithm text is displayed in black (white in dark mode) with proper word wrapping using flex containers
+  - Zárójelek (parentheses) in algorithms are grouped together and only break between groups when needed
 - Training mode URLs use path parameters (e.g., `/oll/oll-1`) instead of query parameters, making them shareable and refreshable.
 - **Training mode features**:
   - Standard algorithm blur effect (only when started via "Training" button, not from list view)
   - "Back" button (with icon) to return to list view
   - "New Training" button (with icon) to generate a new random case
   - "Details" button (with icon) to open external algorithm details
+  - "Play" button (with icon) next to algorithm name to open 3D cube animation modal
   - Clean card design without box-shadow for focused presentation
   - Optimized button layout for mobile: buttons fit in one row with reduced padding and smaller sizes
+  - Algorithm text displayed in flex containers with proper word wrapping - parentheses groups stay together and only break between groups when space is limited
 - Filters and sorting are duplicated in the offcanvas panel for mobile/scrolling; open it via the floating filter button at the bottom-left.
 - The Standard Algorithm is emphasized in training; in cards, the editable "Alg" text is bold when displayed.
 - Filter (type vs learned) is mutually exclusive by design; sort and filter selections are restored per trainer on reload.
