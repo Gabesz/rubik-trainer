@@ -19,7 +19,13 @@ export default defineConfig(({ mode }) => ({
     host: true,
   },
   plugins: [
-    vue(),
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag === 'twisty-player',
+        },
+      },
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['oll/svg/Oll-1.svg'],

@@ -821,28 +821,90 @@ section {
 
 .display-standard-wrapper {
   width: 100%;
+  max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
+  text-align: center;
+}
+
+/* Training panel-ban mindig biztosítjuk, hogy semmi ne essen ki */
+.training-panel .display-standard-wrapper {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.training-panel .display-standard-wrapper .h5,
+.training-panel .display-standard-wrapper p.h5,
+.training-panel .display-standard-wrapper .font-monospace.h5,
+.training-panel .display-standard-wrapper .display-standard {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Flex konténer az algoritmus mozgásokhoz */
+.algorithm-moves-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.algorithm-moves-container .algorithm-move {
+  display: inline-block;
+  padding: 2px 4px;
+  margin: 0;
+  white-space: nowrap;
+  color: #000;
+  flex-shrink: 0;
+}
+
+/* Zárójel csoport - nem lehet törni */
+.algorithm-moves-container .algorithm-move-group {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Sortörés zárójel csoport után */
+.algorithm-moves-container .algorithm-move-break-after {
+  flex-basis: 100%;
+  width: 100%;
+  height: 0;
 }
 
 @media (max-width: 767.98px) {
   .training-panel .algorithm-card.display-card .card-body {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
   }
   
-  .display-standard-wrapper {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    max-width: 100% !important;
-    width: 100% !important;
+  .training-panel .display-standard-wrapper {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
   }
 }
 
 @media (min-width: 768px) {
-  .display-standard-wrapper {
+  /* Csak a lista nézetben használjuk a negatív margint */
+  .display-standard-wrapper:not(.training-panel .display-standard-wrapper) {
     margin-left: -2.5rem;
     margin-right: -2.5rem;
     padding-left: 2.5rem;
@@ -861,14 +923,15 @@ section {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  text-align: center;
 }
 
-.display-standard-wrapper .h5,
-.display-standard-wrapper p.h5,
-.display-standard-wrapper .font-monospace.h5,
-.training-panel .display-standard-wrapper .h5,
-.training-panel .display-standard-wrapper p.h5,
-.training-panel .display-standard-wrapper .font-monospace.h5 {
+.display-standard-wrapper .h5:not(.algorithm-moves-container),
+.display-standard-wrapper p.h5:not(.algorithm-moves-container),
+.display-standard-wrapper .font-monospace.h5:not(.algorithm-moves-container),
+.training-panel .display-standard-wrapper .h5:not(.algorithm-moves-container),
+.training-panel .display-standard-wrapper p.h5:not(.algorithm-moves-container),
+.training-panel .display-standard-wrapper .font-monospace.h5:not(.algorithm-moves-container) {
   word-break: break-word !important;
   overflow-wrap: break-word !important;
   hyphens: auto;
@@ -887,6 +950,27 @@ section {
 .training-panel .display-standard-wrapper {
   max-width: 100% !important;
   overflow-x: hidden !important;
+  text-align: center !important;
+}
+
+.training-panel .display-standard-wrapper .h5,
+.training-panel .display-standard-wrapper p.h5,
+.training-panel .display-standard-wrapper .font-monospace.h5,
+.training-panel .display-standard-wrapper .display-standard {
+  text-align: center !important;
+}
+
+/* Oldal padding a "Standard Algorithm" címhez és az algoritmus szövegéhez */
+.training-panel .text-center > p.text-muted {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (max-width: 767.98px) {
+  .training-panel .text-center > p.text-muted {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
 }
 
 /* Blur effect for standard algorithm in training mode */

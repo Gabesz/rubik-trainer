@@ -12,11 +12,26 @@
         </router-link>
       </div>
       <div class="d-flex justify-content-between align-items-start algorithm-title-container">
-        <h5 class="card-title">
-          <router-link :to="`/${mode}/${algorithm.id}`" class="text-decoration-none">
-            {{ algorithm.name }}
-          </router-link>
-        </h5>
+        <div class="d-flex align-items-center gap-2 flex-grow-1">
+          <h5 class="card-title mb-0">
+            <router-link :to="`/${mode}/${algorithm.id}`" class="text-decoration-none">
+              {{ algorithm.name }}
+            </router-link>
+          </h5>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm d-flex align-items-center gap-1"
+            data-bs-toggle="modal"
+            :data-bs-target="`#cubeModal-${algorithm.id}`"
+            title="Play 3D animation"
+            @click.stop
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+            </svg>
+            <span>Play</span>
+          </button>
+        </div>
         <span 
           class="badge bg-secondary case-type-badge" 
           role="button"
@@ -94,11 +109,45 @@
       </div>
     </div>
   </div>
+  
+  <!-- 3D Cube Animation Modal -->
+  <div
+    class="modal fade"
+    :id="`cubeModal-${algorithm.id}`"
+    tabindex="-1"
+    aria-labelledby="cubeModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="d-flex align-items-center gap-2">
+            <strong v-if="!algorithm.name.toUpperCase().startsWith(mode.toUpperCase())">{{ mode.toUpperCase() }}</strong>
+            <strong class="modal-title mb-0" id="cubeModalLabel">{{ algorithm.name }}</strong>
+            <span v-if="algorithm.type">({{ algorithm.type }})</span>
+          </div>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <RubikCube3D
+            :algorithm="algorithm.standardAlg || localAlg"
+            :setup="algorithm.setup"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, watch, nextTick, onBeforeUnmount, onMounted, computed } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
+import RubikCube3D from './RubikCube3D.vue';
 
 const router = useRouter();
 
@@ -284,6 +333,7 @@ onMounted(() => {
     setTimeout(initRouterLinks, 1200);
   });
 });
+
 
 onBeforeUnmount(() => {
   if (savedTimer) {

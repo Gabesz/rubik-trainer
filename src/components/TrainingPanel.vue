@@ -10,28 +10,68 @@
               class="img-fluid display-image"
             />
           </div>
-          <h3 class="mb-3">{{ algorithm.name }}</h3>
-          <div class="mb-4">
+          <div class="d-flex justify-content-center align-items-center gap-2 mb-3">
+            <h3 class="mb-0">{{ algorithm.name }}</h3>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm d-flex align-items-center gap-1"
+              data-bs-toggle="modal"
+              :data-bs-target="`#cubeModal-${algorithm.id}`"
+              title="Play 3D animation"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+              </svg>
+              <span>Play</span>
+            </button>
+          </div>
+          <div class="mb-4 text-center px-3">
             <p class="text-muted mb-1">Setup</p>
-            <div class="display-standard-wrapper">
-              <p class="font-monospace h5" v-html="formattedSetup"></p>
+            <div class="display-standard-wrapper text-center">
+              <div class="font-monospace h5 algorithm-moves-container">
+                <span
+                  v-for="(item, index) in setupMoves"
+                  :key="`setup-${index}`"
+                  class="algorithm-move"
+                  :class="{ 'algorithm-move-group': item.isGroup }"
+                >
+                  {{ item.move }}
+                </span>
+              </div>
             </div>
           </div>
-          <div class="mb-4" v-if="showMyAlg">
-            <p class="font-monospace display-standard" v-html="formattedMyAlg"></p>
+          <div class="mb-4 text-center" v-if="showMyAlg">
+            <div class="font-monospace display-standard algorithm-moves-container">
+              <span
+                v-for="(item, index) in myAlgMoves"
+                :key="`myalg-${index}`"
+                class="algorithm-move"
+                :class="{ 'algorithm-move-group': item.isGroup }"
+              >
+                {{ item.move }}
+              </span>
+            </div>
           </div>
-          <div v-if="showStandard">
+          <div v-if="showStandard" class="text-center px-3">
             <p class="text-muted mb-1">Standard Algorithm</p>
-            <div class="display-standard-wrapper">
-              <p 
-                class="font-monospace display-standard fw-bold" 
+            <div class="display-standard-wrapper text-center">
+              <div 
+                class="font-monospace display-standard fw-bold algorithm-moves-container" 
                 :class="{ 
                   'standard-alg-blur': shouldBlur,
                   'blur-revealed': isBlurRevealed 
                 }"
                 @click="shouldBlur && revealBlur()"
-                v-html="formattedStandard"
-              ></p>
+              >
+                <span
+                  v-for="(item, index) in algorithmMoves"
+                  :key="`alg-${index}`"
+                  class="algorithm-move"
+                  :class="{ 'algorithm-move-group': item.isGroup }"
+                >
+                  {{ item.move }}
+                </span>
+              </div>
             </div>
           </div>
           <div class="mt-auto pt-4 d-flex gap-2 justify-content-center align-items-center training-panel-buttons">
@@ -76,11 +116,50 @@
     <div v-else class="alert alert-secondary text-center mb-0">
       No learned algorithms yet. Mark some cases as learned to start training.
     </div>
+    
+    <!-- 3D Cube Animation Modal -->
+    <div
+      v-if="algorithm"
+      class="modal fade"
+      :id="`cubeModal-${algorithm.id}`"
+      tabindex="-1"
+      aria-labelledby="cubeModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div class="d-flex align-items-center gap-2">
+              <strong v-if="!algorithm.name.toUpperCase().startsWith(trainerMode.toUpperCase())">{{ trainerMode }}</strong>
+              <strong class="modal-title mb-0" id="cubeModalLabel">{{ algorithm.name }}</strong>
+              <span v-if="algorithm.type">({{ algorithm.type }})</span>
+            </div>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <RubikCube3D
+              ref="rubikCube3DRef"
+              :algorithm="algorithm.standardAlg || myAlg"
+              :setup="algorithm.setup"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
 <script setup>
 import { computed, ref, toRefs, watch } from 'vue';
+import { useRoute } from 'vue-router';
+import RubikCube3D from './RubikCube3D.vue';
+
+const route = useRoute();
 
 const props = defineProps({
   algorithm: {
@@ -106,6 +185,15 @@ defineEmits(['new', 'back']);
 const { algorithm } = toRefs(props);
 const isBlurRevealed = ref(false);
 
+// Trainer mode meghatározása a route-ból
+const trainerMode = computed(() => {
+  const path = route.path;
+  if (path.startsWith('/f2l')) return 'F2L';
+  if (path.startsWith('/oll')) return 'OLL';
+  if (path.startsWith('/pll')) return 'PLL';
+  return 'OLL'; // default
+});
+
 // Reset blur when algorithm changes
 watch(algorithm, () => {
   isBlurRevealed.value = false;
@@ -115,28 +203,76 @@ function revealBlur() {
   isBlurRevealed.value = !isBlurRevealed.value;
 }
 
-const formattedStandard = computed(() => {
+// Algoritmus mozgások listája - zárójelek közé csoportosítva
+const algorithmMoves = computed(() => {
   const text = algorithm.value?.standardAlg ?? '';
-  if (!text) return '';
-  return text
-    .replace(/\)/g, ')<wbr>')
-    .replace(/\s+/g, '&nbsp;');
+  if (!text) return [];
+  return parseAlgorithmWithGroups(text);
 });
 
-const formattedSetup = computed(() => {
+// Setup mozgások listája - zárójelek közé csoportosítva
+const setupMoves = computed(() => {
   const text = algorithm.value?.setup ?? '';
-  if (!text) return '';
-  return text
-    .replace(/\)/g, ')<wbr>')
-    .replace(/\s+/g, '&nbsp;');
+  if (!text) return [];
+  return parseAlgorithmWithGroups(text);
 });
 
-const formattedMyAlg = computed(() => {
+// MyAlg mozgások listája - zárójelek közé csoportosítva
+const myAlgMoves = computed(() => {
   const text = props.myAlg || '';
-  return text
-    .replace(/\)/g, ')<wbr>')
-    .replace(/\s+/g, '&nbsp;');
+  if (!text) return [];
+  return parseAlgorithmWithGroups(text);
 });
+
+// Algoritmus feldolgozása zárójelek szerint csoportosítva
+function parseAlgorithmWithGroups(text) {
+  const moves = text.split(/\s+/).filter(m => m.trim().length > 0);
+  const result = [];
+  let inGroup = false;
+  let currentGroup = [];
+  
+  moves.forEach((move, index) => {
+    const startsWithParen = move.startsWith('(');
+    const endsWithParen = move.endsWith(')');
+    
+    if (startsWithParen) {
+      inGroup = true;
+      currentGroup = [move];
+    } else if (inGroup) {
+      currentGroup.push(move);
+      if (endsWithParen) {
+        // Zárójel csoport vége - egyetlen elemként kezeljük
+        // Nincs automatikus sortörés, csak ha a flex konténer úgy dönt
+        result.push({
+          move: currentGroup.join(' '),
+          isGroup: true,
+          breakAfter: false // Nincs automatikus sortörés
+        });
+        currentGroup = [];
+        inGroup = false;
+      }
+    } else {
+      // Normál mozgás zárójelek nélkül
+      result.push({
+        move,
+        isGroup: false,
+        breakAfter: false
+      });
+    }
+  });
+  
+  // Ha maradt valami a currentGroup-ban (hibás formátum esetén)
+  if (currentGroup.length > 0) {
+    result.push({
+      move: currentGroup.join(' '),
+      isGroup: true,
+      breakAfter: false
+    });
+  }
+  
+  return result;
+}
+
 
 const hasMyAlg = computed(() => {
   return (props.myAlg || '').trim().length > 0;
