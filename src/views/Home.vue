@@ -137,7 +137,7 @@
       <div class="col-lg-8 text-center">
         <p class="text-muted mb-2">
           <a 
-            href="https://github.com/Gabesz/rubik-timer" 
+            href="https://github.com/Gabesz/rubik-trainer" 
             target="_blank" 
             rel="noopener noreferrer"
             class="text-decoration-none d-inline-flex align-items-center gap-2"
