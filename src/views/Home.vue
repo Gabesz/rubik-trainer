@@ -21,6 +21,7 @@
         <p class="lead text-muted mb-0">
           Three focused trainers to learn and drill algorithms for 3×3:
           orientation (OLL), permutation (PLL), and first two layers (F2L).
+          Watch interactive 3D animations of algorithms with the play button.
         </p>
       </div>
     </div>
@@ -32,7 +33,7 @@
             <h2 class="h4 mb-2">F2L Trainer</h2>
             <p class="text-muted mb-3">
               First Two Layers – practise the core 3×3 F2L cases with the same UX:
-              SVG diagrams, filters, learned tracking, and custom alg notes.
+              SVG diagrams, filters, learned tracking, custom alg notes, and interactive 3D animations.
             </p>
             <ul class="small text-muted mb-4">
               <li>Separated storage from the OLL/PLL apps</li>
@@ -54,7 +55,7 @@
             <h2 class="h4 mb-2">OLL Trainer</h2>
             <p class="text-muted mb-3">
               Orientation of the Last Layer – practice all 57 OLL cases with SVG diagrams,
-              filters, custom alg notes, and a focused training mode.
+              filters, custom alg notes, focused training mode, and interactive 3D animations.
             </p>
             <ul class="small text-muted mb-4">
               <li>Filter by case type or learned state</li>
@@ -76,7 +77,7 @@
             <h2 class="h4 mb-2">PLL Trainer</h2>
             <p class="text-muted mb-3">
               Permutation of the Last Layer – drill the 21 PLL cases with the same UX:
-              SVG diagrams, learned tracking, and custom alg management.
+              SVG diagrams, learned tracking, custom alg management, and interactive 3D animations.
             </p>
             <ul class="small text-muted mb-4">
               <li>Separate learned/progress storage from the OLL app</li>
