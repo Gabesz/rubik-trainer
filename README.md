@@ -8,7 +8,7 @@ Demo: [https://vps.elisnails.hu/rubik-trainer/](https://vps.elisnails.hu/rubik-t
 
 - **Three trainers in one app**: F2L (41 cases), OLL (57 cases), and PLL (21 cases) with unified UX.
 - **Dark theme support**: Toggle between light and dark themes with a theme switcher in the navbar. Theme preference is saved in `localStorage` and persists across sessions.
-- **Easy navigation**: Switch between trainers via dropdown menu in the header, or return to the home page. Click on algorithm names or images in list view to navigate directly to training mode for that specific algorithm.
+- **Easy navigation**: Switch between trainers via dropdown menu in the header, or return to the home page. The home page features interactive trainer buttons that smoothly scroll to each trainer section. Click on algorithm names or images in list view to navigate directly to training mode for that specific algorithm.
 - **Filterable lists**: Filter by case type or learned state. Offcanvas filter panel accessible via floating button (bottom-left) when filters are off-screen. Click on case type badges in algorithm cards to quickly filter by that type.
 - **Sort toggle**: "Default" or "Short algs" (shortest standard algorithms first). Filter and sort choices persist per trainer in `localStorage`.
 - **Editable algorithms**: Case cards show SVG diagrams, setup moves, and a single editable "Alg" field (defaults to the standard). Your edits are saved per trainer in `localStorage`.
@@ -47,7 +47,7 @@ The build output lives in `rubik-trainer/dist/`. Copy that directory to your hos
 
 - `src/App.vue` – root component with `router-view`.
 - `src/main.js` – Vue app initialization, Vue Router setup, and service worker registration.
-- `src/views/Home.vue` – landing page with links to the three trainers.
+- `src/views/Home.vue` – landing page with interactive trainer buttons, links to the three trainers, and GitHub repository link.
 - `src/views/Trainer.vue` – universal trainer component that handles F2L, OLL, and PLL modes via props.
 - `src/components/AlgorithmCard.vue` – algorithm card with learned toggle, unified editable "Alg" field, and play button for 3D animation.
 - `src/components/TrainingPanel.vue` – focused training presentation with play button for 3D animation.
