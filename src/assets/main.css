@@ -877,6 +877,12 @@ section {
   flex-shrink: 0;
 }
 
+/* Dark mode support for algorithm moves */
+html[data-bs-theme="dark"] .algorithm-moves-container .algorithm-move,
+html.dark-theme .algorithm-moves-container .algorithm-move {
+  color: #fff !important;
+}
+
 /* Zárójel csoport - nem lehet törni */
 .algorithm-moves-container .algorithm-move-group {
   white-space: nowrap;
