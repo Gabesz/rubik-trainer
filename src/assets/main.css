@@ -1293,3 +1293,41 @@ html.dark-theme .algorithm-moves-container .algorithm-move {
   }
 }
 
+/* Fix for modal backdrop staying visible after navigation on mobile */
+/* Hide backdrop when body doesn't have modal-open class */
+body:not(.modal-open) .modal-backdrop {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Hide modals with show class when body doesn't have modal-open */
+body:not(.modal-open) .modal.show {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Ensure modal-open class doesn't lock scrolling when modals are hidden */
+/* This is a fallback - ideally the class should be removed, but CSS can't do that */
+body.modal-open:not(:has(.modal.show)) {
+  overflow: auto !important;
+  padding-right: 0 !important;
+}
+
+/* Alternative for browsers that don't support :has() */
+/* Force remove scroll lock if no visible backdrop */
+body.modal-open:not(:has(.modal-backdrop.show)) {
+  overflow: auto !important;
+  padding-right: 0 !important;
+}
+
+/* Additional safety: if modal is not in viewport, clean up */
+.modal:not(.show) {
+  pointer-events: none;
+}
+
+.modal:not(.show) ~ .modal-backdrop {
+  display: none !important;
+}
+
