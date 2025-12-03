@@ -18,9 +18,40 @@
     <div class="row justify-content-center mb-4">
       <div class="col-lg-8 text-center">
         <h1 class="display-4 fw-bold mb-4">Rubik's Cube Trainers</h1>
+        
+        <!-- CFOP Explanation -->
+        <div class="cfop-info mb-5">
+          <div class="card border-0 shadow-sm mb-4" style="background-color: rgba(13, 110, 253, 0.05);">
+            <div class="card-body">
+              <h3 class="h5 mb-3">What is the Fridrich/CFOP Method?</h3>
+              <p class="mb-3">
+                This method was created by Jessica Fridrich in 1997 and has since become one of the most popular solving methods among Rubik's cube solvers.
+              </p>
+              <p class="mb-2">
+                This method consists of 4 parts: Cross (cross), <a href="#trainer-f2l" class="text-decoration-none fw-bold" @click.prevent="scrollToTrainer('f2l')">F2L</a> (First Two Layers), <a href="#trainer-oll" class="text-decoration-none fw-bold" @click.prevent="scrollToTrainer('oll')">OLL</a> (Orient Last Layer – Orientation of the Last Layer), <a href="#trainer-pll" class="text-decoration-none fw-bold" @click.prevent="scrollToTrainer('pll')">PLL</a> (Permutate Last Layer – Permutation of the Last Layer).
+              </p>
+              <p class="mb-3">
+                The cross and the first two layers can be done independently and intuitively. However, for the last layer you need to learn a total of 78 algorithms if you want to know the algorithm for every possible position. Of these, there are <a href="#trainer-oll" class="text-decoration-none fw-bold" @click.prevent="scrollToTrainer('oll')">57 OLL</a> and <a href="#trainer-pll" class="text-decoration-none fw-bold" @click.prevent="scrollToTrainer('pll')">21 PLL</a>.
+              </p>
+              <hr class="my-3">
+              <h4 class="h6 mb-2">The Four Steps:</h4>
+              <ol class="mb-2 ps-3" style="max-width: 600px; margin-left: auto; margin-right: auto;">
+                <li class="mb-2"><strong>C</strong>ross – Solve the bottom layer cross</li>
+                <li class="mb-2"><strong>F</strong>2L – First Two Layers – Pair up and insert corner-edge pairs</li>
+                <li class="mb-2"><strong>O</strong>LL – Orientation of the Last Layer – Orient all top layer pieces correctly</li>
+                <li><strong>P</strong>LL – Permutation of the Last Layer – Position the top layer pieces correctly</li>
+              </ol>
+              <p class="mb-0 small text-muted">
+                This app focuses on F2L, OLL, and PLL – the algorithm-heavy steps that benefit most from dedicated practice.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <p class="lead mb-4">
           Master the 3×3 Rubik's Cube with three focused trainers:
         </p>
+
         <div class="trainer-buttons d-flex flex-column flex-md-row flex-wrap justify-content-center gap-3 mb-4">
           <button 
             type="button"
@@ -239,6 +270,37 @@ html.dark-theme .theme-toggle-home:hover {
   .trainer-buttons .btn {
     width: 100%;
   }
+}
+
+html[data-bs-theme="dark"] .cfop-info .card,
+html.dark-theme .cfop-info .card {
+  background-color: rgba(74, 158, 255, 0.1) !important;
+  border-color: rgba(74, 158, 255, 0.2);
+}
+
+.cfop-info ol {
+  text-align: left;
+}
+
+.cfop-info a {
+  color: #0d6efd;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.cfop-info a:hover {
+  color: #0a58ca;
+  text-decoration: underline !important;
+}
+
+html[data-bs-theme="dark"] .cfop-info a,
+html.dark-theme .cfop-info a {
+  color: #4a9eff;
+}
+
+html[data-bs-theme="dark"] .cfop-info a:hover,
+html.dark-theme .cfop-info a:hover {
+  color: #6bb0ff;
 }
 </style>
 
