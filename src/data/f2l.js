@@ -30,12 +30,17 @@ function deriveDetailUrl(name) {
 }
 
 export async function fetchAlgorithms() {
-  const response = await fetch(DATA_URL);
-  if (!response.ok) {
-    throw new Error('Unable to load F2L algorithms.');
-  }
+  try {
+    const response = await fetch(DATA_URL);
+    if (!response.ok) {
+      throw new Error(
+        `Failed to load F2L algorithms from ${DATA_URL}. ` +
+        `HTTP ${response.status} ${response.statusText}. ` +
+        `Please check if the file exists and the server is accessible.`
+      );
+    }
 
-  const rawAlgorithms = await response.json();
+    const rawAlgorithms = await response.json();
   const result = rawAlgorithms.map((algorithm, index) => {
     // Use index as fallback to ensure unique IDs
     const baseId = deriveId(algorithm.name);
@@ -59,5 +64,15 @@ export async function fetchAlgorithms() {
   }
   
   return result;
+  } catch (error) {
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      throw new Error(
+        `Network error while loading F2L algorithms from ${DATA_URL}. ` +
+        `Original error: ${error.message}. ` +
+        `Please check your network connection and try again.`
+      );
+    }
+    throw error;
+  }
 }
 

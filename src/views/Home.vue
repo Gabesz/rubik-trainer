@@ -17,7 +17,10 @@
     </button>
     <div class="row justify-content-center mb-4">
       <div class="col-lg-8 text-center">
-        <h1 class="display-4 fw-bold mb-4">Rubik's Cube Trainers</h1>
+        <h1 class="display-4 fw-bold mb-4">
+          Rubik's Cube Trainers
+          <small class="text-muted fs-6 ms-2">{{ appVersion }}</small>
+        </h1>
         
         <!-- CFOP Explanation -->
         <div class="cfop-info mb-5">
@@ -186,6 +189,9 @@
 
 <script setup>
 import { useTheme } from '../composables/useTheme';
+import { APP_VERSION } from '../version';
+
+const appVersion = APP_VERSION;
 
 const { isDark, toggleTheme } = useTheme();
 

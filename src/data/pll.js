@@ -35,12 +35,17 @@ function deriveDetailUrl(name) {
 }
 
 export async function fetchAlgorithms() {
-  const response = await fetch(DATA_URL);
-  if (!response.ok) {
-    throw new Error('Unable to load PLL algorithms.');
-  }
+  try {
+    const response = await fetch(DATA_URL);
+    if (!response.ok) {
+      throw new Error(
+        `Failed to load PLL algorithms from ${DATA_URL}. ` +
+        `HTTP ${response.status} ${response.statusText}. ` +
+        `Please check if the file exists and the server is accessible.`
+      );
+    }
 
-  const rawAlgorithms = await response.json();
+    const rawAlgorithms = await response.json();
   return rawAlgorithms.map((algorithm) => ({
     id: deriveId(algorithm.name),
     name: algorithm.name,
@@ -50,5 +55,15 @@ export async function fetchAlgorithms() {
     detailUrl: deriveDetailUrl(algorithm.name),
     imageUrl: deriveImagePath(algorithm.name),
   }));
+  } catch (error) {
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      throw new Error(
+        `Network error while loading PLL algorithms from ${DATA_URL}. ` +
+        `Original error: ${error.message}. ` +
+        `Please check your network connection and try again.`
+      );
+    }
+    throw error;
+  }
 }
 

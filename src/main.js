@@ -8,6 +8,12 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import './assets/main.css';
 import { registerSW } from 'virtual:pwa-register';
 
+// Detect if running in iframe or Tizen OS app (for Service Worker registration)
+const isInIframe = typeof window !== 'undefined' && window.self !== window.top;
+const isTizenOS = typeof navigator !== 'undefined' && /Tizen/i.test(navigator.userAgent);
+const shouldSkipServiceWorker = isInIframe || isTizenOS;
+
+// Router base path is always /rubik-trainer/ since that's where the app is hosted
 const router = createRouter({
   history: createWebHistory('/rubik-trainer/'),
   routes: [
@@ -34,7 +40,8 @@ const app = createApp(App);
 app.use(router);
 app.mount('#app');
 
-if ('serviceWorker' in navigator) {
+// Don't register Service Worker if running in iframe or Tizen OS app
+if ('serviceWorker' in navigator && !shouldSkipServiceWorker) {
   registerSW({ immediate: true });
 }
 
