@@ -181,6 +181,44 @@
   outline-offset: 3px;
 }
 
+/* UserIcon in floating action group - matches other floating buttons */
+.floating-action-group .user-icon-btn {
+  width: 3.25rem;
+  height: 3.25rem;
+  background: #0d6efd;
+  border: none;
+  color: white;
+  box-shadow: 0 0.75rem 1.5rem rgba(13, 110, 253, 0.25);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.floating-action-group .user-icon-btn:hover {
+  background: #0b5ed7;
+  color: white;
+  border: none;
+  transform: translateY(-4px);
+  box-shadow: 0 1rem 2rem rgba(13, 110, 253, 0.35);
+}
+
+.floating-action-group .user-icon-btn:focus-visible {
+  outline: 3px solid rgba(13, 110, 253, 0.4);
+  outline-offset: 3px;
+}
+
+html[data-bs-theme="dark"] .floating-action-group .user-icon-btn,
+html.dark-theme .floating-action-group .user-icon-btn {
+  background: #0d6efd;
+  color: white;
+  border: none;
+}
+
+html[data-bs-theme="dark"] .floating-action-group .user-icon-btn:hover,
+html.dark-theme .floating-action-group .user-icon-btn:hover {
+  background: #0b5ed7;
+  color: white;
+  border: none;
+}
+
 /* Smaller size on desktop */
 @media (min-width: 992px) {
   .floating-action-btn {
@@ -192,6 +230,68 @@
     width: 1rem;
     height: 1rem;
   }
+
+  .floating-action-group .user-icon-btn {
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+
+  .floating-action-group .user-icon-btn svg {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+}
+
+/* Mobile menu UserIcon - matches nav-link style */
+.mobile-menu-user-icon {
+  width: 100%;
+}
+
+.mobile-menu-user-icon .user-icon-container {
+  width: 100%;
+}
+
+.mobile-menu-user-icon .user-icon-btn {
+  width: 100%;
+  height: auto;
+  border-radius: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  padding: 0.5rem 0.75rem;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.mobile-menu-user-icon .user-icon-btn::after {
+  content: 'Account';
+  font-size: 1rem;
+}
+
+.mobile-menu-user-icon .user-icon-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.mobile-menu-user-icon .user-icon-btn:hover {
+  background: transparent;
+  border: none;
+  transform: none;
+  color: #0d6efd;
+}
+
+html[data-bs-theme="dark"] .mobile-menu-user-icon .user-icon-btn,
+html.dark-theme .mobile-menu-user-icon .user-icon-btn {
+  background: transparent;
+  border: none;
+  color: inherit;
+}
+
+html[data-bs-theme="dark"] .mobile-menu-user-icon .user-icon-btn:hover,
+html.dark-theme .mobile-menu-user-icon .user-icon-btn:hover {
+  background: transparent;
+  border: none;
+  color: #4a9eff;
 }
 
 .badge-filter-item.list-filter {

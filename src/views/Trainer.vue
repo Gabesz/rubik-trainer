@@ -173,7 +173,10 @@
                 </li>
               </ul>
             </li>
-            <!-- Theme toggle and Print buttons - only visible on mobile/tablet -->
+            <!-- User, Theme toggle and Print buttons - only visible on mobile/tablet -->
+            <li class="nav-item d-lg-none">
+              <UserIcon :unique-id="`trainer-mobile-${mode}`" class="mobile-menu-user-icon" />
+            </li>
             <li class="nav-item d-lg-none">
               <a
                 class="nav-link d-flex align-items-center gap-2"
@@ -403,6 +406,8 @@
     </button>
     <!-- Floating action buttons group - only visible on desktop -->
     <div class="floating-action-group d-none d-lg-flex">
+      <!-- User Icon - at top -->
+      <UserIcon :unique-id="`trainer-floating-${mode}`" />
       <button
         type="button"
         class="btn btn-primary floating-action-btn"
@@ -438,6 +443,7 @@ import { computed, onMounted, onBeforeUnmount, ref, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router';
 import AlgorithmCard from '../components/AlgorithmCard.vue';
 import TrainingPanel from '../components/TrainingPanel.vue';
+import UserIcon from '../components/UserIcon.vue';
 import { useLearned } from '../composables/useLearned';
 import { useTheme } from '../composables/useTheme';
 
@@ -507,8 +513,8 @@ const {
   reloadFromStorage,
 } = useLearned(props.mode);
 
-function setMyAlg(id, value) {
-  setMyAlgEntry(id, value, props.mode);
+async function setMyAlg(id, value) {
+  await setMyAlgEntry(id, value, props.mode);
 }
 
 const myAlgsMap = computed(() => {
@@ -674,8 +680,8 @@ function stopTraining() {
   });
 }
 
-function toggleLearned(id) {
-  toggleLearnedEntry(id, props.mode);
+async function toggleLearned(id) {
+  await toggleLearnedEntry(id, props.mode);
   if (isTraining.value && learnedAlgorithms.value.length === 0) {
     stopTraining();
   } else if (isTraining.value && currentTraining.value) {
@@ -804,6 +810,12 @@ function handlePrint() {
 }
 
 function handleContentClick(event) {
+  // Don't handle clicks on modals or user icon
+  if (event.target.closest('.modal') || event.target.closest('.user-icon-container') || event.target.closest('.user-icon-btn')) {
+    console.log('handleContentClick: ignoring click on modal/user icon');
+    return;
+  }
+  
   // Only close navbar on mobile/tablet (when navbar is collapsed)
   if (window.innerWidth < 992) {
     const navbarCollapse = document.getElementById('navbarNav');
@@ -818,7 +830,9 @@ function handleContentClick(event) {
       // Check if clicking on algorithm card content (image or title)
       const isAlgorithmCardClick = event.target.closest('.algorithm-card') && 
         (event.target.closest('.algorithm-image-container') || event.target.closest('.algorithm-title-container'));
-      if (navbar && !navbar.contains(event.target) && !clickedLink && !isLink && !isAlgorithmCardClick) {
+      // Don't close if clicking on user icon or auth modal
+      const isUserIconClick = event.target.closest('.user-icon-container') || event.target.closest('.user-icon-btn');
+      if (navbar && !navbar.contains(event.target) && !clickedLink && !isLink && !isAlgorithmCardClick && !isUserIconClick) {
         closeNavbar();
       }
     }
