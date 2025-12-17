@@ -3,6 +3,7 @@
     <button
       type="button"
       class="btn btn-link nav-link user-icon-btn"
+      :class="{ 'not-logged-in': !currentUser }"
       :id="`userIcon-${uniqueId}`"
       @click.stop.prevent="toggleModal"
       :title="currentUser ? 'Profile' : 'Sign in'"
@@ -102,6 +103,12 @@ onMounted(() => {
   height: 42px;
 }
 
+.user-icon-btn.not-logged-in {
+  border-color: #0d6efd;
+  background: #ffffff;
+  color: #0d6efd;
+}
+
 .user-icon-btn:hover {
   color: #0d6efd;
   border-color: #0d6efd;
@@ -122,11 +129,25 @@ html.dark-theme .user-icon-btn {
   border-color: #4a4a4a;
 }
 
+html[data-bs-theme="dark"] .user-icon-btn.not-logged-in,
+html.dark-theme .user-icon-btn.not-logged-in {
+  border-color: #4a9eff;
+  background: #ffffff;
+  color: #4a9eff;
+}
+
 html[data-bs-theme="dark"] .user-icon-btn:hover,
 html.dark-theme .user-icon-btn:hover {
   color: #4a9eff;
   border-color: #4a9eff;
   background: rgba(74, 158, 255, 0.15);
+}
+
+html[data-bs-theme="dark"] .user-icon-btn.not-logged-in:hover,
+html.dark-theme .user-icon-btn.not-logged-in:hover {
+  border-color: #4a9eff;
+  background: rgba(74, 158, 255, 0.1);
+  color: #0d6efd;
 }
 
 </style>
