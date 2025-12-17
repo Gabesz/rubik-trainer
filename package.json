@@ -17,6 +17,7 @@
     "@vitejs/plugin-vue": "^6.0.1",
     "@vueuse/motion": "^3.0.3",
     "bootstrap": "^5.3.8",
+    "firebase": "^12.7.0",
     "vite-plugin-pwa": "^1.1.0",
     "vue-router": "^4.6.3"
   }
