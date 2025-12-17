@@ -3,13 +3,13 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAz05bLJSpVi6cyVyub-PILe-hbYj7SdKo",
-  authDomain: "rubiktrainer-54c5e.firebaseapp.com",
-  projectId: "rubiktrainer-54c5e",
-  storageBucket: "rubiktrainer-54c5e.firebasestorage.app",
-  messagingSenderId: "307665987440",
-  appId: "1:307665987440:web:e526db8a96a0f63d0e51b5",
-  measurementId: "G-ZKEQTLW56P"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
