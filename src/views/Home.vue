@@ -166,7 +166,7 @@
       </div>
     </div>
 
-    <!-- GitHub Link Footer -->
+    <!-- GitHub Link Footer 
     <div class="row justify-content-center mt-5 pt-4">
       <div class="col-lg-8 text-center">
         <p class="text-muted mb-2">
@@ -183,7 +183,7 @@
           </a>
         </p>
       </div>
-    </div>
+    </div>-->
   </main>
 </template>
 

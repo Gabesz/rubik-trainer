@@ -1430,4 +1430,3 @@ body.modal-open:not(:has(.modal-backdrop.show)) {
 .modal:not(.show) ~ .modal-backdrop {
   display: none !important;
 }
-
