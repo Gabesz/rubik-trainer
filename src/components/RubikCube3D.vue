@@ -46,6 +46,8 @@
       puzzle="3x3x3"
       hint-facelets="none"
       background="none"
+      camera-latitude="180"
+      camera-longitude="205" 
       style="width: 100%; max-width: 500px; height: 500px;"
     ></twisty-player>
   </div>
@@ -71,8 +73,10 @@ const currentTimestamp = ref(0);
 const isPlayerReady = ref(false);
 
 // Setup algoritmus (ha van) - experimental-setup-alg prop-hoz
+// x2 rotáció a legelején: fehér alul, sárga felül orientáció (alapértelmezett: sárga alul, fehér felül)
 const setup = computed(() => {
-  return props.setup && props.setup.trim() ? props.setup.trim() : '';
+  const baseSetup = props.setup && props.setup.trim() ? props.setup.trim() : '';
+  return baseSetup ? `x2 ${baseSetup}` : 'x2';
 });
 
 // Fő algoritmus - alg prop-hoz
