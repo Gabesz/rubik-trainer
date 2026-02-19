@@ -96,7 +96,7 @@
                   class="nav-link text-danger position-relative d-flex align-items-center gap-2 d-lg-inline-flex"
                   href="#"
                   @click.prevent="handleNavClick(confirmResetAlgs)"
-                  :class="{ disabled: Object.keys(myAlgsMap).length === 0 }"
+                  :class="{ disabled: editedCount === 0 }"
                 >
                   <svg class="d-lg-none" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
                     <path fill="currentColor" d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
@@ -105,7 +105,7 @@
                   <span
                     class="position-absolute badge rounded-pill bg-danger"
                   >
-                    {{ Object.keys(myAlgsMap).length }}
+                    {{ editedCount }}
                   </span>
                 </a>
               </li>
@@ -291,9 +291,11 @@
         :algorithm="currentTraining"
         :learned-count="learnedCount"
         :my-alg="currentTraining ? getMyAlg(currentTraining.id) : ''"
+        :my-name="currentTraining ? getMyName(currentTraining.id) : ''"
         :should-blur="shouldBlurStandardAlg"
         @new="nextTraining"
         @back="stopTraining"
+        @update-my-name="setMyName"
       />
 
       <section v-else-if="loading" class="text-center py-5">
@@ -368,8 +370,10 @@
             :mode="mode"
             :learned="isLearned(algorithm.id)"
             :my-alg="getMyAlg(algorithm.id)"
+            :my-name="getMyName(algorithm.id)"
             @toggle="toggleLearned"
             @update-my-alg="setMyAlg"
+            @update-my-name="setMyName"
             @filter-by-type="setActiveType"
             class="algorithm-grid-item"
           />
@@ -506,6 +510,8 @@ const {
   learnedCount,
   getMyAlg,
   setMyAlg: setMyAlgEntry,
+  getMyName,
+  setMyName: setMyNameEntry,
   resetMyAlgs,
   toggleLearned: toggleLearnedEntry,
   resetLearned: resetLearnedEntry,
@@ -517,6 +523,10 @@ async function setMyAlg(id, value) {
   await setMyAlgEntry(id, value, props.mode);
 }
 
+async function setMyName(id, value) {
+  await setMyNameEntry(id, value, props.mode);
+}
+
 const myAlgsMap = computed(() => {
   const map = {};
   for (const alg of algorithms.value) {
@@ -526,6 +536,23 @@ const myAlgsMap = computed(() => {
     }
   }
   return map;
+});
+
+const myNamesMap = computed(() => {
+  const map = {};
+  for (const alg of algorithms.value) {
+    const v = getMyName(alg.id);
+    if (v !== undefined && v !== null && String(v).trim() !== '') {
+      map[alg.id] = v;
+    }
+  }
+  return map;
+});
+
+const editedCount = computed(() => {
+  const algIds = new Set(Object.keys(myAlgsMap.value));
+  const nameIds = new Set(Object.keys(myNamesMap.value));
+  return new Set([...algIds, ...nameIds]).size;
 });
 
 const learnedAlgorithms = computed(() =>
@@ -728,7 +755,7 @@ function confirmReset() {
 }
 
 function confirmResetAlgs() {
-  const hasAny = Object.keys(myAlgsMap.value).length > 0;
+  const hasAny = editedCount.value > 0;
   if (!hasAny) return;
   if (window.confirm('Reset all edited algorithms back to their defaults?')) {
     resetMyAlgs(props.mode);
@@ -812,7 +839,6 @@ function handlePrint() {
 function handleContentClick(event) {
   // Don't handle clicks on modals or user icon
   if (event.target.closest('.modal') || event.target.closest('.user-icon-container') || event.target.closest('.user-icon-btn')) {
-    console.log('handleContentClick: ignoring click on modal/user icon');
     return;
   }
   

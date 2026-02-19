@@ -5,8 +5,10 @@ import { useUserData } from './useUserData';
 export function useLearned(mode) {
   const STORAGE_KEY = `${mode}-learned`;
   const ALG_KEY = `${mode}-my-algs`;
+  const NAMES_KEY = `${mode}-my-names`;
   const learnedIds = ref([]);
   const myAlgs = ref({});
+  const myNames = ref({});
   let initialised = false;
   let firebaseUnsubscribe = null;
   let migrationDone = false;
@@ -16,6 +18,7 @@ export function useLearned(mode) {
     loadUserData, 
     saveLearnedIds, 
     saveMyAlgs, 
+    saveMyNames,
     subscribeToUserData,
     migrateLocalStorageToFirebase 
   } = useUserData();
@@ -34,6 +37,7 @@ export function useLearned(mode) {
         const data = await loadUserData(mode);
         learnedIds.value = data.learnedIds || [];
         myAlgs.value = data.myAlgs || {};
+        myNames.value = data.myNames || {};
         
         // Migrate localStorage data if not already migrated
         if (!migrationDone) {
@@ -45,6 +49,7 @@ export function useLearned(mode) {
             const migratedData = await loadUserData(mode);
             learnedIds.value = migratedData.learnedIds || [];
             myAlgs.value = migratedData.myAlgs || {};
+            myNames.value = migratedData.myNames || {};
           }
         }
 
@@ -55,6 +60,7 @@ export function useLearned(mode) {
         firebaseUnsubscribe = subscribeToUserData(mode, (data) => {
           learnedIds.value = data.learnedIds || [];
           myAlgs.value = data.myAlgs || {};
+          myNames.value = data.myNames || {};
         });
       } catch (error) {
         console.error(`Failed to load user data from Firebase (${mode}):`, error);
@@ -85,6 +91,13 @@ export function useLearned(mode) {
           myAlgs.value = parsedAlgs;
         }
       }
+      const storedNames = window.localStorage.getItem(NAMES_KEY);
+      if (storedNames) {
+        const parsedNames = JSON.parse(storedNames);
+        if (parsedNames && typeof parsedNames === 'object') {
+          myNames.value = parsedNames;
+        }
+      }
     } catch (error) {
       console.error(`Failed to read learned algorithms from storage (${mode}):`, error);
     }
@@ -94,6 +107,7 @@ export function useLearned(mode) {
     const targetMode = newMode || mode;
     const storageKey = `${targetMode}-learned`;
     const algKey = `${targetMode}-my-algs`;
+    const namesKey = `${targetMode}-my-names`;
     
     initialised = false; // Reset initialization to allow reload
 
@@ -102,6 +116,7 @@ export function useLearned(mode) {
         const data = await loadUserData(targetMode);
         learnedIds.value = data.learnedIds || [];
         myAlgs.value = data.myAlgs || {};
+        myNames.value = data.myNames || {};
         
         // Unsubscribe old and subscribe to new mode
         if (firebaseUnsubscribe) {
@@ -110,6 +125,7 @@ export function useLearned(mode) {
         firebaseUnsubscribe = subscribeToUserData(targetMode, (data) => {
           learnedIds.value = data.learnedIds || [];
           myAlgs.value = data.myAlgs || {};
+          myNames.value = data.myNames || {};
         });
       } catch (error) {
         console.error(`Failed to reload user data from Firebase (${targetMode}):`, error);
@@ -134,6 +150,17 @@ export function useLearned(mode) {
         } else {
           myAlgs.value = {};
         }
+        const storedNames = window.localStorage.getItem(namesKey);
+        if (storedNames) {
+          const parsedNames = JSON.parse(storedNames);
+          if (parsedNames && typeof parsedNames === 'object') {
+            myNames.value = parsedNames;
+          } else {
+            myNames.value = {};
+          }
+        } else {
+          myNames.value = {};
+        }
       }
     } else {
       try {
@@ -157,6 +184,17 @@ export function useLearned(mode) {
         } else {
           myAlgs.value = {};
         }
+        const storedNames = window.localStorage.getItem(namesKey);
+        if (storedNames) {
+          const parsedNames = JSON.parse(storedNames);
+          if (parsedNames && typeof parsedNames === 'object') {
+            myNames.value = parsedNames;
+          } else {
+            myNames.value = {};
+          }
+        } else {
+          myNames.value = {};
+        }
       } catch (error) {
         console.error(`Failed to reload learned algorithms from storage (${targetMode}):`, error);
         learnedIds.value = [];
@@ -175,13 +213,15 @@ export function useLearned(mode) {
     const targetMode = currentMode || mode;
     const storageKey = `${targetMode}-learned`;
     const algKey = `${targetMode}-my-algs`;
+    const namesKey = `${targetMode}-my-names`;
 
     if (useFirebase.value) {
       // Save to Firebase
       try {
         await Promise.all([
           saveLearnedIds(targetMode, learnedIds.value),
-          saveMyAlgs(targetMode, myAlgs.value)
+          saveMyAlgs(targetMode, myAlgs.value),
+          saveMyNames(targetMode, myNames.value)
         ]);
       } catch (error) {
         console.error(`Failed to persist to Firebase (${targetMode}):`, error);
@@ -189,6 +229,7 @@ export function useLearned(mode) {
         try {
           window.localStorage.setItem(storageKey, JSON.stringify(learnedIds.value));
           window.localStorage.setItem(algKey, JSON.stringify(myAlgs.value));
+          window.localStorage.setItem(namesKey, JSON.stringify(myNames.value));
         } catch (localError) {
           console.error(`Failed to persist to localStorage (${targetMode}):`, localError);
         }
@@ -198,6 +239,7 @@ export function useLearned(mode) {
       try {
         window.localStorage.setItem(storageKey, JSON.stringify(learnedIds.value));
         window.localStorage.setItem(algKey, JSON.stringify(myAlgs.value));
+        window.localStorage.setItem(namesKey, JSON.stringify(myNames.value));
       } catch (error) {
         console.error(`Failed to persist learned algorithms (${targetMode}):`, error);
       }
@@ -238,6 +280,8 @@ export function useLearned(mode) {
 
   const getMyAlg = (id) => myAlgs.value[id];
 
+  const getMyName = (id) => myNames.value[id];
+
   const setMyAlg = async (id, value, currentMode) => {
     myAlgs.value = {
       ...myAlgs.value,
@@ -246,8 +290,23 @@ export function useLearned(mode) {
     await persist(currentMode);
   };
 
+  const setMyName = async (id, value, currentMode) => {
+    const trimmed = (value || '').trim();
+    if (trimmed === '') {
+      const { [id]: _, ...rest } = myNames.value;
+      myNames.value = rest;
+    } else {
+      myNames.value = {
+        ...myNames.value,
+        [id]: trimmed,
+      };
+    }
+    await persist(currentMode);
+  };
+
   const resetMyAlgs = async (currentMode) => {
     myAlgs.value = {};
+    myNames.value = {};
     await persist(currentMode);
   };
 
@@ -275,6 +334,8 @@ export function useLearned(mode) {
     isLearned,
     getMyAlg,
     setMyAlg,
+    getMyName,
+    setMyName,
     resetMyAlgs,
     reloadFromStorage,
   };

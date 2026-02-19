@@ -265,7 +265,6 @@ const loading = ref(false);
 
 // Handle modal open/close - add/remove modal-open class from body
 watch(() => props.show, (newVal) => {
-  console.log('AuthModal show prop changed:', newVal);
   if (newVal) {
     // Modal opening - add modal-open class to body
     document.body.classList.add('modal-open');
@@ -290,7 +289,6 @@ watch(() => props.show, (newVal) => {
 
 // Watch for auth state changes
 watch(currentUser, (newUser, oldUser) => {
-  console.log('AuthModal currentUser watch:', { newUser: !!newUser, oldUser: !!oldUser, show: props.show });
   if (newUser && props.show && !oldUser) {
     message.value = 'Successfully signed in!';
     messageType.value = 'success';
@@ -415,15 +413,11 @@ const handleUpdatePassword = async () => {
 };
 
 const handleClose = () => {
-  console.log('AuthModal handleClose called');
   emit('close');
 };
 
 const handleBackdropClick = (event) => {
-  console.log('AuthModal handleBackdropClick called', event.target, event.currentTarget);
-  // Only close if clicking directly on the backdrop div
   if (event.target.classList.contains('modal-backdrop')) {
-    console.log('Closing modal from backdrop click');
     handleClose();
   }
 };

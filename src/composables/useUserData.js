@@ -23,7 +23,7 @@ export function useUserData() {
   // Load user data for a specific mode
   const loadUserData = async (mode) => {
     if (!currentUser.value) {
-      return { learnedIds: [], myAlgs: {} };
+      return { learnedIds: [], myAlgs: {}, myNames: {} };
     }
 
     loading.value = true;
@@ -37,7 +37,8 @@ export function useUserData() {
         const data = userDoc.data();
         return {
           learnedIds: data.learned?.[mode] || [],
-          myAlgs: data.myAlgs?.[mode] || {}
+          myAlgs: data.myAlgs?.[mode] || {},
+          myNames: data.myNames?.[mode] || {}
         };
       } else {
         // Create initial document structure
@@ -47,14 +48,17 @@ export function useUserData() {
           },
           myAlgs: {
             [mode]: {}
+          },
+          myNames: {
+            [mode]: {}
           }
         });
-        return { learnedIds: [], myAlgs: {} };
+        return { learnedIds: [], myAlgs: {}, myNames: {} };
       }
     } catch (err) {
       error.value = err.message;
       console.error('Failed to load user data:', err);
-      return { learnedIds: [], myAlgs: {} };
+      return { learnedIds: [], myAlgs: {}, myNames: {} };
     } finally {
       loading.value = false;
     }
@@ -87,6 +91,40 @@ export function useUserData() {
     } catch (err) {
       error.value = err.message;
       console.error('Failed to save learned IDs:', err);
+      return { success: false, error: err.message };
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  // Save my names for a specific mode
+  const saveMyNames = async (mode, names) => {
+    if (!currentUser.value) return { success: false, error: 'Not authenticated' };
+
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const userDocRef = getUserDocRef();
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        await updateDoc(userDocRef, {
+          [`myNames.${mode}`]: names
+        });
+      } else {
+        await setDoc(userDocRef, {
+          learned: {},
+          myAlgs: {},
+          myNames: {
+            [mode]: names
+          }
+        });
+      }
+      return { success: true };
+    } catch (err) {
+      error.value = err.message;
+      console.error('Failed to save my names:', err);
       return { success: false, error: err.message };
     } finally {
       loading.value = false;
@@ -129,7 +167,7 @@ export function useUserData() {
   // Subscribe to real-time updates for user data
   const subscribeToUserData = (mode, callback) => {
     if (!currentUser.value) {
-      callback({ learnedIds: [], myAlgs: {} });
+      callback({ learnedIds: [], myAlgs: {}, myNames: {} });
       return () => {};
     }
 
@@ -141,15 +179,16 @@ export function useUserData() {
           const data = snapshot.data();
           callback({
             learnedIds: data.learned?.[mode] || [],
-            myAlgs: data.myAlgs?.[mode] || {}
+            myAlgs: data.myAlgs?.[mode] || {},
+            myNames: data.myNames?.[mode] || {}
           });
         } else {
-          callback({ learnedIds: [], myAlgs: {} });
+          callback({ learnedIds: [], myAlgs: {}, myNames: {} });
         }
       },
       (err) => {
         console.error('Error subscribing to user data:', err);
-        callback({ learnedIds: [], myAlgs: {} });
+        callback({ learnedIds: [], myAlgs: {}, myNames: {} });
       }
     );
 
@@ -163,15 +202,18 @@ export function useUserData() {
     try {
       const storageKey = `${mode}-learned`;
       const algKey = `${mode}-my-algs`;
+      const namesKey = `${mode}-my-names`;
       
       const storedLearned = window.localStorage.getItem(storageKey);
       const storedAlgs = window.localStorage.getItem(algKey);
+      const storedNames = window.localStorage.getItem(namesKey);
 
       const learnedIds = storedLearned ? JSON.parse(storedLearned) : [];
       const myAlgs = storedAlgs ? JSON.parse(storedAlgs) : {};
+      const myNames = storedNames ? JSON.parse(storedNames) : {};
 
       // Only migrate if there's data to migrate
-      if (learnedIds.length > 0 || Object.keys(myAlgs).length > 0) {
+      if (learnedIds.length > 0 || Object.keys(myAlgs).length > 0 || Object.keys(myNames).length > 0) {
         const userDocRef = getUserDocRef();
         const userDoc = await getDoc(userDocRef);
 
@@ -180,13 +222,16 @@ export function useUserData() {
           const existingData = userDoc.data();
           const existingLearned = existingData.learned?.[mode] || [];
           const existingAlgs = existingData.myAlgs?.[mode] || {};
+          const existingNames = existingData.myNames?.[mode] || {};
 
           const mergedLearned = [...new Set([...existingLearned, ...learnedIds])];
           const mergedAlgs = { ...existingAlgs, ...myAlgs };
+          const mergedNames = { ...existingNames, ...myNames };
 
           await updateDoc(userDocRef, {
             [`learned.${mode}`]: mergedLearned,
-            [`myAlgs.${mode}`]: mergedAlgs
+            [`myAlgs.${mode}`]: mergedAlgs,
+            [`myNames.${mode}`]: mergedNames
           });
         } else {
           await setDoc(userDocRef, {
@@ -195,6 +240,9 @@ export function useUserData() {
             },
             myAlgs: {
               [mode]: myAlgs
+            },
+            myNames: {
+              [mode]: myNames
             }
           });
         }
@@ -216,6 +264,7 @@ export function useUserData() {
     loadUserData,
     saveLearnedIds,
     saveMyAlgs,
+    saveMyNames,
     subscribeToUserData,
     migrateLocalStorageToFirebase
   };

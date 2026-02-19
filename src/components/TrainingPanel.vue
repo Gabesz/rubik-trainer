@@ -11,7 +11,20 @@
             />
           </div>
           <div class="d-flex justify-content-center align-items-center gap-2 mb-3">
-            <h3 class="mb-0">{{ algorithm.name }}</h3>
+            <template v-if="nameEditing">
+              <input
+                type="text"
+                class="form-control form-control-sm d-inline-block training-name-edit"
+                v-model="localName"
+                @blur="commitNameEdit"
+                @keydown.enter="commitNameEdit"
+                @keydown.escape="cancelNameEdit"
+                ref="nameInputRef"
+              />
+            </template>
+            <h3 v-else class="mb-0 training-name-display" @click="handleNameClick" title="Click to edit name">
+              {{ displayName }}
+            </h3>
             <button
               type="button"
               class="btn btn-primary btn-sm d-flex align-items-center gap-1"
@@ -130,8 +143,8 @@
         <div class="modal-content">
           <div class="modal-header">
             <div class="d-flex align-items-center gap-2">
-              <strong v-if="!algorithm.name.toUpperCase().startsWith(trainerMode.toUpperCase())">{{ trainerMode }}</strong>
-              <strong class="modal-title mb-0" id="cubeModalLabel">{{ algorithm.name }}</strong>
+              <strong v-if="!displayName.toUpperCase().startsWith(trainerMode.toUpperCase())">{{ trainerMode }}</strong>
+              <strong class="modal-title mb-0" id="cubeModalLabel">{{ displayName }}</strong>
               <span v-if="algorithm.type">({{ algorithm.type }})</span>
             </div>
             <button
@@ -155,7 +168,7 @@
 </template>
 
 <script setup>
-import { computed, ref, toRefs, watch } from 'vue';
+import { computed, ref, toRefs, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import RubikCube3D from './RubikCube3D.vue';
 
@@ -178,12 +191,58 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  myName: {
+    type: String,
+    default: '',
+  },
 });
 
-defineEmits(['new', 'back']);
+const emit = defineEmits(['new', 'back', 'update-my-name']);
 
 const { algorithm } = toRefs(props);
 const isBlurRevealed = ref(false);
+
+const displayName = computed(() => {
+  const custom = props.myName;
+  if (custom !== undefined && custom !== null && String(custom).trim() !== '') {
+    return String(custom).trim();
+  }
+  return algorithm.value?.name ?? '';
+});
+
+const localName = ref(
+  ((props.myName && String(props.myName).trim()) || algorithm.value?.name) ?? ''
+);
+const nameEditing = ref(false);
+const nameInputRef = ref(null);
+
+watch(displayName, (val) => {
+  if (!nameEditing.value) {
+    localName.value = val;
+  }
+});
+
+function handleNameClick() {
+  nameEditing.value = true;
+  localName.value = displayName.value;
+  nextTick(() => nameInputRef.value?.focus());
+}
+
+function commitNameEdit() {
+  nameEditing.value = false;
+  const trimmed = (localName.value || '').trim();
+  const defaultName = algorithm.value?.name ?? '';
+  if (trimmed === '' || trimmed === defaultName) {
+    emit('update-my-name', algorithm.value?.id, '');
+  } else {
+    emit('update-my-name', algorithm.value?.id, trimmed);
+  }
+}
+
+function cancelNameEdit() {
+  nameEditing.value = false;
+  localName.value = displayName.value;
+}
 
 // Trainer mode meghatározása a route-ból
 const trainerMode = computed(() => {

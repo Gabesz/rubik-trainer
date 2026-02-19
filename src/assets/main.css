@@ -1305,6 +1305,37 @@ html.dark-theme .algorithm-moves-container .algorithm-move {
     display: none !important;
   }
 
+  /* Hide Play button in list view when printing */
+  .algorithm-card button[data-bs-toggle="modal"] {
+    display: none !important;
+  }
+
+  /* Hide "Click to edit" / edit hint when printing */
+  .algorithm-name-link {
+  cursor: pointer;
+  color: var(--bs-link-color);
+}
+.algorithm-name-link:hover {
+  color: var(--bs-link-hover-color);
+  text-decoration: underline !important;
+}
+.algorithm-name-edit {
+  max-width: 10rem;
+}
+.training-name-display {
+  cursor: pointer;
+}
+.training-name-display:hover {
+  text-decoration: underline;
+}
+.training-name-edit {
+  max-width: 12rem;
+}
+
+.algorithm-card .edit-hint {
+    display: none !important;
+  }
+
   /* Show training panel for printing */
   .training-panel {
     display: block !important;

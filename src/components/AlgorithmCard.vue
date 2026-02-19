@@ -1,5 +1,5 @@
 <template>
-  <div class="card algorithm-card" :class="{ learned }" :data-algorithm-id="algorithm.id">
+  <div class="card algorithm-card" :class="[$attrs.class, { learned }]" :data-algorithm-id="algorithm.id">
     <div class="card-body d-flex flex-column">
       <div class="text-center mb-3 algorithm-image-container">
         <router-link :to="`/${mode}/${algorithm.id}`" class="d-inline-block">
@@ -14,9 +14,29 @@
       <div class="d-flex justify-content-between align-items-start algorithm-title-container">
         <div class="d-flex align-items-center gap-2 flex-grow-1">
           <h5 class="card-title mb-0">
-            <router-link :to="`/${mode}/${algorithm.id}`" class="text-decoration-none">
-              {{ algorithm.name }}
-            </router-link>
+            <template v-if="nameEditing">
+              <input
+                type="text"
+                class="form-control form-control-sm d-inline-block algorithm-name-edit"
+                v-model="localName"
+                @blur="commitNameEdit"
+                @keydown.enter="commitNameEdit"
+                @keydown.escape="cancelNameEdit"
+                ref="nameInputRef"
+              />
+            </template>
+            <span
+              v-else
+              class="text-decoration-none algorithm-name-link"
+              role="button"
+              tabindex="0"
+              @click="handleNameClick"
+              @keydown.enter="handleNameClick"
+              @keydown.space.prevent="handleNameClick"
+              title="Click to edit name"
+            >
+              {{ displayName }}
+            </span>
           </h5>
           <button
             type="button"
@@ -122,8 +142,8 @@
       <div class="modal-content">
         <div class="modal-header">
           <div class="d-flex align-items-center gap-2">
-            <strong v-if="!algorithm.name.toUpperCase().startsWith(mode.toUpperCase())">{{ mode.toUpperCase() }}</strong>
-            <strong class="modal-title mb-0" id="cubeModalLabel">{{ algorithm.name }}</strong>
+            <strong v-if="!displayName.toUpperCase().startsWith(mode.toUpperCase())">{{ mode.toUpperCase() }}</strong>
+            <strong class="modal-title mb-0" id="cubeModalLabel">{{ displayName }}</strong>
             <span v-if="algorithm.type">({{ algorithm.type }})</span>
           </div>
           <button
@@ -149,6 +169,8 @@ import { ref, watch, nextTick, onBeforeUnmount, onMounted, computed } from 'vue'
 import { RouterLink, useRouter } from 'vue-router';
 import RubikCube3D from './RubikCube3D.vue';
 
+defineOptions({ inheritAttrs: false });
+
 const router = useRouter();
 
 const props = defineProps({
@@ -173,11 +195,28 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  myName: {
+    type: String,
+    default: '',
+  },
 });
 
-const emit = defineEmits(['toggle', 'update-my-alg', 'filter-by-type']);
+const emit = defineEmits(['toggle', 'update-my-alg', 'update-my-name', 'filter-by-type']);
+
+const displayName = computed(() => {
+  const custom = props.myName;
+  if (custom !== undefined && custom !== null && String(custom).trim() !== '') {
+    return String(custom).trim();
+  }
+  return props.algorithm.name;
+});
 
 const localAlg = ref(props.myAlg || props.algorithm.standardAlg);
+const localName = ref(
+  (props.myName && String(props.myName).trim()) || props.algorithm.name
+);
+const nameEditing = ref(false);
+const nameInputRef = ref(null);
 const editing = ref(false);
 const textareaRef = ref(null);
 const showSavedIndicator = ref(false);
@@ -210,6 +249,34 @@ watch(localAlg, (value, oldValue) => {
   const fallback = props.algorithm.standardAlg;
   emit('update-my-alg', props.algorithm.id, value || fallback);
 });
+
+watch(displayName, (val) => {
+  if (!nameEditing.value) {
+    localName.value = val;
+  }
+});
+
+function handleNameClick() {
+  nameEditing.value = true;
+  localName.value = displayName.value;
+  nextTick(() => nameInputRef.value?.focus());
+}
+
+function commitNameEdit() {
+  nameEditing.value = false;
+  const trimmed = (localName.value || '').trim();
+  const defaultName = props.algorithm.name;
+  if (trimmed === '' || trimmed === defaultName) {
+    emit('update-my-name', props.algorithm.id, '');
+  } else {
+    emit('update-my-name', props.algorithm.id, trimmed);
+  }
+}
+
+function cancelNameEdit() {
+  nameEditing.value = false;
+  localName.value = displayName.value;
+}
 
 // Watch for algorithm changes and re-initialize router-links
 watch(() => props.algorithm.id, () => {
@@ -252,6 +319,13 @@ function commitEdit() {
     savedTimer = null;
   }, 1000);
 }
+
+watch(nameEditing, async (value) => {
+  if (value) {
+    await nextTick();
+    nameInputRef.value?.focus();
+  }
+});
 
 watch(editing, async (value) => {
   if (value) {

@@ -134,10 +134,7 @@ const activeMoveIndex = computed(() => {
 // Ugrás egy adott lépésre
 function jumpToMove(type, index) {
   const player = twistyPlayerRef.value;
-  if (!player) {
-    console.warn('Player not available');
-    return;
-  }
+  if (!player) return;
   
   // Próbáljuk meg több módon is elérni a timeline-t
   let timeline = null;
@@ -148,14 +145,7 @@ function jumpToMove(type, index) {
     timeline = player.experimentalModel.twistySceneModel.timeline;
   }
   
-  if (!timeline) {
-    console.warn('Timeline not available', {
-      hasPlayer: !!player,
-      hasTimeline: !!player.timeline,
-      hasModel: !!player.experimentalModel
-    });
-    return;
-  }
+  if (!timeline) return;
   
   try {
     let targetTimestamp = 0;
@@ -174,7 +164,6 @@ function jumpToMove(type, index) {
     } else if (timeline.jumpToTimestamp) {
       timeline.jumpToTimestamp(targetTimestamp);
     } else {
-      console.warn('Timeline setTimestamp method not available');
       return;
     }
     
@@ -186,9 +175,8 @@ function jumpToMove(type, index) {
       player.play();
     }
     
-    console.log(`Ugrás ${type} lépésre: ${index} (timestamp: ${targetTimestamp.toFixed(2)}s)`);
   } catch (e) {
-    console.warn('Error jumping to move:', e);
+    // Timeline not ready yet
   }
 }
 
@@ -220,7 +208,7 @@ function setToSetupEnd() {
       timeline.setTimestamp(0);
     }
   } catch (e) {
-    console.warn('setToSetupEnd error:', e);
+    // Timeline not ready yet
   }
 }
 
@@ -262,26 +250,13 @@ onMounted(() => {
       }
       
       if (timeline) {
-        // Jelöljük, hogy a player készen áll
         isPlayerReady.value = true;
-        console.log('Player ready!', { timeline: !!timeline });
-        
         setToSetupEnd();
-        
-        console.log('Twisty player initialized:', {
-          player: !!player,
-          timeline: !!timeline,
-          playerKeys: player ? Object.keys(player).slice(0, 10) : [],
-          timelineKeys: timeline ? Object.keys(timeline).slice(0, 10) : []
-        });
       }
       
       // Frissítjük az aktuális timestamp-et
       const updateTimestamp = () => {
-        if (!timeline) {
-          console.warn('No timeline available');
-          return;
-        }
+        if (!timeline) return;
         
         try {
           // Próbáljuk meg több módon is elérni a timestamp-et
@@ -295,9 +270,7 @@ onMounted(() => {
           else if (timeline.getTimestamp && typeof timeline.getTimestamp === 'function') {
             try {
               timestamp = timeline.getTimestamp();
-            } catch (e) {
-              console.warn('getTimestamp error:', e);
-            }
+            } catch (e) {}
           }
           // Ha nincs, próbáljuk a currentTime property-t
           else if (timeline.currentTime !== undefined && timeline.currentTime !== null) {
@@ -306,17 +279,6 @@ onMounted(() => {
           // Próbáljuk a player-t is
           else if (player && player.timeline && player.timeline.timestamp !== undefined) {
             timestamp = player.timeline.timestamp;
-          }
-          
-          // Debug: logoljuk, hogy mit találtunk (csak első alkalommal)
-          if (timestamp === null && currentTimestamp.value === 0) {
-            console.log('Timeline debug - első alkalom:', {
-              timelineTimestamp: timeline.timestamp,
-              timelineGetTimestamp: typeof timeline.getTimestamp,
-              timelineCurrentTime: timeline.currentTime,
-              playerTimeline: player?.timeline?.timestamp,
-              timelineKeys: Object.keys(timeline).slice(0, 20)
-            });
           }
           
           if (timestamp !== null && timestamp !== undefined) {
@@ -347,14 +309,9 @@ onMounted(() => {
                 }
               }
               
-              if (activeMove) {
-                console.log(`[${activeMove.type === 'setup' ? 'Setup' : 'Algorithm'}] Aktuális forgás: ${activeMove.move} (${activeMove.index + 1}/${activeMove.total}) | Timestamp: ${timestamp.toFixed(2)}s`);
-              }
             }
           }
-        } catch (e) {
-          console.warn('Error getting timestamp:', e);
-        }
+        } catch (e) {}
       };
       
       // Először azonnal frissítjük
@@ -363,18 +320,9 @@ onMounted(() => {
       // Próbáljuk meg a player eseményeit is figyelni
       if (player && player.addEventListener) {
         // Figyeljük a player eseményeit
-        player.addEventListener('move', () => {
-          console.log('Player move event');
-          updateTimestamp();
-        });
-        player.addEventListener('play', () => {
-          console.log('Player play event');
-          updateTimestamp();
-        });
-        player.addEventListener('pause', () => {
-          console.log('Player pause event');
-          updateTimestamp();
-        });
+        player.addEventListener('move', updateTimestamp);
+        player.addEventListener('play', updateTimestamp);
+        player.addEventListener('pause', updateTimestamp);
       }
       
       // Polling - folyamatosan frissítjük a timestamp-et (gyakoribb, hogy biztosan működjön)
