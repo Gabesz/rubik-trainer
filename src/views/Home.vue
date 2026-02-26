@@ -21,6 +21,23 @@
           Rubik's Cube Trainers
           <small class="text-muted fs-6 ms-2">{{ appVersion }}</small>
         </h1>
+
+        <!-- Notation section - directly under title -->
+        <div class="mb-4">
+          <div class="card h-100 app-card border-0 shadow-sm">
+            <div class="card-body d-flex flex-column">
+              <h2 class="h4 mb-2">Notation</h2>
+              <p class="text-muted mb-3">
+                Learn the Rubik's cube notation: U, D, L, R, F, B and their variations. Click the buttons to see how each move affects a solved cube.
+              </p>
+              <div class="mt-auto">
+                <router-link to="/notation" class="btn btn-outline-secondary w-100">
+                  Open Notation
+                </router-link>
+              </div>
+            </div>
+          </div>
+        </div>
         
         <!-- CFOP Explanation -->
         <div class="cfop-info mb-5">

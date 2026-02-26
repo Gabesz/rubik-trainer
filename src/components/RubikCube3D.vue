@@ -47,7 +47,7 @@
       hint-facelets="none"
       background="none"
       camera-latitude="180"
-      camera-longitude="205" 
+     
       style="width: 100%; max-width: 500px; height: 500px;"
     ></twisty-player>
   </div>

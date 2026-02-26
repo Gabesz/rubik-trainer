@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import App from './App.vue';
 import Home from './views/Home.vue';
 import Trainer from './views/Trainer.vue';
+import Notation from './views/Notation.vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import './assets/main.css';
@@ -33,6 +34,7 @@ const router = createRouter({
       component: Trainer, 
       props: (route) => ({ mode: 'f2l', algorithmId: route.params.algorithmId }) 
     },
+    { path: '/notation', component: Notation },
   ],
 });
 
