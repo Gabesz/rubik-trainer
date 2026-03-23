@@ -33,6 +33,11 @@ const props = defineProps({
   uniqueId: {
     type: String,
     default: 'default'
+  },
+  /** Called when opening the auth modal from the mobile hamburger (click does not bubble). */
+  closeMobileNavbar: {
+    type: Function,
+    default: null
   }
 });
 
@@ -48,6 +53,9 @@ const toggleModal = (event) => {
   
   // Use nextTick to ensure the click event is fully processed before opening modal
   if (!showModal.value) {
+    if (typeof window !== 'undefined' && window.innerWidth < 992 && props.closeMobileNavbar) {
+      props.closeMobileNavbar();
+    }
     // Opening modal - delay slightly to avoid immediate backdrop click
     setTimeout(() => {
       showModal.value = true;

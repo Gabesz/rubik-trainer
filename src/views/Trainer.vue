@@ -44,7 +44,11 @@
           </button>
         </div>
 
-        <div class="collapse navbar-collapse align-items-lg-center flex-lg-grow-1 w-100" id="navbarNav">
+        <div
+          class="collapse navbar-collapse align-items-lg-center flex-lg-grow-1 w-100"
+          id="navbarNav"
+          @click="closeNavbarIfMobile"
+        >
           <ul
             class="navbar-nav rt-navbar-pills mx-lg-auto align-items-lg-center flex-column flex-lg-row gap-1 gap-lg-3 py-3 py-lg-0"
           >
@@ -205,7 +209,11 @@
             </li>
             <!-- User, Theme toggle and Print — mobile menu -->
             <li class="nav-item d-lg-none">
-              <UserIcon :unique-id="`trainer-mobile-${mode}`" class="mobile-menu-user-icon" />
+              <UserIcon
+                :unique-id="`trainer-mobile-${mode}`"
+                class="mobile-menu-user-icon"
+                :close-mobile-navbar="closeNavbar"
+              />
             </li>
             <li class="nav-item d-lg-none">
               <a
@@ -863,6 +871,12 @@ function handleScroll() {
 
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function closeNavbarIfMobile() {
+  if (typeof window !== 'undefined' && window.innerWidth < 992) {
+    closeNavbar();
+  }
 }
 
 function closeNavbar() {

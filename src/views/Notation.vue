@@ -47,6 +47,7 @@
         <div
           class="collapse navbar-collapse align-items-lg-center flex-lg-grow-1 w-100"
           id="notationNavbarNav"
+          @click="closeNavbarIfMobile"
         >
           <ul
             class="navbar-nav rt-navbar-pills mx-lg-auto align-items-lg-center flex-column flex-lg-row gap-1 gap-lg-3 py-3 py-lg-0"
@@ -117,7 +118,11 @@
               <UserIcon unique-id="notation" />
             </li>
             <li class="nav-item d-lg-none">
-              <UserIcon unique-id="notation-mobile" class="mobile-menu-user-icon" />
+              <UserIcon
+                unique-id="notation-mobile"
+                class="mobile-menu-user-icon"
+                :close-mobile-navbar="closeNavbar"
+              />
             </li>
             <li class="nav-item d-lg-none">
               <a
@@ -191,6 +196,12 @@ const { isDark, toggleTheme } = useTheme();
 
 function handlePrint() {
   window.print();
+}
+
+function closeNavbarIfMobile() {
+  if (typeof window !== 'undefined' && window.innerWidth < 992) {
+    closeNavbar();
+  }
 }
 
 function closeNavbar() {
