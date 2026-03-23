@@ -337,6 +337,14 @@ html.dark-theme .rt-page .algorithm-card.learned {
 
 .rt-page .training-panel .algorithm-card.display-card {
   background-color: var(--rt-color-surface-high);
+  border-radius: var(--rt-radius-xl);
+  overflow: hidden;
+  box-shadow: var(--rt-shadow-card);
+  transition: box-shadow var(--rt-transition-fast), transform 0.3s ease;
+}
+
+.rt-page .training-panel .algorithm-card.display-card:hover {
+  box-shadow: var(--rt-shadow-glow-primary);
 }
 
 .rt-page .btn-primary:not(:disabled):not(.disabled) {
