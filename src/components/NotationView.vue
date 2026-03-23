@@ -181,7 +181,7 @@ function initAnimCube() {
 
   const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark' ||
     document.documentElement.classList.contains('dark-theme');
-  const bgcolor = isDark ? '2d2d2d' : 'ffffff';
+  const bgcolor = isDark ? '181c20' : 'f4f6fa';
 
   const baseParams = `buttonbar=0&counter=0&bgcolor=${bgcolor}&snap=1&yz=1&edit=1`;
 
@@ -247,6 +247,10 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 1.25rem 1rem 1.5rem;
+  border-radius: var(--rt-radius-xl);
+  background: var(--rt-color-surface-low);
+  border: 1px solid color-mix(in srgb, var(--rt-color-outline-variant) 45%, transparent);
 }
 
 .notation-cube-container {
@@ -256,6 +260,9 @@ onBeforeUnmount(() => {
   margin-bottom: 1.5rem;
   min-height: 350px;
   width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--rt-radius-lg);
+  background: color-mix(in srgb, var(--rt-color-surface-high) 65%, transparent);
 }
 
 .animcube-wrapper {
@@ -282,7 +289,11 @@ onBeforeUnmount(() => {
 }
 
 .notation-buttons-section h3 {
+  font-family: var(--rt-font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
   text-align: center;
+  color: var(--rt-color-on-surface);
 }
 
 .notation-buttons-section p {
@@ -312,9 +323,8 @@ onBeforeUnmount(() => {
   transform: scale(1.02);
 }
 
-/* Dark mode - AnimCube background */
-html[data-bs-theme="dark"] .animcube-wrapper,
+html[data-bs-theme='dark'] .animcube-wrapper,
 html.dark-theme .animcube-wrapper {
-  --animcube-bg: #2d2d2d;
+  --animcube-bg: #181c20;
 }
 </style>

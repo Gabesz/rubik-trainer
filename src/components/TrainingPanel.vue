@@ -133,6 +133,7 @@
     <!-- 3D Cube Animation Modal -->
     <div
       v-if="algorithm"
+      ref="cubeModalRef"
       class="modal fade"
       :id="`cubeModal-${algorithm.id}`"
       tabindex="-1"
@@ -156,7 +157,7 @@
           </div>
           <div class="modal-body">
             <RubikCube3D
-              ref="rubikCube3DRef"
+              v-if="showRubikCube"
               :algorithm="algorithm.standardAlg || myAlg"
               :setup="algorithm.setup"
             />
@@ -168,7 +169,7 @@
 </template>
 
 <script setup>
-import { computed, ref, toRefs, watch, nextTick } from 'vue';
+import { computed, ref, toRefs, watch, nextTick, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import RubikCube3D from './RubikCube3D.vue';
 
@@ -201,6 +202,16 @@ const emit = defineEmits(['new', 'back', 'update-my-name']);
 
 const { algorithm } = toRefs(props);
 const isBlurRevealed = ref(false);
+const cubeModalRef = ref(null);
+const showRubikCube = ref(false);
+
+function onTrainingCubeModalShown() {
+  showRubikCube.value = true;
+}
+
+function onTrainingCubeModalHidden() {
+  showRubikCube.value = false;
+}
 
 const displayName = computed(() => {
   const custom = props.myName;
@@ -253,9 +264,14 @@ const trainerMode = computed(() => {
   return 'OLL'; // default
 });
 
-// Reset blur when algorithm changes
+// Reset blur when algorithm changes; re-bind modal listeners when modal DOM is recreated
 watch(algorithm, () => {
   isBlurRevealed.value = false;
+  showRubikCube.value = false;
+  nextTick(() => {
+    detachTrainingCubeModalListeners();
+    attachTrainingCubeModalListeners();
+  });
 });
 
 function revealBlur() {
@@ -345,6 +361,32 @@ const showMyAlg = computed(() => {
 
 const showStandard = computed(() => {
   return !hasMyAlg.value;
+});
+
+function attachTrainingCubeModalListeners() {
+  const el = cubeModalRef.value;
+  if (!el) {
+    return;
+  }
+  el.addEventListener('shown.bs.modal', onTrainingCubeModalShown);
+  el.addEventListener('hidden.bs.modal', onTrainingCubeModalHidden);
+}
+
+function detachTrainingCubeModalListeners() {
+  const el = cubeModalRef.value;
+  if (!el) {
+    return;
+  }
+  el.removeEventListener('shown.bs.modal', onTrainingCubeModalShown);
+  el.removeEventListener('hidden.bs.modal', onTrainingCubeModalHidden);
+}
+
+onMounted(() => {
+  nextTick(() => attachTrainingCubeModalListeners());
+});
+
+onBeforeUnmount(() => {
+  detachTrainingCubeModalListeners();
 });
 </script>
 

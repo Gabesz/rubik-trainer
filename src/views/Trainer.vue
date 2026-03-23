@@ -1,56 +1,36 @@
 <template>
-  <div class="app-container" :class="`trainer-${mode}`">
-    <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-light border-bottom">
-      <div class="container">
-        <!-- Left side: Home icon and title -->
-        <div class="d-flex align-items-center gap-2">
-          <router-link
-            to="/"
-            class="home-icon-link"
-            title="Home"
-          >
-            <svg aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
-              <path fill="currentColor" d="M8 0L0 8h2v8h4v-6h4v6h4V8h2z"/>
-            </svg>
-          </router-link>
-          <h1 class="h5 mb-0">
-            {{ modeTitle }} Trainer
-          </h1>
-        </div>
+  <div class="app-container rt-page" :class="`trainer-${mode}`">
+    <nav
+      class="navbar navbar-expand-lg fixed-top rt-navbar rt-navbar--neon border-0"
+      :class="isDark ? 'navbar-dark' : 'navbar-light'"
+    >
+      <div class="container-fluid rt-navbar-inner px-3 px-lg-4">
+        <router-link to="/" class="rt-navbar-brand" title="Home">RUBIK TRAINER</router-link>
 
-        <!-- Right side: Toggler and Dropdown - always visible outside collapse -->
-        <div class="d-flex align-items-center gap-2">
-          <!-- Dropdown - always visible on mobile -->
-          <div class="dropdown d-lg-none">
+        <div class="d-flex align-items-center gap-2 ms-auto d-lg-none">
+          <div class="dropdown">
             <a
-              class="nav-link dropdown-toggle"
+              class="nav-link dropdown-toggle py-1 small"
               href="#"
               :id="`trainerDropdownMobile-${mode}`"
               role="button"
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              Other trainers
+              Trainers
             </a>
             <ul class="dropdown-menu dropdown-menu-end" :aria-labelledby="`trainerDropdownMobile-${mode}`">
               <li>
-                <router-link to="/f2l" class="dropdown-item" :class="{ active: mode === 'f2l' }">
-                  F2L Trainer
-                </router-link>
+                <router-link to="/f2l" class="dropdown-item" :class="{ active: mode === 'f2l' }">F2L</router-link>
               </li>
               <li>
-                <router-link to="/oll" class="dropdown-item" :class="{ active: mode === 'oll' }">
-                  OLL Trainer
-                </router-link>
+                <router-link to="/oll" class="dropdown-item" :class="{ active: mode === 'oll' }">OLL</router-link>
               </li>
               <li>
-                <router-link to="/pll" class="dropdown-item" :class="{ active: mode === 'pll' }">
-                  PLL Trainer
-                </router-link>
+                <router-link to="/pll" class="dropdown-item" :class="{ active: mode === 'pll' }">PLL</router-link>
               </li>
             </ul>
           </div>
-
           <button
             class="navbar-toggler"
             type="button"
@@ -64,9 +44,43 @@
           </button>
         </div>
 
-        <!-- Collapsible navbar content -->
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-2">
+        <div class="collapse navbar-collapse align-items-lg-center flex-lg-grow-1 w-100" id="navbarNav">
+          <ul
+            class="navbar-nav rt-navbar-pills mx-lg-auto align-items-lg-center flex-column flex-lg-row gap-1 gap-lg-3 py-3 py-lg-0"
+          >
+            <li class="nav-item">
+              <router-link class="nav-link rt-nav-pill" to="/">Home</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link
+                class="nav-link rt-nav-pill"
+                to="/f2l"
+                :class="{ 'rt-nav-pill--active': mode === 'f2l' }"
+                >F2L</router-link
+              >
+            </li>
+            <li class="nav-item">
+              <router-link
+                class="nav-link rt-nav-pill"
+                to="/oll"
+                :class="{ 'rt-nav-pill--active': mode === 'oll' }"
+                >OLL</router-link
+              >
+            </li>
+            <li class="nav-item">
+              <router-link
+                class="nav-link rt-nav-pill"
+                to="/pll"
+                :class="{ 'rt-nav-pill--active': mode === 'pll' }"
+                >PLL</router-link
+              >
+            </li>
+            <li class="nav-item">
+              <router-link class="nav-link rt-nav-pill" to="/notation">Notation</router-link>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav ms-lg-auto d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-2">
             <template v-if="isTraining">
               <li class="nav-item">
                 <a class="nav-link d-flex align-items-center gap-2 d-lg-inline-flex" href="#" @click.prevent="handleNavClick(stopTraining)">
@@ -143,37 +157,53 @@
               </li>
             </template>
 
-            <!-- Dropdown - only visible on desktop -->
-            <li class="nav-item dropdown d-none d-lg-block">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                :id="`trainerDropdown-${mode}`"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
+            <!-- Theme, print, account — desktop (Stitch updated nav cluster) -->
+            <li class="nav-item d-none d-lg-block">
+              <button
+                type="button"
+                class="btn rt-navbar-icon-btn"
+                @click="toggleTheme"
+                :title="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
+                aria-label="Toggle theme"
               >
-                Other trainers
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end" :aria-labelledby="`trainerDropdown-${mode}`">
-                <li>
-                  <router-link to="/f2l" class="dropdown-item" :class="{ active: mode === 'f2l' }">
-                    F2L Trainer
-                  </router-link>
-                </li>
-                <li>
-                  <router-link to="/oll" class="dropdown-item" :class="{ active: mode === 'oll' }">
-                    OLL Trainer
-                  </router-link>
-                </li>
-                <li>
-                  <router-link to="/pll" class="dropdown-item" :class="{ active: mode === 'pll' }">
-                    PLL Trainer
-                  </router-link>
-                </li>
-              </ul>
+                <svg v-if="isDark" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+                  <path
+                    fill="currentColor"
+                    d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"
+                  />
+                </svg>
+                <svg v-else aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+                  <path
+                    fill="currentColor"
+                    d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"
+                  />
+                </svg>
+              </button>
             </li>
-            <!-- User, Theme toggle and Print buttons - only visible on mobile/tablet -->
+            <li class="nav-item d-none d-lg-block">
+              <button
+                type="button"
+                class="btn rt-navbar-icon-btn"
+                @click="handlePrint"
+                title="Print"
+                aria-label="Print"
+              >
+                <svg aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+                  <path
+                    fill="currentColor"
+                    d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2H5zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1z"
+                  />
+                  <path
+                    fill="currentColor"
+                    d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2V7zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"
+                  />
+                </svg>
+              </button>
+            </li>
+            <li class="nav-item d-none d-lg-block rt-navbar-user-item">
+              <UserIcon :unique-id="`trainer-${mode}`" />
+            </li>
+            <!-- User, Theme toggle and Print — mobile menu -->
             <li class="nav-item d-lg-none">
               <UserIcon :unique-id="`trainer-mobile-${mode}`" class="mobile-menu-user-icon" />
             </li>
@@ -210,6 +240,7 @@
           </ul>
         </div>
       </div>
+      <div class="rt-navbar-sheen" aria-hidden="true"></div>
     </nav>
     <div class="container" :class="{ 'training-container': isTraining }">
       <!-- Offcanvas Filters -->
@@ -307,8 +338,18 @@
         {{ error }}
       </section>
 
-      <section v-else>
-        <div class="badge-filter mb-3">
+      <section v-else class="rt-case-library">
+        <header class="rt-case-library__header">
+          <p class="rt-case-library__eyebrow">Algorithm library</p>
+          <h2 class="rt-case-library__title">{{ modeTitle }} cases</h2>
+          <p class="rt-case-library__stats">
+            <span>{{ algorithms.length }} total</span>
+            <span class="rt-case-library__stats-sep" aria-hidden="true">·</span>
+            <span>{{ learnedCount }} learned</span>
+          </p>
+        </header>
+
+        <div class="badge-filter rt-case-library__filters mb-3">
           <button
             type="button"
             class="badge-filter-item list-filter"
@@ -340,7 +381,11 @@
           </button>
         </div>
         <div class="d-flex justify-content-end mb-4" ref="sortControlsRef">
-          <div class="btn-group btn-group-sm" role="group" aria-label="Sort algorithms">
+          <div
+            class="btn-group btn-group-sm rt-case-library__sort"
+            role="group"
+            aria-label="Sort algorithms"
+          >
             <button
               type="button"
               class="btn"
@@ -362,21 +407,32 @@
           </div>
         </div>
 
-        <div class="algorithm-grid pb-5">
-          <AlgorithmCard
-            v-for="algorithm in visibleAlgorithms"
-            :key="algorithm.id"
-            :algorithm="algorithm"
-            :mode="mode"
-            :learned="isLearned(algorithm.id)"
-            :my-alg="getMyAlg(algorithm.id)"
-            :my-name="getMyName(algorithm.id)"
-            @toggle="toggleLearned"
-            @update-my-alg="setMyAlg"
-            @update-my-name="setMyName"
-            @filter-by-type="setActiveType"
-            class="algorithm-grid-item"
-          />
+        <div class="rt-case-library__groups pb-5">
+          <div
+            v-for="group in groupedVisibleAlgorithms"
+            :key="group.type"
+            class="rt-case-library__group"
+          >
+            <h3 class="rt-case-library__group-heading">{{ group.type }}</h3>
+            <div class="algorithm-grid">
+              <AlgorithmCard
+                v-for="algorithm in group.items"
+                :key="algorithm.id"
+                :algorithm="algorithm"
+                :mode="mode"
+                :learned="isLearned(algorithm.id)"
+                :my-alg="getMyAlg(algorithm.id)"
+                :my-name="getMyName(algorithm.id)"
+                :case-index="visibleCaseNumberById.get(algorithm.id)"
+                library-layout
+                @toggle="toggleLearned"
+                @update-my-alg="setMyAlg"
+                @update-my-name="setMyName"
+                @filter-by-type="setActiveType"
+                class="algorithm-grid-item"
+              />
+            </div>
+          </div>
         </div>
       </section>
     </div>
@@ -408,37 +464,6 @@
         <path fill="currentColor" d="M6 10.5V15l4-2v-2.5l4.854-4.854A.5.5 0 0 0 14.5 4h-13a.5.5 0 0 0-.354.854z"/>
       </svg>
     </button>
-    <!-- Floating action buttons group - only visible on desktop -->
-    <div class="floating-action-group d-none d-lg-flex">
-      <!-- User Icon - at top -->
-      <UserIcon :unique-id="`trainer-floating-${mode}`" />
-      <button
-        type="button"
-        class="btn btn-primary floating-action-btn"
-        @click="toggleTheme"
-        :title="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
-        aria-label="Toggle theme"
-      >
-        <svg v-if="isDark" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
-          <path fill="currentColor" d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
-        </svg>
-        <svg v-else aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
-          <path fill="currentColor" d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
-        </svg>
-      </button>
-      <button
-        type="button"
-        class="btn btn-primary floating-action-btn"
-        @click="handlePrint"
-        title="Print"
-        aria-label="Print"
-      >
-        <svg aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
-          <path fill="currentColor" d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2H5zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1z"/>
-          <path fill="currentColor" d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2V7zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
-        </svg>
-      </button>
-    </div>
   </div>
 </template>
 
@@ -596,6 +621,45 @@ const visibleAlgorithms = computed(() => {
     if (sa !== sb) return sa - sb;
     return a.name.localeCompare(b.name);
   });
+});
+
+/** Global position in the current filtered/sorted list (for “Case NN” labels). */
+const visibleCaseNumberById = computed(() => {
+  const m = new Map();
+  visibleAlgorithms.value.forEach((a, i) => m.set(a.id, i + 1));
+  return m;
+});
+
+/** Stitch “F2L Cases Library” style: group list rows by case type */
+const groupedVisibleAlgorithms = computed(() => {
+  const list = visibleAlgorithms.value;
+  if (list.length === 0) {
+    return [];
+  }
+  const order = caseTypes.value;
+  const byType = new Map();
+  for (const alg of list) {
+    const key = alg.type || 'Other';
+    if (!byType.has(key)) {
+      byType.set(key, []);
+    }
+    byType.get(key).push(alg);
+  }
+  const seen = new Set();
+  const groups = [];
+  for (const t of order) {
+    const items = byType.get(t);
+    if (items?.length) {
+      groups.push({ type: t, items });
+      seen.add(t);
+    }
+  }
+  for (const [t, items] of byType) {
+    if (!seen.has(t) && items.length) {
+      groups.push({ type: t, items });
+    }
+  }
+  return groups;
 });
 
 function pickRandomTraining(force = false) {
@@ -1283,30 +1347,8 @@ watch(() => props.mode, (newMode) => {
 </script>
 
 <style scoped>
-.home-icon-link {
-  display: inline-flex;
-  align-items: center;
-  color: #6c757d;
-  text-decoration: none;
-  transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
-  line-height: 1;
-  padding: 0.25rem;
-  margin-right: 0.5rem;
-}
-
-.home-icon-link:hover {
-  color: #0d6efd;
-  transform: translateY(-1px);
-}
-
-.home-icon-link:focus-visible {
-  outline: 2px solid rgba(13, 110, 253, 0.4);
-  outline-offset: 2px;
-  border-radius: 0.25rem;
-}
-
 .app-container {
-  padding-top: 4.5rem;
+  padding-top: 5.25rem;
 }
 
 /* Training mode: center content vertically */
@@ -1314,7 +1356,7 @@ watch(() => props.mode, (newMode) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 4.5rem);
+  min-height: calc(100vh - 5.25rem);
   padding-left: calc(var(--bs-gutter-x, 1.5rem) - 10px);
   padding-right: calc(var(--bs-gutter-x, 1.5rem) - 10px);
 }

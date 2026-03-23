@@ -56,6 +56,28 @@
 <script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 
+/** Twisty internals call random helpers on move lists; empty alg + hidden modals can hit length 0 and throw. */
+const EMPTY_ALG_FALLBACK = "R R'";
+
+/**
+ * Same library as https://cdn.cubing.net/js/cubing/twisty — loaded from npm so the app
+ * does not depend on CDN chunk URLs / cross-origin module graphs in list view.
+ */
+let twistyModulePromise = null;
+
+function ensureTwistyPlayerLoaded() {
+  if (typeof customElements === 'undefined') {
+    return Promise.reject(new Error('customElements not available'));
+  }
+  if (customElements.get('twisty-player')) {
+    return Promise.resolve();
+  }
+  if (!twistyModulePromise) {
+    twistyModulePromise = import('cubing/twisty');
+  }
+  return twistyModulePromise;
+}
+
 const props = defineProps({
   algorithm: {
     type: String,
@@ -79,9 +101,10 @@ const setup = computed(() => {
   return baseSetup ? `x2 ${baseSetup}` : 'x2';
 });
 
-// Fő algoritmus - alg prop-hoz
+// Fő algoritmus - alg prop-hoz (never empty — cubing.net twisty randomUIntBelow breaks on 0-length sequences)
 const algorithm = computed(() => {
-  return props.algorithm && props.algorithm.trim() ? props.algorithm.trim() : '';
+  const t = props.algorithm && props.algorithm.trim() ? props.algorithm.trim() : '';
+  return t || EMPTY_ALG_FALLBACK;
 });
 
 // Setup időtartama másodpercekben (körülbelül 0.5 másodperc per mozgás)
@@ -227,14 +250,6 @@ watch(() => [props.algorithm, props.setup], () => {
 });
 
 onMounted(() => {
-  // Betöltjük a twisty-player scriptet, ha még nincs betöltve
-  if (!customElements.get('twisty-player')) {
-    const script = document.createElement('script');
-    script.type = 'module';
-    script.src = 'https://cdn.cubing.net/js/cubing/twisty';
-    document.head.appendChild(script);
-  }
-  
   // Várunk, amíg a twisty-player betöltődik, majd beállítjuk a timeline-t a setup utáni állapotba
   // Próbáljuk meg többször, mert a twisty-player aszinkron betöltődik
   const trySetInitialState = () => {
@@ -361,13 +376,16 @@ onMounted(() => {
       setTimeout(trySetInitialState, 100);
     }
   };
-  
-  // Először 500ms után próbáljuk
-  setTimeout(trySetInitialState, 500);
-  // Majd 1 másodperc után is
-  setTimeout(trySetInitialState, 1000);
-  // És 2 másodperc után is
-  setTimeout(trySetInitialState, 2000);
+
+  ensureTwistyPlayerLoaded()
+    .then(() => {
+      setTimeout(trySetInitialState, 500);
+      setTimeout(trySetInitialState, 1000);
+      setTimeout(trySetInitialState, 2000);
+    })
+    .catch((err) => {
+      console.error('[RubikCube3D] Failed to load cubing/twisty', err);
+    });
 });
 </script>
 

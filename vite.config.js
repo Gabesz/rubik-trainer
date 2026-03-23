@@ -30,8 +30,8 @@ export default defineConfig(({ mode }) => ({
       registerType: 'autoUpdate',
       includeAssets: ['oll/svg/Oll-1.svg'],
       manifest: {
-        name: 'Rubik Trainer',
-        short_name: 'Rubik Trainer',
+        name: 'RUBIK TRAINER',
+        short_name: 'RUBIK TRAINER',
         description: "Practice and track Rubik's Cube OLL, PLL, and F2L algorithms.",
         start_url: '/rubik-trainer/',
         scope: '/rubik-trainer/',

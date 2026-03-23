@@ -452,29 +452,30 @@ const handleBackdropClick = (event) => {
   text-align: left;
 }
 
-html[data-bs-theme="dark"] .auth-modal-wrapper .modal-content,
+html[data-bs-theme='dark'] .auth-modal-wrapper .modal-content,
 html.dark-theme .auth-modal-wrapper .modal-content {
-  background-color: #2d2d2d;
-  color: #e0e0e0;
+  background-color: var(--rt-color-surface-high);
+  color: var(--rt-color-on-surface);
+  border: 1px solid var(--rt-glass-border);
 }
 
-html[data-bs-theme="dark"] .auth-modal-wrapper .modal-header,
+html[data-bs-theme='dark'] .auth-modal-wrapper .modal-header,
 html.dark-theme .auth-modal-wrapper .modal-header {
-  border-bottom-color: rgba(255, 255, 255, 0.1);
+  border-bottom-color: var(--rt-glass-border);
 }
 
-html[data-bs-theme="dark"] .auth-modal-wrapper .form-control,
+html[data-bs-theme='dark'] .auth-modal-wrapper .form-control,
 html.dark-theme .auth-modal-wrapper .form-control {
-  background-color: #1a1a1a;
-  border-color: rgba(255, 255, 255, 0.1);
-  color: #e0e0e0;
+  background-color: var(--rt-color-surface-low);
+  border-color: var(--rt-glass-border);
+  color: var(--rt-color-on-surface);
 }
 
-html[data-bs-theme="dark"] .auth-modal-wrapper .form-control:focus,
+html[data-bs-theme='dark'] .auth-modal-wrapper .form-control:focus,
 html.dark-theme .auth-modal-wrapper .form-control:focus {
-  background-color: #1a1a1a;
-  border-color: #4a9eff;
-  color: #e0e0e0;
+  background-color: var(--rt-color-surface-low);
+  border-color: var(--rt-color-primary-mid);
+  color: var(--rt-color-on-surface);
 }
 </style>
 

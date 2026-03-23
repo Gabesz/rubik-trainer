@@ -1,3 +1,662 @@
+/* Stitch "Neon Kinetic" shared tokens (Rubik Trainer Landing design system) */
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --rt-font-display: 'Space Grotesk', system-ui, sans-serif;
+  --rt-font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --rt-color-surface: #f4f6fa;
+  --rt-color-surface-low: #eceff5;
+  --rt-color-surface-high: #e2e6ee;
+  --rt-color-surface-highest: #d8dde8;
+  --rt-color-on-surface: #1a1f26;
+  --rt-color-on-surface-variant: #4a5568;
+  --rt-color-primary: #0d6efd;
+  --rt-color-primary-mid: #4d94fc;
+  --rt-color-on-primary: #ffffff;
+  --rt-color-secondary: #c026c0;
+  --rt-color-tertiary: #65a30d;
+  --rt-color-outline-variant: rgba(66, 70, 85, 0.22);
+  --rt-radius-lg: 0.75rem;
+  --rt-radius-xl: 1rem;
+  --rt-radius-pill: 624.9375rem;
+  --rt-shadow-glow-primary: 0 0 48px rgba(13, 110, 253, 0.14);
+  --rt-shadow-card: 0 1rem 2.5rem rgba(26, 31, 38, 0.08);
+  --rt-transition-fast: 0.2s ease;
+  --rt-transition-medium: 0.35s ease;
+  --rt-gradient-hero: radial-gradient(120% 80% at 50% -20%, rgba(13, 110, 253, 0.18), transparent 55%),
+    radial-gradient(80% 50% at 100% 0%, rgba(192, 38, 192, 0.1), transparent 45%),
+    linear-gradient(180deg, #f4f6fa 0%, #eef1f7 100%);
+  --rt-gradient-primary-btn: linear-gradient(135deg, #6ea8fe 0%, #0d6efd 100%);
+  --rt-glass-bg: rgba(255, 255, 255, 0.72);
+  --rt-glass-border: rgba(255, 255, 255, 0.35);
+  --rt-gradient-page: radial-gradient(95% 55% at 50% -8%, rgba(13, 110, 253, 0.09), transparent 52%),
+    linear-gradient(180deg, #f4f6fa 0%, #f0f3f9 100%);
+}
+
+html[data-bs-theme='dark'],
+html.dark-theme {
+  --rt-color-surface: #101418;
+  --rt-color-surface-low: #181c20;
+  --rt-color-surface-high: #262a2e;
+  --rt-color-surface-highest: #313539;
+  --rt-color-on-surface: #e0e3e8;
+  --rt-color-on-surface-variant: #c2c6d8;
+  --rt-color-primary: #b1c5ff;
+  --rt-color-primary-mid: #0d6efd;
+  --rt-color-on-primary: #002c70;
+  --rt-color-secondary: #ffabf3;
+  --rt-color-tertiary: #abd600;
+  --rt-color-outline-variant: rgba(66, 70, 85, 0.35);
+  --rt-shadow-glow-primary: 0 0 48px rgba(177, 197, 255, 0.12);
+  --rt-shadow-card: 0 1.25rem 3rem rgba(0, 0, 0, 0.45);
+  --rt-gradient-hero: radial-gradient(100% 70% at 50% -15%, rgba(13, 110, 253, 0.35), transparent 50%),
+    radial-gradient(60% 40% at 100% 10%, rgba(255, 171, 243, 0.12), transparent 50%),
+    linear-gradient(180deg, #101418 0%, #0b0f12 100%);
+  --rt-gradient-primary-btn: linear-gradient(135deg, #b1c5ff 0%, #0d6efd 100%);
+  --rt-glass-bg: rgba(24, 28, 32, 0.62);
+  --rt-glass-border: rgba(177, 197, 255, 0.12);
+  --rt-gradient-page: radial-gradient(85% 50% at 50% -6%, rgba(13, 110, 253, 0.2), transparent 55%),
+    linear-gradient(180deg, #101418 0%, #0c1014 100%);
+}
+
+/* --- Neon Kinetic app shell (Trainer, Notation; shared toggles & surfaces) --- */
+.rt-page {
+  min-height: 100vh;
+  color: var(--rt-color-on-surface);
+  background-color: var(--rt-color-surface);
+  background-image: var(--rt-gradient-page);
+  transition: background-color var(--rt-transition-medium), color var(--rt-transition-medium);
+}
+
+body:has(.rt-page) {
+  background-color: var(--rt-color-surface);
+}
+
+html[data-bs-theme='dark'] .app-container.rt-page,
+html.dark-theme .app-container.rt-page {
+  background-color: var(--rt-color-surface);
+  background-image: var(--rt-gradient-page);
+}
+
+button.rt-theme-toggle {
+  padding: 0;
+  cursor: pointer;
+}
+
+.rt-theme-toggle {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 1100;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rt-glass-border);
+  border-radius: 50%;
+  background: var(--rt-glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: var(--rt-color-on-surface);
+  box-shadow: var(--rt-shadow-card);
+  transition: transform var(--rt-transition-fast), box-shadow var(--rt-transition-fast),
+    border-color var(--rt-transition-fast);
+}
+
+.rt-theme-toggle:hover {
+  transform: scale(1.06);
+  box-shadow: var(--rt-shadow-glow-primary);
+}
+
+.rt-page .navbar.rt-navbar {
+  background: var(--rt-glass-bg) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--rt-glass-border) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+html[data-bs-theme='dark'] .rt-page .navbar.rt-navbar,
+html.dark-theme .rt-page .navbar.rt-navbar {
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.4);
+}
+
+.rt-page .navbar.rt-navbar .nav-link:not(.text-danger),
+.rt-page .navbar.rt-navbar h1 {
+  color: var(--rt-color-on-surface) !important;
+}
+
+.rt-page .navbar.rt-navbar .nav-link:hover:not(.text-danger),
+.rt-page .navbar.rt-navbar .nav-link:focus:not(.text-danger) {
+  color: var(--rt-color-primary) !important;
+}
+
+.rt-page .navbar.rt-navbar .nav-link.text-danger {
+  color: #dc3545 !important;
+}
+
+html[data-bs-theme='dark'] .rt-page .navbar.rt-navbar .nav-link.text-danger,
+html.dark-theme .rt-page .navbar.rt-navbar .nav-link.text-danger {
+  color: #f5a5ad !important;
+}
+
+.rt-page .navbar.rt-navbar .home-icon-link {
+  color: var(--rt-color-on-surface);
+  opacity: 0.92;
+}
+
+.rt-page .navbar.rt-navbar .home-icon-link:hover {
+  color: var(--rt-color-primary-mid);
+  opacity: 1;
+}
+
+.rt-page .navbar.rt-navbar .navbar-toggler {
+  border-color: color-mix(in srgb, var(--rt-color-on-surface) 22%, transparent);
+}
+
+/* Stitch: F2L Trainer Desktop (Updated Nav) — glass bar, brand, center pills, icon cluster */
+.rt-page .navbar.rt-navbar.rt-navbar--neon {
+  margin-top: 0;
+  min-height: 5rem;
+  padding-top: 0;
+  padding-bottom: 0;
+  background: color-mix(in srgb, var(--rt-color-surface) 58%, transparent) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid color-mix(in srgb, #fff 6%, transparent) !important;
+  box-shadow: 0 0 24px color-mix(in srgb, var(--rt-color-primary) 16%, transparent);
+}
+
+html[data-bs-theme='light'] .rt-page .navbar.rt-navbar.rt-navbar--neon,
+html.light-theme .rt-page .navbar.rt-navbar.rt-navbar--neon {
+  background: color-mix(in srgb, var(--rt-color-surface) 82%, transparent) !important;
+  border-bottom-color: color-mix(in srgb, var(--rt-color-outline-variant) 45%, transparent) !important;
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.07);
+}
+
+.rt-navbar-inner {
+  min-height: 5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.rt-navbar-sheen {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--rt-color-primary) 32%, transparent),
+    transparent
+  );
+}
+
+.rt-navbar-brand {
+  font-family: var(--rt-font-display);
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rt-color-primary-mid) !important;
+  text-decoration: none;
+  line-height: 1.2;
+  margin-right: 0.75rem;
+}
+
+.rt-navbar-brand:hover {
+  color: var(--rt-color-primary) !important;
+}
+
+.rt-nav-pill {
+  font-family: var(--rt-font-display);
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--rt-color-on-surface) 52%, transparent) !important;
+  border-radius: 0.25rem;
+  padding: 0.35rem 0.7rem !important;
+  transition:
+    color var(--rt-transition-fast),
+    background var(--rt-transition-fast),
+    box-shadow var(--rt-transition-fast);
+}
+
+.rt-nav-pill:hover {
+  color: var(--rt-color-on-surface) !important;
+  background: color-mix(in srgb, var(--rt-color-on-surface) 6%, transparent);
+}
+
+.rt-nav-pill.rt-nav-pill--active {
+  color: var(--rt-color-primary-mid) !important;
+  box-shadow: 0 0 14px color-mix(in srgb, var(--rt-color-primary-mid) 42%, transparent);
+}
+
+.rt-navbar-icon-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--rt-color-on-surface) 12%, transparent);
+  background: color-mix(in srgb, var(--rt-color-surface-high) 50%, transparent);
+  color: var(--rt-color-on-surface);
+  line-height: 1;
+  transition:
+    background var(--rt-transition-fast),
+    border-color var(--rt-transition-fast),
+    color var(--rt-transition-fast);
+}
+
+.rt-navbar-icon-btn:hover {
+  color: var(--rt-color-primary-mid);
+  border-color: color-mix(in srgb, var(--rt-color-primary) 35%, transparent);
+  background: color-mix(in srgb, var(--rt-color-surface-highest) 55%, transparent);
+}
+
+.rt-navbar-user-item .user-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rt-navbar-user-item .user-icon-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--rt-color-on-surface) 12%, transparent);
+  background: color-mix(in srgb, var(--rt-color-surface-low) 70%, transparent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rt-navbar-user-item .user-icon-btn:hover {
+  background: color-mix(in srgb, var(--rt-color-on-surface) 8%, transparent);
+  color: var(--rt-color-primary-mid);
+}
+
+.navbar .container-fluid {
+  overflow: visible !important;
+}
+
+.rt-page .fixed-action-bar {
+  background: color-mix(in srgb, var(--rt-glass-bg) 90%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom-color: var(--rt-glass-border);
+}
+
+html[data-bs-theme='dark'] .rt-page .fixed-action-bar,
+html.dark-theme .rt-page .fixed-action-bar {
+  background: color-mix(in srgb, var(--rt-glass-bg) 94%, transparent);
+}
+
+.rt-page .algorithm-card.card {
+  background-color: var(--rt-color-surface-low);
+  border: 1px solid color-mix(in srgb, var(--rt-color-outline-variant) 55%, transparent);
+  color: var(--rt-color-on-surface);
+  box-shadow: var(--rt-shadow-card);
+  transition: box-shadow var(--rt-transition-fast), transform var(--rt-transition-fast);
+}
+
+.rt-page .algorithm-card.card:hover {
+  box-shadow: var(--rt-shadow-glow-primary);
+}
+
+html[data-bs-theme='dark'] .rt-page .algorithm-card.card,
+html.dark-theme .rt-page .algorithm-card.card {
+  background-color: var(--rt-color-surface-low);
+  border-color: color-mix(in srgb, var(--rt-color-outline-variant) 65%, transparent);
+}
+
+.rt-page .algorithm-card.learned {
+  border-color: #198754;
+  box-shadow: 0 0 0 2px color-mix(in srgb, #198754 40%, transparent), var(--rt-shadow-card);
+}
+
+html[data-bs-theme='dark'] .rt-page .algorithm-card.learned,
+html.dark-theme .rt-page .algorithm-card.learned {
+  border-color: var(--rt-color-tertiary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--rt-color-tertiary) 42%, transparent),
+    0 0 28px color-mix(in srgb, var(--rt-color-tertiary) 22%, transparent);
+}
+
+.rt-page .training-panel .algorithm-card.display-card {
+  background-color: var(--rt-color-surface-high);
+}
+
+.rt-page .btn-primary:not(:disabled):not(.disabled) {
+  background: var(--rt-gradient-primary-btn);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--rt-color-primary-mid) 32%, transparent);
+}
+
+.rt-page .btn-primary:hover:not(:disabled):not(.disabled) {
+  filter: brightness(1.05);
+  border-color: transparent;
+}
+
+html[data-bs-theme='dark'] .rt-page .btn-primary:not(:disabled):not(.disabled),
+html.dark-theme .rt-page .btn-primary:not(:disabled):not(.disabled) {
+  background: var(--rt-gradient-primary-btn);
+  border-color: transparent;
+  color: #fff;
+}
+
+html[data-bs-theme='dark'] .rt-page .btn-primary:hover:not(:disabled):not(.disabled),
+html.dark-theme .rt-page .btn-primary:hover:not(:disabled):not(.disabled) {
+  filter: brightness(1.08);
+  border-color: transparent;
+}
+
+.rt-page .btn-outline-primary {
+  border-color: color-mix(in srgb, var(--rt-color-primary-mid) 45%, transparent);
+  color: var(--rt-color-primary-mid);
+}
+
+.rt-page .btn-outline-primary:hover {
+  background: var(--rt-gradient-primary-btn);
+  border-color: transparent;
+  color: #fff;
+}
+
+html[data-bs-theme='dark'] .rt-page .btn-outline-primary,
+html.dark-theme .rt-page .btn-outline-primary {
+  border-color: color-mix(in srgb, var(--rt-color-primary) 55%, transparent);
+  color: var(--rt-color-primary);
+}
+
+html[data-bs-theme='dark'] .rt-page .modal-content,
+html.dark-theme .rt-page .modal-content {
+  background-color: var(--rt-color-surface-high);
+  color: var(--rt-color-on-surface);
+  border: 1px solid var(--rt-glass-border);
+}
+
+html[data-bs-theme='dark'] .rt-page .modal-header,
+html.dark-theme .rt-page .modal-header {
+  border-bottom-color: var(--rt-glass-border);
+}
+
+html[data-bs-theme='dark'] .rt-page .modal-footer,
+html.dark-theme .rt-page .modal-footer {
+  border-top-color: var(--rt-glass-border);
+}
+
+.rt-page .modal-content {
+  border-radius: var(--rt-radius-xl);
+  box-shadow: var(--rt-shadow-card);
+}
+
+html[data-bs-theme='dark'] .rt-page .dropdown-menu,
+html.dark-theme .rt-page .dropdown-menu {
+  background-color: var(--rt-color-surface-high);
+  border: 1px solid var(--rt-glass-border);
+  box-shadow: var(--rt-shadow-card);
+}
+
+html[data-bs-theme='dark'] .rt-page .dropdown-item.active,
+html.dark-theme .rt-page .dropdown-item.active {
+  background-color: var(--rt-color-primary-mid);
+  color: #fff;
+}
+
+html[data-bs-theme='dark'] .rt-page .offcanvas,
+html.dark-theme .rt-page .offcanvas {
+  background-color: var(--rt-color-surface-low);
+  color: var(--rt-color-on-surface);
+  border-color: var(--rt-glass-border);
+}
+
+html[data-bs-theme='dark'] .rt-page .offcanvas-header,
+html.dark-theme .rt-page .offcanvas-header {
+  border-bottom-color: var(--rt-glass-border);
+}
+
+.rt-page .scroll-top-btn,
+.rt-page .floating-action-btn {
+  background: var(--rt-gradient-primary-btn);
+  border: none;
+  box-shadow: var(--rt-shadow-glow-primary);
+}
+
+.rt-page .scroll-top-btn:hover,
+.rt-page .floating-action-btn:hover {
+  filter: brightness(1.06);
+  border: none;
+}
+
+html[data-bs-theme='dark'] .rt-page .scroll-top-btn,
+html.dark-theme .rt-page .scroll-top-btn,
+html[data-bs-theme='dark'] .rt-page .floating-action-btn,
+html.dark-theme .rt-page .floating-action-btn {
+  background: var(--rt-gradient-primary-btn);
+  border: none;
+}
+
+.rt-page .filter-fab {
+  background-color: var(--rt-color-surface-high);
+  border: 1px solid var(--rt-glass-border);
+  color: var(--rt-color-on-surface);
+  box-shadow: var(--rt-shadow-card);
+}
+
+html[data-bs-theme='dark'] .rt-page .filter-fab,
+html.dark-theme .rt-page .filter-fab {
+  background-color: var(--rt-color-surface-high);
+  color: var(--rt-color-on-surface);
+}
+
+.rt-page .filter-fab:hover {
+  background-color: var(--rt-color-surface-highest);
+}
+
+.rt-page .floating-action-group .user-icon-btn {
+  background: var(--rt-gradient-primary-btn);
+  border: none;
+  box-shadow: var(--rt-shadow-glow-primary);
+}
+
+.rt-page .floating-action-group .user-icon-btn:hover {
+  filter: brightness(1.06);
+  border: none;
+}
+
+main.notation-page.rt-page h1 {
+  font-family: var(--rt-font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.rt-page .text-muted {
+  color: var(--rt-color-on-surface-variant) !important;
+}
+
+/* Stitch “F2L Cases Library” — trainer list shell */
+.rt-case-library__header {
+  margin-bottom: 1.75rem;
+  text-align: left;
+}
+
+.rt-case-library__eyebrow {
+  font-family: var(--rt-font-display);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--rt-color-primary-mid);
+  margin: 0 0 0.5rem;
+}
+
+.rt-case-library__title {
+  font-family: var(--rt-font-display);
+  font-size: clamp(1.65rem, 4vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin: 0 0 0.5rem;
+  color: var(--rt-color-on-surface);
+}
+
+.rt-case-library__stats {
+  font-size: 0.9rem;
+  color: var(--rt-color-on-surface-variant);
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.rt-case-library__stats-sep {
+  opacity: 0.55;
+}
+
+.rt-case-library__group {
+  margin-bottom: 2.5rem;
+}
+
+.rt-case-library__group:last-child {
+  margin-bottom: 0;
+}
+
+.rt-case-library__group-heading {
+  font-family: var(--rt-font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rt-color-on-surface-variant);
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--rt-color-outline-variant) 50%, transparent);
+}
+
+.rt-page .algorithm-card.algorithm-card--library {
+  border-radius: var(--rt-radius-xl);
+}
+
+/* Library list: no green “learned” ring — status is shown inside the card */
+.rt-page .algorithm-card.algorithm-card--library.learned {
+  border-color: color-mix(in srgb, var(--rt-color-outline-variant) 55%, transparent);
+  box-shadow: var(--rt-shadow-card);
+}
+
+.rt-page .algorithm-card.algorithm-card--library.learned:hover {
+  box-shadow: var(--rt-shadow-glow-primary);
+}
+
+html[data-bs-theme='dark'] .rt-page .algorithm-card.algorithm-card--library.learned,
+html.dark-theme .rt-page .algorithm-card.algorithm-card--library.learned {
+  border-color: color-mix(in srgb, var(--rt-color-outline-variant) 65%, transparent);
+  box-shadow: var(--rt-shadow-card);
+}
+
+html[data-bs-theme='dark'] .rt-page .algorithm-card.algorithm-card--library.learned:hover,
+html.dark-theme .rt-page .algorithm-card.algorithm-card--library.learned:hover {
+  box-shadow: var(--rt-shadow-glow-primary);
+}
+
+.rt-lib-card__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  justify-content: flex-start;
+  margin-bottom: 0.65rem;
+}
+
+.rt-lib-card__case {
+  font-family: var(--rt-font-display);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--rt-color-secondary);
+}
+
+.rt-lib-card__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1;
+  min-width: 0;
+  font-size: 0.78rem;
+  color: var(--rt-color-on-surface-variant);
+}
+
+.rt-lib-card__status--on {
+  color: var(--rt-color-tertiary);
+}
+
+.rt-lib-card__status-icon {
+  flex-shrink: 0;
+}
+
+.rt-lib-card__play {
+  margin-left: auto;
+}
+
+.rt-lib-card__title {
+  font-family: var(--rt-font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  color: var(--rt-color-on-surface);
+}
+
+.rt-lib-card__title-text {
+  cursor: pointer;
+}
+
+.rt-lib-card__title-text:hover {
+  color: var(--rt-color-primary);
+}
+
+.rt-lib-card__setup .rt-lib-card__k {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rt-color-on-surface-variant);
+}
+
+.rt-lib-card__alg-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rt-color-on-surface-variant);
+}
+
+.rt-lib-card__alg-plate {
+  background: color-mix(in srgb, var(--rt-color-surface-high) 90%, transparent);
+  border-radius: var(--rt-radius-lg);
+  padding: 0.65rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--rt-color-outline-variant) 45%, transparent);
+}
+
+.rt-page .rt-case-library__sort .btn-success {
+  background: var(--rt-gradient-primary-btn);
+  border-color: transparent;
+}
+
 .heart-icon {
   width: 1em;
   height: 1em;
@@ -322,7 +981,7 @@ html.dark-theme .mobile-menu-user-icon .user-icon-btn:hover {
 }
 :root {
   color-scheme: light dark;
-  font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--rt-font-sans);
   background-color: #f8f9fa;
 }
 
@@ -656,6 +1315,8 @@ html.dark-theme .badge.bg-success {
 }
 
 #app {
+  margin: 0;
+  padding: 0;
   min-height: 100vh;
 }
 
