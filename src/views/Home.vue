@@ -25,7 +25,6 @@
 
     <div class="container rt-landing__wrap py-4 py-md-5">
       <header class="rt-landing__hero rt-landing-reveal">
-        <p class="rt-landing__eyebrow">RUBIK TRAINER</p>
         <h1 class="rt-landing__title">
           <span class="rt-landing__title-line">RUBIK</span>
           <span class="rt-landing__title-line rt-landing__title-line--accent">TRAINER</span>
@@ -285,16 +284,6 @@ html.dark-theme .rt-landing__ambient {
   text-align: center;
   max-width: 40rem;
   margin: 0 auto 3rem;
-}
-
-.rt-landing__eyebrow {
-  font-family: var(--rt-font-display);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--rt-color-primary-mid);
-  margin-bottom: 1rem;
 }
 
 .rt-landing__title {
