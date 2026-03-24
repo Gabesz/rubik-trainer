@@ -709,6 +709,10 @@ html.dark-theme .rt-lib-card__status--practice {
   flex-shrink: 0;
 }
 
+.algorithm-card__twin-actions .btn {
+  font-size: 0.8125rem;
+}
+
 .my-alg-display.placeholder {
   color: #adb5bd;
   font-style: italic;

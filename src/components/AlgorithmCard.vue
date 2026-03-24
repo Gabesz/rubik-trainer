@@ -174,32 +174,32 @@
               <span>Learned</span>
             </button>
           </template>
-          <div v-else class="d-grid gap-2">
+          <div v-else class="d-flex gap-2 w-100 align-items-stretch algorithm-card__twin-actions">
             <button
               type="button"
-              class="btn w-100 d-flex align-items-center justify-content-center gap-2"
+              class="btn flex-fill min-w-0 d-flex align-items-center justify-content-center gap-1 px-2"
               :class="practicing ? 'btn-warning' : 'btn-outline-warning'"
               :title="practicing ? 'Remove from practice list' : ''"
               @click="$emit('toggle-practice', algorithm.id)"
             >
-              <svg class="practice-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <svg class="practice-icon flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                 <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z" />
                 <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z" />
               </svg>
-              <span>{{ practicing ? 'Practicing' : 'Mark as practicing' }}</span>
+              <span class="text-truncate min-w-0">{{ practicing ? 'Practicing' : 'Mark as practicing' }}</span>
             </button>
             <button
               type="button"
-              class="btn w-100 d-flex align-items-center justify-content-center gap-2 btn-outline-success"
+              class="btn flex-fill min-w-0 d-flex align-items-center justify-content-center gap-1 px-2 btn-outline-success"
               @click="$emit('toggle-learned', algorithm.id)"
             >
-              <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true">
+              <svg class="heart-icon flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true">
                 <path
                   fill="currentColor"
                   d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01z"
                 />
               </svg>
-              <span>Mark as learned</span>
+              <span class="text-truncate min-w-0">Mark as learned</span>
             </button>
           </div>
         </div>
@@ -327,32 +327,32 @@
             <span>Learned</span>
           </button>
         </template>
-        <div v-else class="d-grid gap-2">
+        <div v-else class="d-flex gap-2 w-100 align-items-stretch algorithm-card__twin-actions">
           <button
             type="button"
-            class="btn w-100 d-flex align-items-center justify-content-center gap-2"
+            class="btn flex-fill min-w-0 d-flex align-items-center justify-content-center gap-1 px-2"
             :class="practicing ? 'btn-warning' : 'btn-outline-warning'"
             :title="practicing ? 'Remove from practice list' : ''"
             @click="$emit('toggle-practice', algorithm.id)"
           >
-            <svg class="practice-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <svg class="practice-icon flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
               <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z" />
               <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z" />
             </svg>
-            <span>{{ practicing ? 'Practicing' : 'Mark as practicing' }}</span>
+            <span class="text-truncate min-w-0">{{ practicing ? 'Practicing' : 'Mark as practicing' }}</span>
           </button>
           <button
             type="button"
-            class="btn w-100 d-flex align-items-center justify-content-center gap-2 btn-outline-success"
+            class="btn flex-fill min-w-0 d-flex align-items-center justify-content-center gap-1 px-2 btn-outline-success"
             @click="$emit('toggle-learned', algorithm.id)"
           >
-            <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true">
+            <svg class="heart-icon flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true">
               <path
                 fill="currentColor"
                 d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01z"
               />
             </svg>
-            <span>Mark as learned</span>
+            <span class="text-truncate min-w-0">Mark as learned</span>
           </button>
         </div>
       </div>
