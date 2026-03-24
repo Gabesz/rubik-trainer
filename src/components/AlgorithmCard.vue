@@ -1,14 +1,20 @@
 <template>
   <div
     class="card algorithm-card"
-    :class="[$attrs.class, { learned }, { 'algorithm-card--library': libraryLayout }]"
+    :class="[$attrs.class, { learned }, { practicing: practicing && !learned }, { 'algorithm-card--library': libraryLayout }]"
     :data-algorithm-id="algorithm.id"
   >
     <div class="card-body d-flex flex-column">
       <template v-if="libraryLayout">
         <div class="rt-lib-card__top">
           <span v-if="paddedCaseIndex" class="rt-lib-card__case">Case {{ paddedCaseIndex }}</span>
-          <div class="rt-lib-card__status" :class="{ 'rt-lib-card__status--on': learned }">
+          <div
+            class="rt-lib-card__status"
+            :class="{
+              'rt-lib-card__status--on': learned,
+              'rt-lib-card__status--practice': practicing && !learned,
+            }"
+          >
             <svg
               v-if="learned"
               class="rt-lib-card__status-icon"
@@ -20,6 +26,19 @@
               <path
                 fill="currentColor"
                 d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+              />
+            </svg>
+            <svg
+              v-else-if="practicing"
+              class="rt-lib-card__status-icon"
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              aria-hidden="true"
+            >
+              <path
+                fill="currentColor"
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"
               />
             </svg>
             <svg
@@ -35,7 +54,7 @@
                 d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
               />
             </svg>
-            <span class="rt-lib-card__status-text">{{ learned ? 'Learned' : 'In progress' }}</span>
+            <span class="rt-lib-card__status-text">{{ libraryStatusLabel }}</span>
           </div>
           <button
             type="button"
@@ -140,25 +159,49 @@
         </div>
 
         <div class="mt-3" v-if="showToggle">
-          <button
-            class="btn w-100 d-flex align-items-center justify-content-center gap-2"
-            :class="learned ? 'btn-success' : 'btn-outline-secondary'"
-            @click="$emit('toggle', algorithm.id)"
-          >
-            <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true">
-              <path
-                v-if="learned"
-                fill="currentColor"
-                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
-              />
-              <path
-                v-else
-                fill="currentColor"
-                d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01z"
-              />
-            </svg>
-            <span>{{ learned ? 'Learned' : 'Mark as Learned' }}</span>
-          </button>
+          <template v-if="learned">
+            <button
+              type="button"
+              class="btn w-100 d-flex align-items-center justify-content-center gap-2 btn-success"
+              @click="$emit('toggle-learned', algorithm.id)"
+            >
+              <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true">
+                <path
+                  fill="currentColor"
+                  d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
+                />
+              </svg>
+              <span>Learned</span>
+            </button>
+          </template>
+          <div v-else class="d-grid gap-2">
+            <button
+              type="button"
+              class="btn w-100 d-flex align-items-center justify-content-center gap-2"
+              :class="practicing ? 'btn-warning' : 'btn-outline-warning'"
+              :title="practicing ? 'Remove from practice list' : ''"
+              @click="$emit('toggle-practice', algorithm.id)"
+            >
+              <svg class="practice-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z" />
+                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z" />
+              </svg>
+              <span>{{ practicing ? 'Practicing' : 'Mark as practicing' }}</span>
+            </button>
+            <button
+              type="button"
+              class="btn w-100 d-flex align-items-center justify-content-center gap-2 btn-outline-success"
+              @click="$emit('toggle-learned', algorithm.id)"
+            >
+              <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true">
+                <path
+                  fill="currentColor"
+                  d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01z"
+                />
+              </svg>
+              <span>Mark as learned</span>
+            </button>
+          </div>
         </div>
       </template>
 
@@ -269,25 +312,49 @@
         </div>
       </div>
       <div class="mt-auto" v-if="showToggle">
-        <button
-          class="btn w-100 d-flex align-items-center justify-content-center gap-2"
-          :class="learned ? 'btn-success' : 'btn-outline-secondary'"
-          @click="$emit('toggle', algorithm.id)"
-        >
-          <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true">
-            <path
-              v-if="learned"
-              fill="currentColor"
-              d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
-            />
-            <path
-              v-else
-              fill="currentColor"
-              d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01z"
-            />
-          </svg>
-          <span>{{ learned ? 'Learned' : 'Mark as Learned' }}</span>
-        </button>
+        <template v-if="learned">
+          <button
+            type="button"
+            class="btn w-100 d-flex align-items-center justify-content-center gap-2 btn-success"
+            @click="$emit('toggle-learned', algorithm.id)"
+          >
+            <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
+              />
+            </svg>
+            <span>Learned</span>
+          </button>
+        </template>
+        <div v-else class="d-grid gap-2">
+          <button
+            type="button"
+            class="btn w-100 d-flex align-items-center justify-content-center gap-2"
+            :class="practicing ? 'btn-warning' : 'btn-outline-warning'"
+            :title="practicing ? 'Remove from practice list' : ''"
+            @click="$emit('toggle-practice', algorithm.id)"
+          >
+            <svg class="practice-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z" />
+              <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z" />
+            </svg>
+            <span>{{ practicing ? 'Practicing' : 'Mark as practicing' }}</span>
+          </button>
+          <button
+            type="button"
+            class="btn w-100 d-flex align-items-center justify-content-center gap-2 btn-outline-success"
+            @click="$emit('toggle-learned', algorithm.id)"
+          >
+            <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01z"
+              />
+            </svg>
+            <span>Mark as learned</span>
+          </button>
+        </div>
       </div>
       </template>
     </div>
@@ -352,6 +419,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  practicing: {
+    type: Boolean,
+    default: false,
+  },
   showToggle: {
     type: Boolean,
     default: true,
@@ -374,7 +445,13 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['toggle', 'update-my-alg', 'update-my-name', 'filter-by-type']);
+const emit = defineEmits(['toggle-learned', 'toggle-practice', 'update-my-alg', 'update-my-name', 'filter-by-type']);
+
+const libraryStatusLabel = computed(() => {
+  if (props.learned) return 'Learned';
+  if (props.practicing) return 'Practicing';
+  return 'In progress';
+});
 
 const displayName = computed(() => {
   const custom = props.myName;

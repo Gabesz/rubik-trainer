@@ -1,12 +1,14 @@
-import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue';
+import { computed, ref, watch, onBeforeUnmount } from 'vue';
 import { useAuth } from './useAuth';
 import { useUserData } from './useUserData';
 
 export function useLearned(mode) {
   const STORAGE_KEY = `${mode}-learned`;
+  const PRACTICE_KEY = `${mode}-practicing`;
   const ALG_KEY = `${mode}-my-algs`;
   const NAMES_KEY = `${mode}-my-names`;
   const learnedIds = ref([]);
+  const practiceIds = ref([]);
   const myAlgs = ref({});
   const myNames = ref({});
   let initialised = false;
@@ -16,7 +18,8 @@ export function useLearned(mode) {
   const { currentUser } = useAuth();
   const { 
     loadUserData, 
-    saveLearnedIds, 
+    saveLearnedIds,
+    savePracticingIds,
     saveMyAlgs, 
     saveMyNames,
     subscribeToUserData,
@@ -25,6 +28,11 @@ export function useLearned(mode) {
 
   // Check if using Firebase (user is logged in)
   const useFirebase = computed(() => !!currentUser.value);
+
+  function normalizePracticeAgainstLearned() {
+    const learnedSet = new Set(learnedIds.value);
+    practiceIds.value = practiceIds.value.filter((id) => !learnedSet.has(id));
+  }
 
   async function loadFromStorage() {
     if (initialised || typeof window === 'undefined') {
@@ -36,6 +44,8 @@ export function useLearned(mode) {
       try {
         const data = await loadUserData(mode);
         learnedIds.value = data.learnedIds || [];
+        practiceIds.value = data.practiceIds || [];
+        normalizePracticeAgainstLearned();
         myAlgs.value = data.myAlgs || {};
         myNames.value = data.myNames || {};
         
@@ -48,6 +58,8 @@ export function useLearned(mode) {
             // Reload after migration
             const migratedData = await loadUserData(mode);
             learnedIds.value = migratedData.learnedIds || [];
+            practiceIds.value = migratedData.practiceIds || [];
+            normalizePracticeAgainstLearned();
             myAlgs.value = migratedData.myAlgs || {};
             myNames.value = migratedData.myNames || {};
           }
@@ -59,6 +71,8 @@ export function useLearned(mode) {
         }
         firebaseUnsubscribe = subscribeToUserData(mode, (data) => {
           learnedIds.value = data.learnedIds || [];
+          practiceIds.value = data.practiceIds || [];
+          normalizePracticeAgainstLearned();
           myAlgs.value = data.myAlgs || {};
           myNames.value = data.myNames || {};
         });
@@ -84,6 +98,16 @@ export function useLearned(mode) {
           learnedIds.value = parsed;
         }
       }
+      const storedPractice = window.localStorage.getItem(PRACTICE_KEY);
+      if (storedPractice) {
+        const parsedPractice = JSON.parse(storedPractice);
+        if (Array.isArray(parsedPractice)) {
+          practiceIds.value = parsedPractice;
+        }
+      } else {
+        practiceIds.value = [];
+      }
+      normalizePracticeAgainstLearned();
       const storedAlgs = window.localStorage.getItem(ALG_KEY);
       if (storedAlgs) {
         const parsedAlgs = JSON.parse(storedAlgs);
@@ -106,6 +130,7 @@ export function useLearned(mode) {
   async function reloadFromStorage(newMode) {
     const targetMode = newMode || mode;
     const storageKey = `${targetMode}-learned`;
+    const practiceStorageKey = `${targetMode}-practicing`;
     const algKey = `${targetMode}-my-algs`;
     const namesKey = `${targetMode}-my-names`;
     
@@ -115,6 +140,8 @@ export function useLearned(mode) {
       try {
         const data = await loadUserData(targetMode);
         learnedIds.value = data.learnedIds || [];
+        practiceIds.value = data.practiceIds || [];
+        normalizePracticeAgainstLearned();
         myAlgs.value = data.myAlgs || {};
         myNames.value = data.myNames || {};
         
@@ -124,6 +151,8 @@ export function useLearned(mode) {
         }
         firebaseUnsubscribe = subscribeToUserData(targetMode, (data) => {
           learnedIds.value = data.learnedIds || [];
+          practiceIds.value = data.practiceIds || [];
+          normalizePracticeAgainstLearned();
           myAlgs.value = data.myAlgs || {};
           myNames.value = data.myNames || {};
         });
@@ -139,6 +168,14 @@ export function useLearned(mode) {
         } else {
           learnedIds.value = [];
         }
+        const storedPracticeFb = window.localStorage.getItem(practiceStorageKey);
+        if (storedPracticeFb) {
+          const parsedP = JSON.parse(storedPracticeFb);
+          practiceIds.value = Array.isArray(parsedP) ? parsedP : [];
+        } else {
+          practiceIds.value = [];
+        }
+        normalizePracticeAgainstLearned();
         const storedAlgs = window.localStorage.getItem(algKey);
         if (storedAlgs) {
           const parsedAlgs = JSON.parse(storedAlgs);
@@ -173,6 +210,14 @@ export function useLearned(mode) {
         } else {
           learnedIds.value = [];
         }
+        const storedPracticeLs = window.localStorage.getItem(practiceStorageKey);
+        if (storedPracticeLs) {
+          const parsedP = JSON.parse(storedPracticeLs);
+          practiceIds.value = Array.isArray(parsedP) ? parsedP : [];
+        } else {
+          practiceIds.value = [];
+        }
+        normalizePracticeAgainstLearned();
         const storedAlgs = window.localStorage.getItem(algKey);
         if (storedAlgs) {
           const parsedAlgs = JSON.parse(storedAlgs);
@@ -198,6 +243,7 @@ export function useLearned(mode) {
       } catch (error) {
         console.error(`Failed to reload learned algorithms from storage (${targetMode}):`, error);
         learnedIds.value = [];
+        practiceIds.value = [];
         myAlgs.value = {};
       }
     }
@@ -212,6 +258,7 @@ export function useLearned(mode) {
 
     const targetMode = currentMode || mode;
     const storageKey = `${targetMode}-learned`;
+    const practiceStorageKey = `${targetMode}-practicing`;
     const algKey = `${targetMode}-my-algs`;
     const namesKey = `${targetMode}-my-names`;
 
@@ -220,6 +267,7 @@ export function useLearned(mode) {
       try {
         await Promise.all([
           saveLearnedIds(targetMode, learnedIds.value),
+          savePracticingIds(targetMode, practiceIds.value),
           saveMyAlgs(targetMode, myAlgs.value),
           saveMyNames(targetMode, myNames.value)
         ]);
@@ -228,6 +276,7 @@ export function useLearned(mode) {
         // Fallback to localStorage
         try {
           window.localStorage.setItem(storageKey, JSON.stringify(learnedIds.value));
+          window.localStorage.setItem(practiceStorageKey, JSON.stringify(practiceIds.value));
           window.localStorage.setItem(algKey, JSON.stringify(myAlgs.value));
           window.localStorage.setItem(namesKey, JSON.stringify(myNames.value));
         } catch (localError) {
@@ -238,6 +287,7 @@ export function useLearned(mode) {
       // Save to localStorage
       try {
         window.localStorage.setItem(storageKey, JSON.stringify(learnedIds.value));
+        window.localStorage.setItem(practiceStorageKey, JSON.stringify(practiceIds.value));
         window.localStorage.setItem(algKey, JSON.stringify(myAlgs.value));
         window.localStorage.setItem(namesKey, JSON.stringify(myNames.value));
       } catch (error) {
@@ -276,7 +326,12 @@ export function useLearned(mode) {
 
   const learnedCount = computed(() => learnedIds.value.length);
 
+  const practiceCount = computed(() => practiceIds.value.length);
+
   const isLearned = (id) => learnedIds.value.includes(id);
+
+  const isPracticing = (id) =>
+    practiceIds.value.includes(id) && !learnedIds.value.includes(id);
 
   const getMyAlg = (id) => myAlgs.value[id];
 
@@ -316,8 +371,25 @@ export function useLearned(mode) {
       updated.delete(id);
     } else {
       updated.add(id);
+      const pr = new Set(practiceIds.value);
+      pr.delete(id);
+      practiceIds.value = Array.from(pr);
     }
     learnedIds.value = Array.from(updated);
+    await persist(currentMode);
+  };
+
+  const togglePractice = async (id, currentMode) => {
+    if (learnedIds.value.includes(id)) {
+      return;
+    }
+    const updated = new Set(practiceIds.value);
+    if (updated.has(id)) {
+      updated.delete(id);
+    } else {
+      updated.add(id);
+    }
+    practiceIds.value = Array.from(updated);
     await persist(currentMode);
   };
 
@@ -328,10 +400,14 @@ export function useLearned(mode) {
 
   return {
     learnedIds,
+    practiceIds,
     learnedCount,
+    practiceCount,
     toggleLearned,
+    togglePractice,
     resetLearned,
     isLearned,
+    isPracticing,
     getMyAlg,
     setMyAlg,
     getMyName,

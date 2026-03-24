@@ -23,7 +23,7 @@ export function useUserData() {
   // Load user data for a specific mode
   const loadUserData = async (mode) => {
     if (!currentUser.value) {
-      return { learnedIds: [], myAlgs: {}, myNames: {} };
+      return { learnedIds: [], practiceIds: [], myAlgs: {}, myNames: {} };
     }
 
     loading.value = true;
@@ -37,6 +37,7 @@ export function useUserData() {
         const data = userDoc.data();
         return {
           learnedIds: data.learned?.[mode] || [],
+          practiceIds: data.practicing?.[mode] || [],
           myAlgs: data.myAlgs?.[mode] || {},
           myNames: data.myNames?.[mode] || {}
         };
@@ -46,6 +47,9 @@ export function useUserData() {
           learned: {
             [mode]: []
           },
+          practicing: {
+            [mode]: []
+          },
           myAlgs: {
             [mode]: {}
           },
@@ -53,12 +57,46 @@ export function useUserData() {
             [mode]: {}
           }
         });
-        return { learnedIds: [], myAlgs: {}, myNames: {} };
+        return { learnedIds: [], practiceIds: [], myAlgs: {}, myNames: {} };
       }
     } catch (err) {
       error.value = err.message;
       console.error('Failed to load user data:', err);
-      return { learnedIds: [], myAlgs: {}, myNames: {} };
+      return { learnedIds: [], practiceIds: [], myAlgs: {}, myNames: {} };
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  // Save practicing IDs for a specific mode
+  const savePracticingIds = async (mode, ids) => {
+    if (!currentUser.value) return { success: false, error: 'Not authenticated' };
+
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const userDocRef = getUserDocRef();
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        await updateDoc(userDocRef, {
+          [`practicing.${mode}`]: ids
+        });
+      } else {
+        await setDoc(userDocRef, {
+          learned: {},
+          practicing: {
+            [mode]: ids
+          },
+          myAlgs: {}
+        });
+      }
+      return { success: true };
+    } catch (err) {
+      error.value = err.message;
+      console.error('Failed to save practicing IDs:', err);
+      return { success: false, error: err.message };
     } finally {
       loading.value = false;
     }
@@ -167,7 +205,7 @@ export function useUserData() {
   // Subscribe to real-time updates for user data
   const subscribeToUserData = (mode, callback) => {
     if (!currentUser.value) {
-      callback({ learnedIds: [], myAlgs: {}, myNames: {} });
+      callback({ learnedIds: [], practiceIds: [], myAlgs: {}, myNames: {} });
       return () => {};
     }
 
@@ -179,16 +217,17 @@ export function useUserData() {
           const data = snapshot.data();
           callback({
             learnedIds: data.learned?.[mode] || [],
+            practiceIds: data.practicing?.[mode] || [],
             myAlgs: data.myAlgs?.[mode] || {},
             myNames: data.myNames?.[mode] || {}
           });
         } else {
-          callback({ learnedIds: [], myAlgs: {}, myNames: {} });
+          callback({ learnedIds: [], practiceIds: [], myAlgs: {}, myNames: {} });
         }
       },
       (err) => {
         console.error('Error subscribing to user data:', err);
-        callback({ learnedIds: [], myAlgs: {}, myNames: {} });
+        callback({ learnedIds: [], practiceIds: [], myAlgs: {}, myNames: {} });
       }
     );
 
@@ -201,19 +240,27 @@ export function useUserData() {
 
     try {
       const storageKey = `${mode}-learned`;
+      const practiceKey = `${mode}-practicing`;
       const algKey = `${mode}-my-algs`;
       const namesKey = `${mode}-my-names`;
       
       const storedLearned = window.localStorage.getItem(storageKey);
+      const storedPractice = window.localStorage.getItem(practiceKey);
       const storedAlgs = window.localStorage.getItem(algKey);
       const storedNames = window.localStorage.getItem(namesKey);
 
       const learnedIds = storedLearned ? JSON.parse(storedLearned) : [];
+      const practiceIds = storedPractice ? JSON.parse(storedPractice) : [];
       const myAlgs = storedAlgs ? JSON.parse(storedAlgs) : {};
       const myNames = storedNames ? JSON.parse(storedNames) : {};
 
       // Only migrate if there's data to migrate
-      if (learnedIds.length > 0 || Object.keys(myAlgs).length > 0 || Object.keys(myNames).length > 0) {
+      if (
+        learnedIds.length > 0 ||
+        (Array.isArray(practiceIds) && practiceIds.length > 0) ||
+        Object.keys(myAlgs).length > 0 ||
+        Object.keys(myNames).length > 0
+      ) {
         const userDocRef = getUserDocRef();
         const userDoc = await getDoc(userDocRef);
 
@@ -221,22 +268,34 @@ export function useUserData() {
           // Merge with existing data (don't overwrite)
           const existingData = userDoc.data();
           const existingLearned = existingData.learned?.[mode] || [];
+          const existingPractice = existingData.practicing?.[mode] || [];
           const existingAlgs = existingData.myAlgs?.[mode] || {};
           const existingNames = existingData.myNames?.[mode] || {};
 
           const mergedLearned = [...new Set([...existingLearned, ...learnedIds])];
+          const practiceArr = Array.isArray(practiceIds) ? practiceIds : [];
+          const mergedPractice = [...new Set([...existingPractice, ...practiceArr])].filter(
+            (id) => !mergedLearned.includes(id)
+          );
           const mergedAlgs = { ...existingAlgs, ...myAlgs };
           const mergedNames = { ...existingNames, ...myNames };
 
           await updateDoc(userDocRef, {
             [`learned.${mode}`]: mergedLearned,
+            [`practicing.${mode}`]: mergedPractice,
             [`myAlgs.${mode}`]: mergedAlgs,
             [`myNames.${mode}`]: mergedNames
           });
         } else {
+          const practiceArr = Array.isArray(practiceIds) ? practiceIds : [];
+          const mergedLearnedSet = new Set(learnedIds);
+          const mergedPractice = [...new Set(practiceArr)].filter((id) => !mergedLearnedSet.has(id));
           await setDoc(userDocRef, {
             learned: {
               [mode]: learnedIds
+            },
+            practicing: {
+              [mode]: mergedPractice
             },
             myAlgs: {
               [mode]: myAlgs
@@ -263,6 +322,7 @@ export function useUserData() {
     error,
     loadUserData,
     saveLearnedIds,
+    savePracticingIds,
     saveMyAlgs,
     saveMyNames,
     subscribeToUserData,

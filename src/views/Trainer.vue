@@ -268,7 +268,7 @@
               <button
                 type="button"
                 class="badge-filter-item list-filter"
-                :class="{ active: activeType === null && !activeLearnedOnly }"
+                :class="{ active: activeType === null && !activeLearnedOnly && !activePracticingOnly }"
                 @click="setAllFilter"
                 data-bs-dismiss="offcanvas"
               >
@@ -284,6 +284,16 @@
               >
                 <span class="label">Learned</span>
                 <span class="count">{{ learnedCount }}</span>
+              </button>
+              <button
+                type="button"
+                class="badge-filter-item list-filter badge-filter-item--practicing"
+                :class="{ active: activePracticingOnly }"
+                @click="togglePracticingFilter"
+                data-bs-dismiss="offcanvas"
+              >
+                <span class="label">Practicing</span>
+                <span class="count">{{ practiceCount }}</span>
               </button>
               <button
                 v-for="type in caseTypes"
@@ -354,6 +364,8 @@
             <span>{{ algorithms.length }} total</span>
             <span class="rt-case-library__stats-sep" aria-hidden="true">·</span>
             <span>{{ learnedCount }} learned</span>
+            <span class="rt-case-library__stats-sep" aria-hidden="true">·</span>
+            <span>{{ practiceCount }} practicing</span>
           </p>
         </header>
 
@@ -361,7 +373,7 @@
           <button
             type="button"
             class="badge-filter-item list-filter"
-            :class="{ active: activeType === null && !activeLearnedOnly }"
+            :class="{ active: activeType === null && !activeLearnedOnly && !activePracticingOnly }"
             @click="setAllFilter"
           >
             <span class="label">All</span>
@@ -375,6 +387,15 @@
           >
             <span class="label">Learned</span>
             <span class="count">{{ learnedCount }}</span>
+          </button>
+          <button
+            type="button"
+            class="badge-filter-item list-filter badge-filter-item--practicing"
+            :class="{ active: activePracticingOnly }"
+            @click="togglePracticingFilter"
+          >
+            <span class="label">Practicing</span>
+            <span class="count">{{ practiceCount }}</span>
           </button>
           <button
             v-for="type in caseTypes"
@@ -429,11 +450,13 @@
                 :algorithm="algorithm"
                 :mode="mode"
                 :learned="isLearned(algorithm.id)"
+                :practicing="isPracticing(algorithm.id)"
                 :my-alg="getMyAlg(algorithm.id)"
                 :my-name="getMyName(algorithm.id)"
                 :case-index="visibleCaseNumberById.get(algorithm.id)"
                 library-layout
-                @toggle="toggleLearned"
+                @toggle-learned="toggleLearned"
+                @toggle-practice="togglePractice"
                 @update-my-alg="setMyAlg"
                 @update-my-name="setMyName"
                 @filter-by-type="setActiveType"
@@ -525,6 +548,7 @@ const currentTraining = ref(null);
 const shouldBlurStandardAlg = ref(false);
 const activeType = ref(null);
 const activeLearnedOnly = ref(false);
+const activePracticingOnly = ref(false);
 const lastTrainingId = ref(null);
 const showScrollTop = ref(false);
 const sortMode = ref('default');
@@ -535,20 +559,24 @@ let sortObserver = null;
 const STORAGE_KEYS = computed(() => ({
   filterType: `${props.mode}.filter.type`,
   learnedOnly: `${props.mode}.filter.learnedOnly`,
+  practicingOnly: `${props.mode}.filter.practicingOnly`,
   sortMode: `${props.mode}.sort.mode`,
 }));
 
 const {
   learnedIds,
   learnedCount,
+  practiceCount,
   getMyAlg,
   setMyAlg: setMyAlgEntry,
   getMyName,
   setMyName: setMyNameEntry,
   resetMyAlgs,
   toggleLearned: toggleLearnedEntry,
+  togglePractice: togglePracticeEntry,
   resetLearned: resetLearnedEntry,
   isLearned,
+  isPracticing,
   reloadFromStorage,
 } = useLearned(props.mode);
 
@@ -611,6 +639,8 @@ const filteredAlgorithms = computed(() => {
   if (activeLearnedOnly.value) {
     const learnedSet = new Set(learnedIds.value);
     list = list.filter((algorithm) => learnedSet.has(algorithm.id));
+  } else if (activePracticingOnly.value) {
+    list = list.filter((algorithm) => isPracticing(algorithm.id));
   }
   return list;
 });
@@ -793,6 +823,10 @@ async function toggleLearned(id) {
   }
 }
 
+async function togglePractice(id) {
+  await togglePracticeEntry(id, props.mode);
+}
+
 function handleReset() {
   resetLearnedEntry(props.mode);
   stopTraining();
@@ -802,6 +836,9 @@ function setActiveType(type) {
   if (activeLearnedOnly.value) {
     activeLearnedOnly.value = false;
   }
+  if (activePracticingOnly.value) {
+    activePracticingOnly.value = false;
+  }
   activeType.value = type;
 }
 
@@ -809,11 +846,21 @@ function toggleLearnedFilter() {
   activeLearnedOnly.value = !activeLearnedOnly.value;
   if (activeLearnedOnly.value) {
     activeType.value = null;
+    activePracticingOnly.value = false;
+  }
+}
+
+function togglePracticingFilter() {
+  activePracticingOnly.value = !activePracticingOnly.value;
+  if (activePracticingOnly.value) {
+    activeType.value = null;
+    activeLearnedOnly.value = false;
   }
 }
 
 function setAllFilter() {
   activeLearnedOnly.value = false;
+  activePracticingOnly.value = false;
   activeType.value = null;
 }
 
@@ -1049,16 +1096,23 @@ onMounted(() => {
   try {
     const savedType = localStorage.getItem(STORAGE_KEYS.value.filterType);
     const savedLearnedOnly = localStorage.getItem(STORAGE_KEYS.value.learnedOnly);
+    const savedPracticingOnly = localStorage.getItem(STORAGE_KEYS.value.practicingOnly);
     const savedSort = localStorage.getItem(STORAGE_KEYS.value.sortMode);
     if (savedSort === 'default' || savedSort === 'short') {
       sortMode.value = savedSort;
     }
     if (savedLearnedOnly === 'true') {
       activeLearnedOnly.value = true;
+      activePracticingOnly.value = false;
+      activeType.value = null;
+    } else if (savedPracticingOnly === 'true') {
+      activePracticingOnly.value = true;
+      activeLearnedOnly.value = false;
       activeType.value = null;
     } else if (savedType && savedType !== 'null') {
       activeType.value = savedType;
       activeLearnedOnly.value = false;
+      activePracticingOnly.value = false;
     }
   } catch {}
 
@@ -1294,6 +1348,20 @@ watch(activeLearnedOnly, (val) => {
     localStorage.setItem(STORAGE_KEYS.value.learnedOnly, String(val));
     if (val) {
       activeType.value = null;
+      activePracticingOnly.value = false;
+      localStorage.setItem(STORAGE_KEYS.value.filterType, 'null');
+      localStorage.setItem(STORAGE_KEYS.value.practicingOnly, 'false');
+    }
+  } catch {}
+});
+
+watch(activePracticingOnly, (val) => {
+  try {
+    localStorage.setItem(STORAGE_KEYS.value.practicingOnly, String(val));
+    if (val) {
+      activeLearnedOnly.value = false;
+      activeType.value = null;
+      localStorage.setItem(STORAGE_KEYS.value.learnedOnly, 'false');
       localStorage.setItem(STORAGE_KEYS.value.filterType, 'null');
     }
   } catch {}
@@ -1304,7 +1372,9 @@ watch(activeType, (val) => {
     localStorage.setItem(STORAGE_KEYS.value.filterType, val == null ? 'null' : String(val));
     if (val != null) {
       activeLearnedOnly.value = false;
+      activePracticingOnly.value = false;
       localStorage.setItem(STORAGE_KEYS.value.learnedOnly, 'false');
+      localStorage.setItem(STORAGE_KEYS.value.practicingOnly, 'false');
     }
   } catch {}
 });
@@ -1331,6 +1401,7 @@ watch(() => props.mode, (newMode) => {
   try {
     const savedType = localStorage.getItem(STORAGE_KEYS.value.filterType);
     const savedLearnedOnly = localStorage.getItem(STORAGE_KEYS.value.learnedOnly);
+    const savedPracticingOnly = localStorage.getItem(STORAGE_KEYS.value.practicingOnly);
     const savedSort = localStorage.getItem(STORAGE_KEYS.value.sortMode);
     if (savedSort === 'default' || savedSort === 'short') {
       sortMode.value = savedSort;
@@ -1339,20 +1410,28 @@ watch(() => props.mode, (newMode) => {
     }
     if (savedLearnedOnly === 'true') {
       activeLearnedOnly.value = true;
+      activePracticingOnly.value = false;
+      activeType.value = null;
+    } else if (savedPracticingOnly === 'true') {
+      activePracticingOnly.value = true;
+      activeLearnedOnly.value = false;
       activeType.value = null;
     } else if (savedType && savedType !== 'null') {
       activeType.value = savedType;
       activeLearnedOnly.value = false;
+      activePracticingOnly.value = false;
     } else {
       // No saved filters, reset to default
       activeType.value = null;
       activeLearnedOnly.value = false;
+      activePracticingOnly.value = false;
     }
   } catch {
     // On error, reset to default
     sortMode.value = 'default';
     activeType.value = null;
     activeLearnedOnly.value = false;
+    activePracticingOnly.value = false;
   }
   
   // Scroll to top when switching trainers

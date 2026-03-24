@@ -328,11 +328,23 @@ html.dark-theme .rt-page .algorithm-card.card {
   box-shadow: 0 0 0 2px color-mix(in srgb, #198754 40%, transparent), var(--rt-shadow-card);
 }
 
+.rt-page .algorithm-card.practicing:not(.learned) {
+  border-color: #e0a800;
+  box-shadow: 0 0 0 2px color-mix(in srgb, #ffc107 50%, transparent), var(--rt-shadow-card);
+}
+
 html[data-bs-theme='dark'] .rt-page .algorithm-card.learned,
 html.dark-theme .rt-page .algorithm-card.learned {
   border-color: var(--rt-color-tertiary);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--rt-color-tertiary) 42%, transparent),
     0 0 28px color-mix(in srgb, var(--rt-color-tertiary) 22%, transparent);
+}
+
+html[data-bs-theme='dark'] .rt-page .algorithm-card.practicing:not(.learned),
+html.dark-theme .rt-page .algorithm-card.practicing:not(.learned) {
+  border-color: color-mix(in srgb, #ffc107 75%, var(--rt-color-outline-variant));
+  box-shadow: 0 0 0 2px color-mix(in srgb, #ffc107 38%, transparent),
+    0 0 22px color-mix(in srgb, #ffc107 18%, transparent);
 }
 
 .rt-page .training-panel .algorithm-card.display-card {
@@ -580,6 +592,21 @@ html.dark-theme .rt-page .algorithm-card.algorithm-card--library.learned:hover {
   box-shadow: var(--rt-shadow-glow-primary);
 }
 
+.rt-page .algorithm-card.algorithm-card--library.practicing:not(.learned) {
+  border-color: color-mix(in srgb, #ffc107 45%, var(--rt-color-outline-variant) 55%);
+  box-shadow: var(--rt-shadow-card);
+}
+
+.rt-page .algorithm-card.algorithm-card--library.practicing:not(.learned):hover {
+  box-shadow: var(--rt-shadow-glow-primary);
+}
+
+html[data-bs-theme='dark'] .rt-page .algorithm-card.algorithm-card--library.practicing:not(.learned),
+html.dark-theme .rt-page .algorithm-card.algorithm-card--library.practicing:not(.learned) {
+  border-color: color-mix(in srgb, #ffc107 35%, var(--rt-color-outline-variant) 65%);
+  box-shadow: var(--rt-shadow-card);
+}
+
 .rt-lib-card__top {
   display: flex;
   flex-wrap: wrap;
@@ -610,6 +637,15 @@ html.dark-theme .rt-page .algorithm-card.algorithm-card--library.learned:hover {
 
 .rt-lib-card__status--on {
   color: var(--rt-color-tertiary);
+}
+
+.rt-lib-card__status--practice {
+  color: color-mix(in srgb, #b8860b 70%, var(--rt-color-on-surface) 30%);
+}
+
+html[data-bs-theme='dark'] .rt-lib-card__status--practice,
+html.dark-theme .rt-lib-card__status--practice {
+  color: color-mix(in srgb, #ffd54f 85%, var(--rt-color-on-surface) 15%);
 }
 
 .rt-lib-card__status-icon {
@@ -665,7 +701,8 @@ html.dark-theme .rt-page .algorithm-card.algorithm-card--library.learned:hover {
   border-color: transparent;
 }
 
-.heart-icon {
+.heart-icon,
+.practice-icon {
   width: 1em;
   height: 1em;
   display: inline-block;
@@ -987,6 +1024,41 @@ html.dark-theme .mobile-menu-user-icon .user-icon-btn:hover {
   background-color: #157347;
   border-color: rgba(255, 255, 255, 0.35);
 }
+
+/* Practicing list filter — matches btn-warning / outline-warning */
+.badge-filter-item.list-filter.badge-filter-item--practicing {
+  border-color: rgba(217, 164, 6, 0.4);
+  background-color: rgba(255, 193, 7, 0.14);
+  color: #856404;
+}
+
+.badge-filter-item.list-filter.badge-filter-item--practicing.active {
+  background-color: #ffc107;
+  color: #212529;
+  box-shadow: 0 0.5rem 1rem rgba(255, 193, 7, 0.35);
+}
+
+.badge-filter-item.list-filter.badge-filter-item--practicing.active .count {
+  background-color: rgba(0, 0, 0, 0.12);
+  color: #212529;
+}
+
+.badge-filter-item.list-filter.badge-filter-item--practicing .count {
+  background-color: rgba(255, 193, 7, 0.35);
+  color: #664d03;
+}
+
+.badge-filter-item.list-filter.badge-filter-item--practicing:hover {
+  border-color: rgba(217, 164, 6, 0.6);
+  background-color: rgba(255, 193, 7, 0.26);
+}
+
+.badge-filter-item.list-filter.badge-filter-item--practicing.active:hover {
+  background-color: #e0a800;
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #212529;
+}
+
 :root {
   color-scheme: light dark;
   font-family: var(--rt-font-sans);
@@ -1174,6 +1246,44 @@ html.dark-theme .badge-filter-item.list-filter.active {
   color: #fff;
 }
 
+html[data-bs-theme="dark"] .badge-filter-item.list-filter.badge-filter-item--practicing,
+html.dark-theme .badge-filter-item.list-filter.badge-filter-item--practicing {
+  border-color: rgba(255, 193, 7, 0.4);
+  background-color: rgba(255, 193, 7, 0.12);
+  color: #ffda6a;
+}
+
+html[data-bs-theme="dark"] .badge-filter-item.list-filter.badge-filter-item--practicing.active,
+html.dark-theme .badge-filter-item.list-filter.badge-filter-item--practicing.active {
+  background-color: #cc9a06;
+  color: #1a1a1a;
+  box-shadow: 0 0.5rem 1rem rgba(255, 193, 7, 0.25);
+}
+
+html[data-bs-theme="dark"] .badge-filter-item.list-filter.badge-filter-item--practicing.active .count,
+html.dark-theme .badge-filter-item.list-filter.badge-filter-item--practicing.active .count {
+  background-color: rgba(0, 0, 0, 0.15);
+  color: #1a1a1a;
+}
+
+html[data-bs-theme="dark"] .badge-filter-item.list-filter.badge-filter-item--practicing .count,
+html.dark-theme .badge-filter-item.list-filter.badge-filter-item--practicing .count {
+  background-color: rgba(255, 193, 7, 0.22);
+  color: #ffecb3;
+}
+
+html[data-bs-theme="dark"] .badge-filter-item.list-filter.badge-filter-item--practicing:hover,
+html.dark-theme .badge-filter-item.list-filter.badge-filter-item--practicing:hover {
+  border-color: rgba(255, 193, 7, 0.55);
+  background-color: rgba(255, 193, 7, 0.2);
+}
+
+html[data-bs-theme="dark"] .badge-filter-item.list-filter.badge-filter-item--practicing.active:hover,
+html.dark-theme .badge-filter-item.list-filter.badge-filter-item--practicing.active:hover {
+  background-color: #b8860b;
+  color: #1a1a1a;
+}
+
 html[data-bs-theme="dark"] .btn-primary,
 html.dark-theme .btn-primary {
   background-color: #4a9eff;
@@ -1270,6 +1380,12 @@ html[data-bs-theme="dark"] .algorithm-card.learned,
 html.dark-theme .algorithm-card.learned {
   border-color: #198754;
   box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.4);
+}
+
+html[data-bs-theme="dark"] .algorithm-card.practicing:not(.learned),
+html.dark-theme .algorithm-card.practicing:not(.learned) {
+  border-color: #cc9a06;
+  box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.35);
 }
 
 html[data-bs-theme="dark"] .navbar-toggler,
@@ -1799,6 +1915,11 @@ html.dark-theme .algorithm-moves-container .algorithm-move {
 .algorithm-card.learned {
   border-color: #198754;
   box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.3);
+}
+
+.algorithm-card.practicing:not(.learned) {
+  border-color: #e0a800;
+  box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.45);
 }
 
 .algorithm-card img {
