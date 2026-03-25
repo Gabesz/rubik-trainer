@@ -1,5 +1,6 @@
+import rawAlgorithms from './pll-algorithms.json';
+
 const BASE_URL = formatBaseURL(import.meta.env.BASE_URL);
-const DATA_URL = `${BASE_URL}pll/algorithms.json`;
 
 function formatBaseURL(url) {
   if (!url) {
@@ -14,18 +15,14 @@ function deriveImagePath(name) {
 }
 
 function deriveId(name) {
-  // Extract number or code from name (e.g., "PLL Aa" -> "pll-aa", "PLL 1" -> "pll-1")
-  // First try to match PLL codes (Aa, Ab, etc.)
   const codeMatch = name.match(/PLL\s*([A-Za-z]+)/i);
   if (codeMatch) {
     return `pll-${codeMatch[1].toLowerCase()}`;
   }
-  // Then try to match numbers
   const numberMatch = name.match(/PLL\s*(\d+)/i);
   if (numberMatch) {
     return `pll-${numberMatch[1]}`;
   }
-  // Fallback to original logic if no match found
   return name.trim().toLowerCase().replace(/\s+/g, '-');
 }
 
@@ -35,17 +32,6 @@ function deriveDetailUrl(name) {
 }
 
 export async function fetchAlgorithms() {
-  try {
-    const response = await fetch(DATA_URL);
-    if (!response.ok) {
-      throw new Error(
-        `Failed to load PLL algorithms from ${DATA_URL}. ` +
-        `HTTP ${response.status} ${response.statusText}. ` +
-        `Please check if the file exists and the server is accessible.`
-      );
-    }
-
-    const rawAlgorithms = await response.json();
   return rawAlgorithms.map((algorithm) => ({
     id: deriveId(algorithm.name),
     name: algorithm.name,
@@ -55,15 +41,4 @@ export async function fetchAlgorithms() {
     detailUrl: deriveDetailUrl(algorithm.name),
     imageUrl: deriveImagePath(algorithm.name),
   }));
-  } catch (error) {
-    if (error instanceof TypeError && error.message.includes('fetch')) {
-      throw new Error(
-        `Network error while loading PLL algorithms from ${DATA_URL}. ` +
-        `Original error: ${error.message}. ` +
-        `Please check your network connection and try again.`
-      );
-    }
-    throw error;
-  }
 }
-

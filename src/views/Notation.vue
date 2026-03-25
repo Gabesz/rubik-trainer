@@ -147,11 +147,13 @@
           <router-link class="rt-mmenu-link rt-mmenu-link--active" to="/notation">Notation</router-link>
         </li>
         <li>
-          <UserIcon
-            unique-id="notation-mobile"
-            class="mobile-menu-user-icon"
-            :close-mobile-navbar="closeNavbar"
-          />
+          <span class="rt-mmenu-user-host">
+            <UserIcon
+              unique-id="notation-mobile"
+              class="mobile-menu-user-icon"
+              :close-mobile-navbar="closeNavbar"
+            />
+          </span>
         </li>
         <li>
           <a

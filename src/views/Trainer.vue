@@ -242,6 +242,15 @@
         <li>
           <router-link class="rt-mmenu-link" to="/notation">Notation</router-link>
         </li>
+        <li>
+          <span class="rt-mmenu-user-host">
+            <UserIcon
+              :unique-id="`trainer-mobile-${mode}`"
+              class="mobile-menu-user-icon"
+              :close-mobile-navbar="closeNavbar"
+            />
+          </span>
+        </li>
         <template v-if="isTraining">
           <li>
             <a class="rt-mmenu-link" href="#" @click.prevent="handleNavClick(stopTraining)">
@@ -327,13 +336,6 @@
             </a>
           </li>
         </template>
-        <li>
-          <UserIcon
-            :unique-id="`trainer-mobile-${mode}`"
-            class="mobile-menu-user-icon"
-            :close-mobile-navbar="closeNavbar"
-          />
-        </li>
         <li>
           <a
             class="rt-mmenu-link"

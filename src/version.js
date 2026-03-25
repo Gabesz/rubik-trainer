@@ -1,2 +1,2 @@
 // This file is auto-generated during build
-export const APP_VERSION = 'v0.0.46';
+export const APP_VERSION = 'v0.0.52';

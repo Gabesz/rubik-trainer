@@ -1100,6 +1100,16 @@ body.mm-wrapper:not(.mm-wrapper--opened) .mm-wrapper__blocker {
   pointer-events: none;
 }
 
+/* mmenu _initListitem only tags direct a|span with mm-listitem__text — wrap UserIcon in .rt-mmenu-user-host */
+.mm-menu .mm-listitem > .rt-mmenu-user-host.mm-listitem__text {
+  display: flex !important;
+  align-items: stretch;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 !important;
+  min-height: var(--mm-listitem-size);
+}
+
 .mm-menu .mm-listitem .mobile-menu-user-icon {
   width: 100%;
   display: flex;

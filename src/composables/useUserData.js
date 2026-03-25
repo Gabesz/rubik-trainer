@@ -8,6 +8,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { useAuth } from './useAuth';
+import { TRAINER_MODES, normalizeAllModes } from '../utils/userDataCsv';
 
 export function useUserData() {
   const { currentUser } = useAuth();
@@ -317,6 +318,76 @@ export function useUserData() {
     }
   };
 
+  /** Full training snapshot for backup (all modes). Requires auth. */
+  const loadFullTrainingData = async () => {
+    if (!currentUser.value) {
+      return null;
+    }
+
+    try {
+      const userDocRef = getUserDocRef();
+      const userDoc = await getDoc(userDocRef);
+      const training = {
+        learned: {},
+        practicing: {},
+        myAlgs: {},
+        myNames: {},
+      };
+      if (!userDoc.exists()) {
+        for (const mode of TRAINER_MODES) {
+          training.learned[mode] = [];
+          training.practicing[mode] = [];
+          training.myAlgs[mode] = {};
+          training.myNames[mode] = {};
+        }
+        return normalizeAllModes(training);
+      }
+      const data = userDoc.data();
+      for (const mode of TRAINER_MODES) {
+        training.learned[mode] = data.learned?.[mode] || [];
+        training.practicing[mode] = data.practicing?.[mode] || [];
+        training.myAlgs[mode] = data.myAlgs?.[mode] || {};
+        training.myNames[mode] = data.myNames?.[mode] || {};
+      }
+      return normalizeAllModes(training);
+    } catch (err) {
+      console.error('Failed to load full training data:', err);
+      return null;
+    }
+  };
+
+  /** Replace all mode training fields (merge-safe with other user doc fields). */
+  const saveFullTrainingData = async (training) => {
+    if (!currentUser.value) {
+      return { success: false, error: 'Not authenticated' };
+    }
+
+    const n = normalizeAllModes(training);
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const userDocRef = getUserDocRef();
+      await setDoc(
+        userDocRef,
+        {
+          learned: n.learned,
+          practicing: n.practicing,
+          myAlgs: n.myAlgs,
+          myNames: n.myNames,
+        },
+        { merge: true },
+      );
+      return { success: true };
+    } catch (err) {
+      error.value = err.message;
+      console.error('Failed to save full training data:', err);
+      return { success: false, error: err.message };
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
     loading,
     error,
@@ -326,7 +397,9 @@ export function useUserData() {
     saveMyAlgs,
     saveMyNames,
     subscribeToUserData,
-    migrateLocalStorageToFirebase
+    migrateLocalStorageToFirebase,
+    loadFullTrainingData,
+    saveFullTrainingData,
   };
 }
 

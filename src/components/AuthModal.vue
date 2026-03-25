@@ -114,6 +114,43 @@
 
                 <hr />
 
+                <div class="mb-3">
+                  <h6 class="mb-2">Backup</h6>
+                  <p class="small text-muted mb-2">
+                    Export or import your progress, custom algorithms and names, list filters, and theme as a CSV file. The export lists every algorithm; my_alg is your custom moves or the default standard algorithm if unchanged. Email and password are never included.
+                  </p>
+                  <div class="d-flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      class="btn btn-outline-primary flex-grow-1"
+                      @click="handleExportData"
+                      :disabled="!!backupBusy"
+                    >
+                      <span v-if="backupBusy === 'export'" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Export (.csv)
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary flex-grow-1"
+                      @click="triggerImportFile"
+                      :disabled="!!backupBusy"
+                    >
+                      <span v-if="backupBusy === 'import'" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Import (.csv)
+                    </button>
+                  </div>
+                  <input
+                    ref="importFileInput"
+                    type="file"
+                    class="d-none"
+                    accept=".csv,text/csv"
+                    aria-hidden="true"
+                    @change="handleImportFile"
+                  />
+                </div>
+
+                <hr />
+
                 <button
                   type="button"
                   class="btn btn-danger w-100"
@@ -231,8 +268,21 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue';
+import { ref, watch } from 'vue';
 import { useAuth } from '../composables/useAuth';
+import { useUserData } from '../composables/useUserData';
+import { useTheme } from '../composables/useTheme';
+import {
+  buildUserDataCsv,
+  parseUserDataCsv,
+  collectTrainingFromLocalStorage,
+  collectTrainerPrefsFromLocalStorage,
+  collectThemeFromLocalStorage,
+  applyTrainingToLocalStorage,
+  applyTrainerPrefsToLocalStorage,
+  fetchAlgorithmExportCatalog,
+  stripMyAlgsMatchingDefaults,
+} from '../utils/userDataCsv';
 
 const props = defineProps({
   show: {
@@ -248,6 +298,11 @@ const props = defineProps({
 const emit = defineEmits(['close']);
 
 const { currentUser, signIn, signUp, signOut, updatePassword } = useAuth();
+const { loadFullTrainingData, saveFullTrainingData } = useUserData();
+const { setTheme } = useTheme();
+
+const importFileInput = ref(null);
+const backupBusy = ref('');
 
 const isLoginMode = ref(true);
 const showChangePassword = ref(false);
@@ -284,6 +339,7 @@ watch(() => props.show, (newVal) => {
     message.value = '';
     messageType.value = '';
     isLoginMode.value = true;
+    backupBusy.value = '';
   }
 });
 
@@ -421,6 +477,112 @@ const handleBackdropClick = (event) => {
     handleClose();
   }
 };
+
+function triggerImportFile() {
+  importFileInput.value?.click();
+}
+
+async function handleExportData() {
+  message.value = '';
+  messageType.value = '';
+  backupBusy.value = 'export';
+
+  try {
+    let training;
+    if (currentUser.value) {
+      training = await loadFullTrainingData();
+      if (!training) {
+        message.value = 'Could not load your data for export.';
+        messageType.value = 'error';
+        return;
+      }
+    } else {
+      training = collectTrainingFromLocalStorage();
+    }
+
+    const theme = collectThemeFromLocalStorage();
+    const prefs = collectTrainerPrefsFromLocalStorage();
+    const modeCatalog = await fetchAlgorithmExportCatalog();
+    const csv = buildUserDataCsv(training, theme, prefs, modeCatalog);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const stamp = new Date().toISOString().slice(0, 10);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `rubik-trainer-backup-${stamp}.csv`;
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    message.value = 'Export started — check your downloads.';
+    messageType.value = 'success';
+  } catch (err) {
+    console.error(err);
+    message.value = 'Export failed.';
+    messageType.value = 'error';
+  } finally {
+    backupBusy.value = '';
+  }
+}
+
+async function handleImportFile(event) {
+  const input = event.target;
+  const file = input?.files?.[0];
+  if (input) input.value = '';
+  if (!file) return;
+
+  message.value = '';
+  messageType.value = '';
+  backupBusy.value = 'import';
+
+  try {
+    const text = await file.text();
+    const parsed = parseUserDataCsv(text);
+    if (parsed.error) {
+      message.value = parsed.error;
+      messageType.value = 'error';
+      return;
+    }
+
+    const modeCatalog = await fetchAlgorithmExportCatalog();
+    stripMyAlgsMatchingDefaults(parsed.training, modeCatalog);
+
+    const ok = window.confirm(
+      'Replace your current progress, custom algorithms, filters, and theme with this file? This cannot be undone.',
+    );
+    if (!ok) {
+      return;
+    }
+
+    applyTrainingToLocalStorage(parsed.training);
+    applyTrainerPrefsToLocalStorage(parsed.prefs);
+
+    const th = parsed.theme === 'dark' || parsed.theme === 'light' ? parsed.theme : 'light';
+    setTheme(th);
+
+    if (currentUser.value) {
+      const result = await saveFullTrainingData(parsed.training);
+      if (!result.success) {
+        message.value = result.error || 'Could not save to your account.';
+        messageType.value = 'error';
+        return;
+      }
+    }
+
+    message.value = 'Data imported. Reloading…';
+    messageType.value = 'success';
+    setTimeout(() => {
+      window.location.reload();
+    }, 400);
+  } catch (err) {
+    console.error(err);
+    message.value = 'Import failed.';
+    messageType.value = 'error';
+  } finally {
+    backupBusy.value = '';
+  }
+}
 </script>
 
 <style>
