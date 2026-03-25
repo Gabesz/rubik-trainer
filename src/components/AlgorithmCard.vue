@@ -360,40 +360,42 @@
     </div>
   </div>
 
-  <!-- 3D Cube Animation Modal (twisty only mounts when open — avoids init in display:none + many list cards) -->
-  <div
-    ref="cubeModalRef"
-    class="modal fade"
-    :id="`cubeModal-${algorithm.id}`"
-    tabindex="-1"
-    aria-labelledby="cubeModalLabel"
-    aria-hidden="true"
-  >
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <div class="d-flex align-items-center gap-2">
-            <strong v-if="!displayName.toUpperCase().startsWith(mode.toUpperCase())">{{ mode.toUpperCase() }}</strong>
-            <strong class="modal-title mb-0" id="cubeModalLabel">{{ displayName }}</strong>
-            <span v-if="algorithm.type">({{ algorithm.type }})</span>
+  <!-- 3D modal: Teleport to body so z-index/stacking works with mmenu (#app transform + .mm-wrapper__blocker) -->
+  <Teleport to="body">
+    <div
+      ref="cubeModalRef"
+      class="modal fade rt-cube-modal"
+      :id="`cubeModal-${algorithm.id}`"
+      tabindex="-1"
+      :aria-labelledby="`cubeModalLabel-${algorithm.id}`"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div class="d-flex align-items-center gap-2">
+              <strong v-if="!displayName.toUpperCase().startsWith(mode.toUpperCase())">{{ mode.toUpperCase() }}</strong>
+              <strong class="modal-title mb-0" :id="`cubeModalLabel-${algorithm.id}`">{{ displayName }}</strong>
+              <span v-if="algorithm.type">({{ algorithm.type }})</span>
+            </div>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
           </div>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div class="modal-body">
-          <RubikCube3D
-            v-if="showRubikCube"
-            :algorithm="algorithm.standardAlg || localAlg"
-            :setup="algorithm.setup"
-          />
+          <div class="modal-body">
+            <RubikCube3D
+              v-if="showRubikCube"
+              :algorithm="algorithm.standardAlg || localAlg"
+              :setup="algorithm.setup"
+            />
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <script setup>
@@ -624,11 +626,13 @@ function handleEditButton() {
 }
 
 onMounted(() => {
-  const modalEl = cubeModalRef.value;
-  if (modalEl) {
-    modalEl.addEventListener('shown.bs.modal', onCubeModalShown);
-    modalEl.addEventListener('hidden.bs.modal', onCubeModalHidden);
-  }
+  nextTick(() => {
+    const modalEl = cubeModalRef.value;
+    if (modalEl) {
+      modalEl.addEventListener('shown.bs.modal', onCubeModalShown);
+      modalEl.addEventListener('hidden.bs.modal', onCubeModalHidden);
+    }
+  });
 
   // Ensure router-links are clickable in preview mode
   // Use multiple attempts with increasing delays for preview mode

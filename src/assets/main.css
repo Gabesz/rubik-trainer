@@ -159,7 +159,7 @@ html.dark-theme .rt-page .navbar.rt-navbar .nav-link.text-danger {
   border-color: color-mix(in srgb, var(--rt-color-on-surface) 22%, transparent);
 }
 
-/* Stitch: F2L Trainer Desktop (Updated Nav) — glass bar, brand, center pills, icon cluster */
+/* Stitch: F2L Trainer Desktop (Updated Nav) — glass bar, brand, left-aligned pills (content container), icon cluster */
 .rt-page .navbar.rt-navbar.rt-navbar--neon {
   margin-top: 0;
   min-height: 5rem;
@@ -1000,6 +1000,133 @@ html.dark-theme .mobile-menu-user-icon .user-icon-btn:hover {
   background: transparent;
   border: none;
   color: #4a9eff;
+}
+
+/* mmenu off-canvas: vízszintes elcsúszás / „beragadt” tartalom megelőzése mobilon */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+  overscroll-behavior-x: none;
+}
+
+#app.mm-slideout {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+body.mm-wrapper:not(.mm-wrapper--opened) #app.mm-slideout {
+  transform: translate3d(0, 0, 0);
+}
+
+/* mmenu blocker: zárva átlátszó, de még mindig a #app felett van — különben elnyeli a kattintásokat (Play, modal) */
+body.mm-wrapper:not(.mm-wrapper--opened) .mm-wrapper__blocker {
+  pointer-events: none !important;
+}
+
+/* Teleportált kocka-modal: biztosan a mmenu felett (Bootstrap alap 1055; blocker z-index: 3) */
+.rt-cube-modal.modal.show {
+  z-index: 1060;
+}
+
+/* mmenu.js — egységes lista sorok (Rubik Trainer) */
+.mm-menu {
+  --mm-listitem-size: 52px;
+  --rt-mmenu-row-fs: 0.9375rem;
+  font-family: var(--rt-font-sans);
+}
+
+.mm-menu .mm-navbar {
+  font-family: var(--rt-font-sans);
+}
+
+.mm-menu .mm-listitem {
+  align-items: stretch;
+}
+
+.mm-menu a.rt-mmenu-link,
+.mm-menu a.rt-mmenu-link.mm-listitem__text {
+  display: flex !important;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--rt-font-sans) !important;
+  font-size: var(--rt-mmenu-row-fs) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.01em !important;
+  text-transform: none !important;
+  line-height: 1.35 !important;
+  border-radius: 0 !important;
+  padding: 0.875rem 1.25rem !important;
+  white-space: normal !important;
+  min-height: var(--mm-listitem-size);
+}
+
+.mm-menu a.rt-mmenu-link.rt-nav-pill,
+.mm-menu a.rt-mmenu-link.rt-nav-pill--active {
+  /* Ha maradt régi osztály, felülírjuk */
+  font-size: var(--rt-mmenu-row-fs) !important;
+  letter-spacing: 0.01em !important;
+  text-transform: none !important;
+  padding: 0.875rem 1.25rem !important;
+}
+
+.mm-menu a.rt-mmenu-link--active {
+  color: var(--rt-color-primary-mid) !important;
+  font-weight: 600 !important;
+}
+
+.mm-menu a.rt-mmenu-link--danger {
+  color: var(--bs-danger, #dc3545) !important;
+}
+
+.mm-menu a.rt-mmenu-link svg {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  opacity: 0.92;
+}
+
+.mm-menu a.rt-mmenu-link .rt-mmenu-badge {
+  margin-left: auto;
+  flex-shrink: 0;
+  position: static !important;
+}
+
+.mm-menu a.rt-mmenu-link.disabled,
+.mm-menu a.rt-mmenu-link.mm-listitem__text[aria-disabled='true'] {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.mm-menu .mm-listitem .mobile-menu-user-icon {
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+}
+
+.mm-menu .mm-listitem .mobile-menu-user-icon .user-icon-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.mm-menu .mm-listitem .mobile-menu-user-icon .user-icon-btn {
+  min-height: var(--mm-listitem-size);
+  padding: 0.875rem 1.25rem !important;
+  font-size: var(--rt-mmenu-row-fs) !important;
+  font-weight: 500 !important;
+  border-radius: 0 !important;
+}
+
+.mm-menu .mm-listitem .mobile-menu-user-icon .user-icon-btn::after {
+  font-size: var(--rt-mmenu-row-fs);
+  font-weight: 500;
+}
+
+.mm-menu .mm-listitem:after {
+  inset-inline-start: 1.25rem;
 }
 
 .badge-filter-item.list-filter {

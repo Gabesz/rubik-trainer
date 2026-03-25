@@ -4,7 +4,7 @@
       class="navbar navbar-expand-lg fixed-top rt-navbar rt-navbar--neon border-0"
       :class="isDark ? 'navbar-dark' : 'navbar-light'"
     >
-      <div class="container-fluid rt-navbar-inner px-3 px-lg-4">
+      <div class="container rt-navbar-inner">
         <router-link to="/" class="rt-navbar-brand" title="Home">RUBIK TRAINER</router-link>
 
         <div class="d-flex align-items-center gap-2 ms-auto d-lg-none">
@@ -32,25 +32,25 @@
             </ul>
           </div>
           <button
+            ref="mmenuTogglerRef"
             class="navbar-toggler"
             type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
+            aria-controls="trainer-mmenu"
             aria-expanded="false"
             aria-label="Toggle navigation"
+            @click.prevent="openMobileMenu"
           >
             <span class="navbar-toggler-icon"></span>
           </button>
         </div>
 
         <div
-          class="collapse navbar-collapse align-items-lg-center flex-lg-grow-1 w-100"
+          class="navbar-collapse d-none d-lg-flex align-items-lg-center flex-lg-grow-1 w-100"
           id="navbarNav"
           @click="closeNavbarIfMobile"
         >
           <ul
-            class="navbar-nav rt-navbar-pills mx-lg-auto align-items-lg-center flex-column flex-lg-row gap-1 gap-lg-3 py-3 py-lg-0"
+            class="navbar-nav rt-navbar-pills align-items-lg-center flex-column flex-lg-row gap-1 gap-lg-3 py-3 py-lg-0"
           >
             <li class="nav-item">
               <router-link class="nav-link rt-nav-pill" to="/">Home</router-link>
@@ -207,49 +207,178 @@
             <li class="nav-item d-none d-lg-block rt-navbar-user-item">
               <UserIcon :unique-id="`trainer-${mode}`" />
             </li>
-            <!-- User, Theme toggle and Print — mobile menu -->
-            <li class="nav-item d-lg-none">
-              <UserIcon
-                :unique-id="`trainer-mobile-${mode}`"
-                class="mobile-menu-user-icon"
-                :close-mobile-navbar="closeNavbar"
-              />
-            </li>
-            <li class="nav-item d-lg-none">
-              <a
-                class="nav-link d-flex align-items-center gap-2"
-                href="#"
-                @click.prevent="handleNavClick(toggleTheme)"
-                :title="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
-              >
-                <svg v-if="isDark" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
-                  <path fill="currentColor" d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
-                </svg>
-                <svg v-else aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
-                  <path fill="currentColor" d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
-                </svg>
-                <span>{{ isDark ? 'Light theme' : 'Dark theme' }}</span>
-              </a>
-            </li>
-            <li class="nav-item d-lg-none">
-              <a
-                class="nav-link d-flex align-items-center gap-2"
-                href="#"
-                @click.prevent="handleNavClick(handlePrint)"
-                title="Print"
-              >
-                <svg aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
-                  <path fill="currentColor" d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2H5zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1z"/>
-                  <path fill="currentColor" d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2V7zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
-                </svg>
-                <span>Print</span>
-              </a>
-            </li>
           </ul>
         </div>
       </div>
       <div class="rt-navbar-sheen" aria-hidden="true"></div>
     </nav>
+
+    <nav
+      id="trainer-mmenu"
+      ref="mmenuNavRef"
+      class="rt-mmenu-source"
+      aria-hidden="true"
+      @click.capture="closeNavbarIfMobile"
+    >
+      <ul>
+        <li>
+          <router-link class="rt-mmenu-link" to="/">Home</router-link>
+        </li>
+        <li>
+          <router-link class="rt-mmenu-link" to="/f2l" :class="{ 'rt-mmenu-link--active': mode === 'f2l' }"
+            >F2L</router-link
+          >
+        </li>
+        <li>
+          <router-link class="rt-mmenu-link" to="/oll" :class="{ 'rt-mmenu-link--active': mode === 'oll' }"
+            >OLL</router-link
+          >
+        </li>
+        <li>
+          <router-link class="rt-mmenu-link" to="/pll" :class="{ 'rt-mmenu-link--active': mode === 'pll' }"
+            >PLL</router-link
+          >
+        </li>
+        <li>
+          <router-link class="rt-mmenu-link" to="/notation">Notation</router-link>
+        </li>
+        <template v-if="isTraining">
+          <li>
+            <a class="rt-mmenu-link" href="#" @click.prevent="handleNavClick(stopTraining)">
+              <svg aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+                <path
+                  fill="currentColor"
+                  d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"
+                />
+              </svg>
+              <span>Back</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="rt-mmenu-link"
+              href="#"
+              @click.prevent="handleNavClick(nextTraining)"
+              :class="{ disabled: !currentTraining || learnedCount <= 1 }"
+            >
+              <svg aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+                <path
+                  fill="currentColor"
+                  d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"
+                />
+              </svg>
+              <span>New Training</span>
+            </a>
+          </li>
+        </template>
+        <template v-else>
+          <li>
+            <a
+              class="rt-mmenu-link rt-mmenu-link--danger"
+              href="#"
+              @click.prevent="handleNavClick(confirmResetAlgs)"
+              :class="{ disabled: editedCount === 0 }"
+            >
+              <svg aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+                <path
+                  fill="currentColor"
+                  d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"
+                />
+              </svg>
+              <span>Reset algs</span>
+              <span class="badge rounded-pill bg-danger rt-mmenu-badge">{{ editedCount }}</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="rt-mmenu-link"
+              href="#"
+              @click.prevent="handleNavClick(confirmReset)"
+              :class="{ disabled: learnedCount === 0 }"
+            >
+              <svg aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+                <path
+                  fill="currentColor"
+                  d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"
+                />
+              </svg>
+              <span>Reset Progress</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="rt-mmenu-link"
+              href="#"
+              @click.prevent="handleNavClick(startTraining)"
+              :class="{ disabled: learnedCount === 0 }"
+            >
+              <svg aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+                <path
+                  fill="currentColor"
+                  d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                />
+                <path
+                  fill="currentColor"
+                  d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.255 1.287-.39 1.287-1.243 0-1.08-.92-1.144-1.416-.165a.75.75 0 0 1-1.25.154z"
+                />
+              </svg>
+              <span>Training</span>
+              <span class="badge rounded-pill bg-success rt-mmenu-badge">{{ learnedCount }}</span>
+            </a>
+          </li>
+        </template>
+        <li>
+          <UserIcon
+            :unique-id="`trainer-mobile-${mode}`"
+            class="mobile-menu-user-icon"
+            :close-mobile-navbar="closeNavbar"
+          />
+        </li>
+        <li>
+          <a
+            class="rt-mmenu-link"
+            href="#"
+            @click.prevent="handleNavClick(toggleTheme)"
+            :title="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
+          >
+            <svg v-if="isDark" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+              <path
+                fill="currentColor"
+                d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"
+              />
+            </svg>
+            <svg v-else aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+              <path
+                fill="currentColor"
+                d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"
+              />
+            </svg>
+            <span>{{ isDark ? 'Light theme' : 'Dark theme' }}</span>
+          </a>
+        </li>
+        <li>
+          <a
+            class="rt-mmenu-link"
+            href="#"
+            @click.prevent="handleNavClick(handlePrint)"
+            title="Print"
+          >
+            <svg aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
+              <path
+                fill="currentColor"
+                d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2H5zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1z"
+              />
+              <path
+                fill="currentColor"
+                d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2V7zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"
+              />
+            </svg>
+            <span>Print</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
     <div class="container" :class="{ 'training-container': isTraining }">
       <!-- Offcanvas Filters -->
       <div
@@ -505,6 +634,7 @@ import AlgorithmCard from '../components/AlgorithmCard.vue';
 import TrainingPanel from '../components/TrainingPanel.vue';
 import UserIcon from '../components/UserIcon.vue';
 import { useLearned } from '../composables/useLearned';
+import { useMmenuNav } from '../composables/useMmenuNav';
 import { useTheme } from '../composables/useTheme';
 
 const props = defineProps({
@@ -525,6 +655,14 @@ const route = useRoute();
 const modeTitle = computed(() => props.mode.toUpperCase());
 
 const { isDark, toggleTheme } = useTheme();
+
+const mmenuNavRef = ref(null);
+const mmenuTogglerRef = ref(null);
+const { open: openMobileMenu, close: closeMmenu, isOpen: isMobileMenuOpen } = useMmenuNav({
+  menuElRef: mmenuNavRef,
+  isDark,
+  togglerRef: mmenuTogglerRef,
+});
 
 // Function to get fetchAlgorithms based on mode
 async function getFetchAlgorithms() {
@@ -887,14 +1025,10 @@ function setSortMode(mode) {
 
 function handleKeydown(event) {
   if (event.key === 'Escape') {
-    // Close hamburger menu if open (mobile/tablet)
-    if (window.innerWidth < 992) {
-      const navbarCollapse = document.getElementById('navbarNav');
-      if (navbarCollapse && navbarCollapse.classList.contains('show')) {
-        event.preventDefault();
-        closeNavbar();
-        return;
-      }
+    if (window.innerWidth < 992 && isMobileMenuOpen()) {
+      event.preventDefault();
+      closeNavbar();
+      return;
     }
     // Exit training mode if in training
     if (isTraining.value) {
@@ -927,29 +1061,7 @@ function closeNavbarIfMobile() {
 }
 
 function closeNavbar() {
-  // Close Bootstrap collapse navbar on mobile
-  const navbarCollapse = document.getElementById('navbarNav');
-  const navbarToggler = document.querySelector('[data-bs-target="#navbarNav"]');
-  if (navbarCollapse && navbarToggler) {
-    // Check if collapse is currently shown
-    if (navbarCollapse.classList.contains('show')) {
-      // Use Bootstrap's Collapse API if available
-      if (window.bootstrap && window.bootstrap.Collapse) {
-        const bsCollapse = window.bootstrap.Collapse.getInstance(navbarCollapse);
-        if (bsCollapse) {
-          bsCollapse.hide();
-        } else {
-          // Fallback: manually remove show class and update aria attributes
-          navbarCollapse.classList.remove('show');
-          navbarToggler.setAttribute('aria-expanded', 'false');
-        }
-      } else {
-        // Fallback: manually remove show class and update aria attributes
-        navbarCollapse.classList.remove('show');
-        navbarToggler.setAttribute('aria-expanded', 'false');
-      }
-    }
-  }
+  closeMmenu();
 }
 
 function handleNavClick(callback) {
@@ -967,25 +1079,19 @@ function handleContentClick(event) {
     return;
   }
   
-  // Only close navbar on mobile/tablet (when navbar is collapsed)
-  if (window.innerWidth < 992) {
-    const navbarCollapse = document.getElementById('navbarNav');
-    if (navbarCollapse && navbarCollapse.classList.contains('show')) {
-      // Check if click is outside navbar
-      const navbar = document.querySelector('.navbar');
-      // Don't close if clicking on algorithm card links or router-links
-      // Check for router-link elements more thoroughly
-      const clickedLink = event.target.closest('a[href*="/oll/"], a[href*="/pll/"], a[href*="/f2l/"], router-link, .router-link, .algorithm-card a, .algorithm-image-container a, .algorithm-title-container a');
-      // Also check if the click target itself is a link
-      const isLink = event.target.tagName === 'A' || event.target.closest('a') || event.target.closest('router-link');
-      // Check if clicking on algorithm card content (image or title)
-      const isAlgorithmCardClick = event.target.closest('.algorithm-card') && 
-        (event.target.closest('.algorithm-image-container') || event.target.closest('.algorithm-title-container'));
-      // Don't close if clicking on user icon or auth modal
-      const isUserIconClick = event.target.closest('.user-icon-container') || event.target.closest('.user-icon-btn');
-      if (navbar && !navbar.contains(event.target) && !clickedLink && !isLink && !isAlgorithmCardClick && !isUserIconClick) {
-        closeNavbar();
-      }
+  if (window.innerWidth < 992 && isMobileMenuOpen()) {
+    if (event.target.closest('.mm-menu')) {
+      return;
+    }
+    const navbar = document.querySelector('.navbar');
+    // Don't close if clicking on algorithm card links or router-links
+    const clickedLink = event.target.closest('a[href*="/oll/"], a[href*="/pll/"], a[href*="/f2l/"], router-link, .router-link, .algorithm-card a, .algorithm-image-container a, .algorithm-title-container a');
+    const isLink = event.target.tagName === 'A' || event.target.closest('a') || event.target.closest('router-link');
+    const isAlgorithmCardClick = event.target.closest('.algorithm-card') && 
+      (event.target.closest('.algorithm-image-container') || event.target.closest('.algorithm-title-container'));
+    const isUserIconClick = event.target.closest('.user-icon-container') || event.target.closest('.user-icon-btn');
+    if (navbar && !navbar.contains(event.target) && !clickedLink && !isLink && !isAlgorithmCardClick && !isUserIconClick) {
+      closeNavbar();
     }
   }
 }

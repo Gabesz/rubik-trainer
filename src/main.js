@@ -6,6 +6,7 @@ import Trainer from './views/Trainer.vue';
 import Notation from './views/Notation.vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import 'mmenu-js/dist/mmenu.css';
 import './assets/main.css';
 import { registerSW } from 'virtual:pwa-register';
 

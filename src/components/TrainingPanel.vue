@@ -130,41 +130,42 @@
       No learned algorithms yet. Mark some cases as learned to start training.
     </div>
     
-    <!-- 3D Cube Animation Modal -->
-    <div
-      v-if="algorithm"
-      ref="cubeModalRef"
-      class="modal fade"
-      :id="`cubeModal-${algorithm.id}`"
-      tabindex="-1"
-      aria-labelledby="cubeModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <div class="d-flex align-items-center gap-2">
-              <strong v-if="!displayName.toUpperCase().startsWith(trainerMode.toUpperCase())">{{ trainerMode }}</strong>
-              <strong class="modal-title mb-0" id="cubeModalLabel">{{ displayName }}</strong>
-              <span v-if="algorithm.type">({{ algorithm.type }})</span>
+    <!-- 3D modal: Teleport to body — correct stacking vs mmenu blocker / #app transform -->
+    <Teleport v-if="algorithm" to="body">
+      <div
+        ref="cubeModalRef"
+        class="modal fade rt-cube-modal"
+        :id="`cubeModal-${algorithm.id}`"
+        tabindex="-1"
+        :aria-labelledby="`cubeModalLabel-${algorithm.id}`"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="d-flex align-items-center gap-2">
+                <strong v-if="!displayName.toUpperCase().startsWith(trainerMode.toUpperCase())">{{ trainerMode }}</strong>
+                <strong class="modal-title mb-0" :id="`cubeModalLabel-${algorithm.id}`">{{ displayName }}</strong>
+                <span v-if="algorithm.type">({{ algorithm.type }})</span>
+              </div>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
             </div>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <RubikCube3D
-              v-if="showRubikCube"
-              :algorithm="algorithm.standardAlg || myAlg"
-              :setup="algorithm.setup"
-            />
+            <div class="modal-body">
+              <RubikCube3D
+                v-if="showRubikCube"
+                :algorithm="algorithm.standardAlg || myAlg"
+                :setup="algorithm.setup"
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Teleport>
   </section>
 </template>
 
@@ -265,14 +266,18 @@ const trainerMode = computed(() => {
 });
 
 // Reset blur when algorithm changes; re-bind modal listeners when modal DOM is recreated
-watch(algorithm, () => {
-  isBlurRevealed.value = false;
-  showRubikCube.value = false;
-  nextTick(() => {
-    detachTrainingCubeModalListeners();
-    attachTrainingCubeModalListeners();
-  });
-});
+watch(
+  algorithm,
+  () => {
+    isBlurRevealed.value = false;
+    showRubikCube.value = false;
+    nextTick(() => {
+      detachTrainingCubeModalListeners();
+      attachTrainingCubeModalListeners();
+    });
+  },
+  { immediate: true },
+);
 
 function revealBlur() {
   isBlurRevealed.value = !isBlurRevealed.value;
@@ -382,7 +387,10 @@ function detachTrainingCubeModalListeners() {
 }
 
 onMounted(() => {
-  nextTick(() => attachTrainingCubeModalListeners());
+  nextTick(() => {
+    attachTrainingCubeModalListeners();
+    nextTick(() => attachTrainingCubeModalListeners());
+  });
 });
 
 onBeforeUnmount(() => {

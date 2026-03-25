@@ -19,6 +19,7 @@
     "bootstrap": "^5.3.8",
     "cubing": "^0.63.3",
     "firebase": "^12.7.0",
+    "mmenu-js": "^9.3.0",
     "vite-plugin-pwa": "^1.1.0",
     "vue-router": "^4.6.3"
   }
