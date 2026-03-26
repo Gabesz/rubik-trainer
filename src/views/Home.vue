@@ -31,7 +31,7 @@
         </h1>
         <p class="rt-landing__lead">
           Master the architecture of speed. Advanced algorithmic training for the next generation of
-          speedcubers — F2L, OLL, and PLL with SVG cases, progress tracking, and 3D animations.
+          speedcubers — F2L, Advanced F2L, OLL, and PLL with SVG cases, progress tracking, and 3D animations.
         </p>
         <div class="rt-landing__hero-actions">
           <button type="button" class="rt-landing__cta-primary" @click="scrollToCoreTrainers">
@@ -101,12 +101,13 @@
               Popularized by Jessica Fridrich (1997), CFOP remains the dominant speedsolving approach:
               <router-link to="/cross">Cross</router-link>,
               <a href="#trainer-f2l" @click.prevent="scrollToTrainer('f2l')">F2L</a>,
+              <a href="#trainer-af2l" @click.prevent="scrollToTrainer('af2l')">Advanced F2L</a>,
               <a href="#trainer-oll" @click.prevent="scrollToTrainer('oll')">OLL</a>, and
               <a href="#trainer-pll" @click.prevent="scrollToTrainer('pll')">PLL</a>.
             </p>
             <p class="rt-landing__cfop-text">
               The last layer needs up to 78 algorithms total — <strong>57 OLL</strong> and
-              <strong>21 PLL</strong>. This app includes a Cross guide plus F2L, OLL, and PLL trainers.
+              <strong>21 PLL</strong>. This app includes a Cross guide plus F2L, Advanced F2L, OLL, and PLL trainers.
             </p>
             <h3 class="rt-landing__cfop-subtitle">The four steps</h3>
             <ol class="rt-landing__cfop-list">
@@ -146,8 +147,8 @@
         Learn algorithms, track progress, and watch interactive 3D animations.
       </p>
 
-      <div class="row g-4 justify-content-center">
-        <div class="col-12 col-md-6 col-lg-3 rt-landing-reveal" id="trainer-cross">
+      <div class="row g-4 justify-content-center row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-5">
+        <div class="col rt-landing-reveal" id="trainer-cross">
           <div class="rt-landing__card">
             <h3 class="rt-landing__card-title">Cross</h3>
             <p class="rt-landing__card-desc">White cross — CFOP step 1</p>
@@ -164,7 +165,7 @@
           </div>
         </div>
 
-        <div class="col-12 col-md-6 col-lg-3 rt-landing-reveal rt-landing-reveal--delay-1" id="trainer-f2l">
+        <div class="col rt-landing-reveal rt-landing-reveal--delay-1" id="trainer-f2l">
           <div class="rt-landing__card">
             <h3 class="rt-landing__card-title">F2L trainer</h3>
             <p class="rt-landing__card-desc">41 intuitive &amp; algorithmic cases</p>
@@ -181,7 +182,26 @@
           </div>
         </div>
 
-        <div class="col-12 col-md-6 col-lg-3 rt-landing-reveal rt-landing-reveal--delay-2" id="trainer-oll">
+        <div class="col rt-landing-reveal rt-landing-reveal--delay-2" id="trainer-af2l">
+          <div class="rt-landing__card">
+            <h3 class="rt-landing__card-title">Advanced F2L trainer</h3>
+            <p class="rt-landing__card-desc">54 trickier pair situations</p>
+            <p class="rt-landing__card-body">
+              Trapped corners and edges, both pieces stuck — same trainer UX as F2L with SVG cases and 3D
+              playback.
+            </p>
+            <ul class="rt-landing__card-list">
+              <li>54 Advanced F2L cases</li>
+              <li>Filter by case type</li>
+              <li>Progress per case</li>
+            </ul>
+            <router-link to="/advanced-f2l" class="rt-landing__card-cta rt-landing__card-cta--outline"
+              >Open trainer</router-link
+            >
+          </div>
+        </div>
+
+        <div class="col rt-landing-reveal rt-landing-reveal--delay-3" id="trainer-oll">
           <div class="rt-landing__card rt-landing__card--elevated">
             <h3 class="rt-landing__card-title">OLL trainer</h3>
             <p class="rt-landing__card-desc">57 top-layer orientations</p>
@@ -197,7 +217,7 @@
           </div>
         </div>
 
-        <div class="col-12 col-md-6 col-lg-3 rt-landing-reveal rt-landing-reveal--delay-3" id="trainer-pll">
+        <div class="col rt-landing-reveal rt-landing-reveal--delay-4" id="trainer-pll">
           <div class="rt-landing__card">
             <h3 class="rt-landing__card-title">PLL trainer</h3>
             <p class="rt-landing__card-desc">21 edge &amp; corner permutations</p>
@@ -766,6 +786,10 @@ html.light-theme .rt-landing__panel {
 
 .rt-landing-reveal--delay-3.rt-landing-reveal--visible {
   transition-delay: 0.18s;
+}
+
+.rt-landing-reveal--delay-4.rt-landing-reveal--visible {
+  transition-delay: 0.24s;
 }
 
 @media (prefers-reduced-motion: reduce) {
