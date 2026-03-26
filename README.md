@@ -1,38 +1,52 @@
-# Rubik's Cube Trainer PWA
+# RUBIK TRAINER (PWA)
 
-Consolidated Progressive Web App for learning and drilling 3×3 Rubik's Cube algorithms: F2L (First Two Layers), OLL (Orientation of the Last Layer), and PLL (Permutation of the Last Layer). Built with Vue 3 + Vite, Vue Router, Bootstrap 5, and offline-enabled service worker via `vite-plugin-pwa`.
+Progressive Web App for learning and drilling 3×3 Rubik's Cube algorithms: Cross (intro), F2L, Advanced F2L, OLL, and PLL. Built with Vue 3 + Vite, Vue Router, Bootstrap 5, **mmenu-js** (mobile off-canvas navigation), and offline-capable service worker via `vite-plugin-pwa`. Optional **Firebase Authentication + Firestore** syncs progress when you sign in.
 
 Demo: [https://vps.elisnails.hu/rubik-trainer/](https://vps.elisnails.hu/rubik-trainer/)
 
 ## Features
 
-- **Three trainers in one app**: F2L (41 cases), OLL (57 cases), and PLL (21 cases) with unified UX.
-- **Dark theme support**: Toggle between light and dark themes with a theme switcher in the navbar. Theme preference is saved in `localStorage` and persists across sessions.
-- **Easy navigation**: Switch between trainers via dropdown menu in the header, or return to the home page. The home page features interactive trainer buttons that smoothly scroll to each trainer section. Click on algorithm names or images in list view to navigate directly to training mode for that specific algorithm.
-- **Filterable lists**: Filter by case type or learned state. Offcanvas filter panel accessible via floating button (bottom-left) when filters are off-screen. Click on case type badges in algorithm cards to quickly filter by that type.
-- **Sort toggle**: "Default" or "Short algs" (shortest standard algorithms first). Filter and sort choices persist per trainer in `localStorage`.
-- **Editable algorithms**: Case cards show SVG diagrams, setup moves, and a single editable "Alg" field (defaults to the standard). Your edits are saved per trainer in `localStorage`.
-- **Learned tracking**: One-click "Mark as learned" tracking; data persists between sessions and is separated per trainer (F2L, OLL, PLL).
-- **Training mode**: Surfaces random learned cases only, supports quick re-rolls, and exits with `Esc` on desktop. Each training session has a unique URL with the algorithm ID (e.g., `/oll/oll-1`), allowing direct linking and automatic regeneration of a new random element on browser refresh.
-  - **Blur effect**: When starting training via the "Training" button, the standard algorithm is blurred by default. Click to reveal/hide. This effect is not applied when navigating from list view.
-  - **Quick actions**: "Back" button returns to list view, "New Training" button generates a new random case, and "Details" opens external algorithm details in a new tab. All buttons include icons for better visual recognition.
-  - **3D Cube Animation**: Interactive 3D Rubik's cube animation modal accessible via "Play" button next to algorithm names in both list view and training mode. The animation shows the setup and algorithm moves with real-time highlighting of the current move. Click on any move in the algorithm text to jump to that specific position in the animation.
-- **Responsive design**: Tuned for mobile, tablet, and desktop. Mobile navbar automatically closes when clicking menu items or clicking outside the menu, and also closes on Escape key press. No animation on mobile menu collapse for instant feedback. Theme toggle and print buttons are in the hamburger menu on mobile/tablet, and in a floating action button group on desktop.
-- **Print support**: Print-friendly styles for both list view and training mode. Only algorithm cards/content are printed, with all UI elements hidden. Browser headers/footers can be disabled in print settings.
-- **Installable PWA**: Full offline support with service worker caching for algorithms and SVG assets. The app works completely offline after the first visit.
-- **Reset options**: "Reset Progress" clears learned items; "Reset algs" (with badge count) restores all edited algs to defaults after confirmation.
-- **F2L-specific styling**: F2L trainer displays larger SVG images (110x110px) compared to OLL/PLL (120px max-width).
+- **Trainers and pages**
+  - **F2L** (41 cases), **OLL** (57 cases), **PLL** (21 cases), and **Advanced F2L** (54 cases) share the universal trainer UI (`Trainer.vue`) with routes `/f2l`, `/oll`, `/pll`, and `/advanced-f2l` (optional `:algorithmId` for training mode).
+  - **Cross** (`/cross`) — dedicated page with reference material for the white-cross phase (intuitive; not a case library like F2L/OLL).
+  - **Notation** (`/notation`) — notation reference with **AnimCube3** (AnimCubeJS) interactive cubes in a two-column layout; theme toggle in the page chrome.
+- **Branding and home** — Landing page titled **RUBIK TRAINER**, methodology section (Cross → F2L → OLL → PLL), links to trainers and Notation, and app version display (from `src/version.js`, bumped on each production build).
+- **Dark theme** — Toggle in the navbar / mobile menu; preference stored in `localStorage`.
+- **Navigation** — Desktop navbar plus **mmenu-js** slide-out menu on small screens (animated hamburger-to-X toggler). Trainer dropdown and full trainer list (Cross through PLL, Notation). Modals such as the 3D cube viewer use Vue `Teleport` to `body` for correct stacking.
+- **Filters and sort** — Filter by case type or state; **learned** vs **practicing** are separate: you can mark cases as “practicing” (yellow badge) independently of “learned”. Sort: default or “short algs”. Choices persist per trainer in `localStorage` (and in Firestore when logged in).
+- **Editable algorithms and names** — Per-case editable algorithm text and **editable display names**; stored per mode (`localStorage` and/or cloud).
+- **Training mode** — Random selection among learned cases, unique URLs with path params (e.g. `/oll/oll-1`), blur-on-start when entering via the Training button, `Esc` to exit on desktop, 3D **twisty-player** (`cubing/twisty`) modal with move highlighting and click-to-seek.
+- **Account (optional)** — Sign in via Firebase to sync learned IDs, practicing IDs, custom algorithms, and custom names across devices. Without sign-in, data stays local only.
+- **Responsive design** — Mobile-first layout; print-friendly styles; PWA install and offline cache after first visit.
+- **Service worker** — Registered in normal browsers; **not** registered when the app runs inside an **iframe** or on **Tizen** (with cache cleanup on Tizen to avoid stale assets).
 
 ## Getting Started
 
 ```bash
 cd rubik-trainer
 npm install
-# Development server
+```
+
+Optional: copy `.env.example` to `.env` and set Firebase variables if you use authentication and Firestore (the app runs without them for local-only usage).
+
+```bash
+cp .env.example .env   # Unix/macOS; on Windows copy the file manually or: Copy-Item .env.example .env
+```
+
+```bash
 npm run dev
 ```
 
-The dev server runs at `http://localhost:5173`. Vite automatically reloads on file changes. During development the service worker registers immediately; if you prefer to skip PWA caching in dev, remove or guard the `registerSW({ immediate: true })` call in `src/main.js`.
+The dev server runs at `http://localhost:5173`. Vite hot-reloads on changes. The service worker may register in dev; to avoid PWA caching while developing, you can guard or remove `registerSW({ immediate: true })` in `src/main.js`.
+
+### Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `npm run dev` | Vite dev server |
+| `npm run build` | Runs `prebuild` (increments version in `src/version.js`) then production build |
+| `npm run preview` | Local preview of `dist/` |
+| `npm run generate:af2l-svgs` | Regenerate Advanced F2L SVG assets (`scripts/generate-af2l-svgs.mjs`) |
 
 ### Production Build
 
@@ -41,74 +55,46 @@ npm run build
 npm run preview   # optional local preview after build
 ```
 
-The build output lives in `rubik-trainer/dist/`. Copy that directory to your hosting provider (see deployment notes below).
+Output: `dist/`. Deploy that folder under the configured base path (see below).
 
 ## Project Structure
 
-- `src/App.vue` – root component with `router-view`.
-- `src/main.js` – Vue app initialization, Vue Router setup, and service worker registration.
-- `src/views/Home.vue` – landing page with interactive trainer buttons, links to the three trainers, and GitHub repository link.
-- `src/views/Trainer.vue` – universal trainer component that handles F2L, OLL, and PLL modes via props.
-- `src/components/AlgorithmCard.vue` – algorithm card with learned toggle, unified editable "Alg" field, and play button for 3D animation.
-- `src/components/TrainingPanel.vue` – focused training presentation with play button for 3D animation.
-- `src/components/RubikCube3D.vue` – 3D Rubik's cube animation component using twisty-player library with interactive move highlighting and clickable algorithm moves.
-- `src/composables/useLearned.js` – shared `localStorage` helpers for learned IDs and custom algorithms (mode-aware).
-- `src/data/oll.js`, `src/data/pll.js`, `src/data/f2l.js` – data fetching modules for each trainer type.
-- `public/oll/`, `public/pll/`, `public/f2l/` – trainer-specific data directories:
-  - `algorithms.json` – source data (name, type, setup, standard algorithm).
-  - `svg/` – SVG assets for each case.
-- `src/assets/main.css` – global styling overrides and responsive tweaks, including F2L-specific image sizing.
-- `vite.config.js` – Vite + PWA configuration, including `base: '/rubik-trainer/'` for subdirectory hosting.
+- `src/main.js` — Vue app, router (`/rubik-trainer/` base), routes, PWA registration (with iframe/Tizen exceptions).
+- `src/App.vue` — Root shell with `router-view`.
+- `src/views/Home.vue` — Landing (RUBIK TRAINER, trainer cards, methodology).
+- `src/views/Trainer.vue` — Universal trainer for `oll`, `pll`, `f2l`, `af2l`.
+- `src/views/Cross.vue` — Cross reference page.
+- `src/views/Notation.vue` — Notation page wrapping `NotationView`.
+- `src/components/AlgorithmCard.vue`, `TrainingPanel.vue`, `RubikCube3D.vue`, `NotationView.vue`, `AuthModal.vue`, `UserIcon.vue`, `AnimatedNavTogglerIcon.vue` — UI pieces.
+- `src/composables/useLearned.js` — Learned / practicing / custom algs / custom names; `localStorage` + Firebase when authenticated.
+- `src/composables/useAuth.js`, `useUserData.js`, `src/config/firebase.js` — Auth and Firestore user data.
+- `src/composables/useMmenuNav.js` — Mobile mmenu wiring.
+- `src/data/*-algorithms.json` — Bundled algorithm definitions (imported by `oll.js`, `pll.js`, `f2l.js`, `af2l.js`).
+- `public/oll/`, `public/pll/`, `public/f2l/` — SVG (and any legacy assets) per trainer; `public/af2l/svg/` — Advanced F2L SVGs; `public/cross/` — Cross reference image(s).
+- `scripts/increment-version.js` — Prebuild version bump; `scripts/generate-af2l-svgs.mjs` — AF2L SVG pipeline.
+- `vite.config.js` — Vite + PWA; `base: '/rubik-trainer/'` for subdirectory hosting.
 
 ## UI Notes
 
-- The header includes a Bootstrap navbar with:
-  - Home icon on the left (links to home page)
-  - Trainer title (e.g., "OLL Trainer")
-  - "Other trainers" dropdown menu (desktop: in navbar, mobile: always visible next to hamburger)
-  - Action buttons (Reset algs, Reset Progress, Training/Back, New Training) in collapsible menu with icons on mobile
-  - Theme toggle and Print buttons: in hamburger menu on mobile/tablet, in floating action button group on desktop (top-right)
-  - Mobile menu automatically closes when clicking any menu item, clicking outside the menu, or pressing Escape
-- **Navigation**: Click on algorithm names or images in list view to navigate directly to training mode for that specific algorithm. The algorithm name and image are both clickable router links.
-- **3D Cube Animation**: 
-  - Play button appears next to algorithm names in both list view cards and training mode
-  - Opens a modal with interactive 3D Rubik's cube animation using the twisty-player library
-  - Shows setup and algorithm moves with real-time highlighting of the currently executing move
-  - Click on any move in the algorithm text to jump to that specific position and continue playback
-  - Modal header displays trainer type (OLL/PLL/F2L), algorithm name, and case type in parentheses
-  - Algorithm text is displayed in black (white in dark mode) with proper word wrapping using flex containers
-  - Zárójelek (parentheses) in algorithms are grouped together and only break between groups when needed
-- Training mode URLs use path parameters (e.g., `/oll/oll-1`) instead of query parameters, making them shareable and refreshable.
-- **Training mode features**:
-  - Standard algorithm blur effect (only when started via "Training" button, not from list view)
-  - "Back" button (with icon) to return to list view
-  - "New Training" button (with icon) to generate a new random case
-  - "Details" button (with icon) to open external algorithm details
-  - "Play" button (with icon) next to algorithm name to open 3D cube animation modal
-  - Clean card design without box-shadow for focused presentation
-  - Optimized button layout for mobile: buttons fit in one row with reduced padding and smaller sizes
-  - Algorithm text displayed in flex containers with proper word wrapping - parentheses groups stay together and only break between groups when space is limited
-- Filters and sorting are duplicated in the offcanvas panel for mobile/scrolling; open it via the floating filter button at the bottom-left.
-- The Standard Algorithm is emphasized in training; in cards, the editable "Alg" text is bold when displayed.
-- Filter (type vs learned) is mutually exclusive by design; sort and filter selections are restored per trainer on reload.
-- "Reset algs" shows a badge with the number of cases that have edited algs.
-- Each trainer maintains separate `localStorage` keys (e.g., `oll-learned`, `pll-learned`, `f2l-learned`) to prevent data conflicts.
-- Theme preference is stored in `localStorage` with key `theme-preference` and persists across sessions.
+- **Mobile**: mmenu off-canvas menu lists Home, trainers, Notation, user account row, theme, print; Bootstrap’s top navbar is complemented by the slide-out panel.
+- **3D cube (trainers)**: `cubing/twisty` web component; algorithm text supports grouped parentheses / word wrap as before.
+- **Notation page**: External **AnimCube3** script for classic animated cube demos (two-column layout).
+- Training URLs use path parameters for shareability and refresh behavior.
+- Per-trainer storage keys remain mode-prefixed (e.g. `oll-learned`, `oll-practicing`, …) so modes do not clash.
 
 ## Deployment Notes
 
-- The app is configured for the subpath `https://vps.elisnails.hu/rubik-trainer/`; ensure the production bundle is uploaded to that folder and served with the same base path.
-- When updating production builds, browsers may retain cached assets via the service worker. Users can pull fresh assets by reloading twice, clearing site data, or (on desktop) running `navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));` in DevTools prior to refreshing.
-- If you replace or add algorithm data, drop the updated `algorithms.json` and SVGs into the appropriate `public/{trainer}/` directory and rebuild.
+- Production base path: `https://vps.elisnails.hu/rubik-trainer/` — upload `dist/` to that path.
+- After deployments, users may need a hard refresh or cache clear if the service worker serves old bundles.
+- Firebase: configure the same `VITE_*` variables in your hosting environment for production builds that use auth.
 
 ## Customization Tips
 
-- Algorithm metadata lives in `public/{trainer}/algorithms.json`. To change categories or add cases, edit the JSON file and match SVG filenames. The fetch helpers derive IDs from the `name` field.
-- Styling changes can go in `src/assets/main.css`. Bootstrap classes are available globally.
-- Training-mode behavior is centralized in `src/views/Trainer.vue` (`startTraining`, `nextTraining`, `stopTraining`); extend these helpers to adjust selection logic or add spaced repetition rules. The training mode uses Vue Router path parameters to maintain unique URLs for each training session, enabling direct linking and automatic regeneration on refresh.
-- To add a new trainer type, create a new data module in `src/data/`, add a route in `src/main.js`, and update the Trainer component's mode validator.
+- Edit algorithm data in `src/data/*-algorithms.json` (and rebuild). Match SVG filenames under `public/{trainer}/` / `public/af2l/svg/` as required by the loaders in `src/data/*.js`.
+- Styling: `src/assets/main.css` and Bootstrap utilities.
+- Training selection logic: `src/views/Trainer.vue` (`startTraining`, `nextTraining`, `stopTraining`).
+- New trainer mode: add JSON + `src/data` module, route in `main.js`, and extend `Trainer` mode handling.
 
 ## License
 
-No explicit license is provided. Adapt the code within the constraints of the project owner's requirements.
-
+No explicit license is provided. Adapt the code within the constraints of the project owner’s requirements.
