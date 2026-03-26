@@ -52,7 +52,11 @@
         <div class="rt-landing__phases">
           <article class="rt-landing__phase">
             <span class="rt-landing__phase-label">Phase 01</span>
-            <h3 class="rt-landing__phase-title">Cross</h3>
+            <h3 class="rt-landing__phase-title">
+              <a href="#trainer-cross" class="rt-landing__phase-link" @click.prevent="scrollToTrainer('cross')"
+                >Cross</a
+              >
+            </h3>
             <p class="rt-landing__phase-desc">
               Foundational four-edge alignment on the base layer (intuitive).
             </p>
@@ -95,18 +99,21 @@
             <h2 id="cfop-heading" class="rt-landing__cfop-title">What is the Fridrich / CFOP method?</h2>
             <p class="rt-landing__cfop-text">
               Popularized by Jessica Fridrich (1997), CFOP remains the dominant speedsolving approach:
-              <strong>Cross</strong>,
+              <router-link to="/cross">Cross</router-link>,
               <a href="#trainer-f2l" @click.prevent="scrollToTrainer('f2l')">F2L</a>,
               <a href="#trainer-oll" @click.prevent="scrollToTrainer('oll')">OLL</a>, and
               <a href="#trainer-pll" @click.prevent="scrollToTrainer('pll')">PLL</a>.
             </p>
             <p class="rt-landing__cfop-text">
               The last layer needs up to 78 algorithms total — <strong>57 OLL</strong> and
-              <strong>21 PLL</strong>. This app focuses on F2L, OLL, and PLL practice.
+              <strong>21 PLL</strong>. This app includes a Cross guide plus F2L, OLL, and PLL trainers.
             </p>
             <h3 class="rt-landing__cfop-subtitle">The four steps</h3>
             <ol class="rt-landing__cfop-list">
-              <li><strong>C</strong>ross — bottom cross</li>
+              <li>
+                <router-link to="/cross" class="text-decoration-none"><strong>C</strong>ross</router-link> — bottom
+                cross
+              </li>
               <li><strong>F</strong>2L — first two layers</li>
               <li><strong>O</strong>LL — orient last layer</li>
               <li><strong>P</strong>LL — permute last layer</li>
@@ -140,7 +147,24 @@
       </p>
 
       <div class="row g-4 justify-content-center">
-        <div class="col-12 col-lg-4 rt-landing-reveal" id="trainer-f2l">
+        <div class="col-12 col-md-6 col-lg-3 rt-landing-reveal" id="trainer-cross">
+          <div class="rt-landing__card">
+            <h3 class="rt-landing__card-title">Cross</h3>
+            <p class="rt-landing__card-desc">White cross — CFOP step 1</p>
+            <p class="rt-landing__card-body">
+              Build the bottom cross intuitively: daisy method, aligning edges to centers, and a short fix for a
+              flipped front edge.
+            </p>
+            <ul class="rt-landing__card-list">
+              <li>Beginner-friendly walkthrough</li>
+              <li>Reference illustration</li>
+              <li>Leads into F2L</li>
+            </ul>
+            <router-link to="/cross" class="rt-landing__card-cta rt-landing__card-cta--outline">Open guide</router-link>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-3 rt-landing-reveal rt-landing-reveal--delay-1" id="trainer-f2l">
           <div class="rt-landing__card">
             <h3 class="rt-landing__card-title">F2L trainer</h3>
             <p class="rt-landing__card-desc">41 intuitive &amp; algorithmic cases</p>
@@ -157,7 +181,7 @@
           </div>
         </div>
 
-        <div class="col-12 col-lg-4 rt-landing-reveal rt-landing-reveal--delay-1" id="trainer-oll">
+        <div class="col-12 col-md-6 col-lg-3 rt-landing-reveal rt-landing-reveal--delay-2" id="trainer-oll">
           <div class="rt-landing__card rt-landing__card--elevated">
             <h3 class="rt-landing__card-title">OLL trainer</h3>
             <p class="rt-landing__card-desc">57 top-layer orientations</p>
@@ -173,7 +197,7 @@
           </div>
         </div>
 
-        <div class="col-12 col-lg-4 rt-landing-reveal rt-landing-reveal--delay-2" id="trainer-pll">
+        <div class="col-12 col-md-6 col-lg-3 rt-landing-reveal rt-landing-reveal--delay-3" id="trainer-pll">
           <div class="rt-landing__card">
             <h3 class="rt-landing__card-title">PLL trainer</h3>
             <p class="rt-landing__card-desc">21 edge &amp; corner permutations</p>

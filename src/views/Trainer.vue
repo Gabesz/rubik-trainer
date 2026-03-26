@@ -21,7 +21,13 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end" :aria-labelledby="`trainerDropdownMobile-${mode}`">
               <li>
+                <router-link to="/cross" class="dropdown-item">Cross</router-link>
+              </li>
+              <li>
                 <router-link to="/f2l" class="dropdown-item" :class="{ active: mode === 'f2l' }">F2L</router-link>
+              </li>
+              <li>
+                <router-link to="/advanced-f2l" class="dropdown-item" :class="{ active: mode === 'af2l' }">Advanced F2L</router-link>
               </li>
               <li>
                 <router-link to="/oll" class="dropdown-item" :class="{ active: mode === 'oll' }">OLL</router-link>
@@ -56,11 +62,22 @@
               <router-link class="nav-link rt-nav-pill" to="/">Home</router-link>
             </li>
             <li class="nav-item">
+              <router-link class="nav-link rt-nav-pill" to="/cross">Cross</router-link>
+            </li>
+            <li class="nav-item">
               <router-link
                 class="nav-link rt-nav-pill"
                 to="/f2l"
                 :class="{ 'rt-nav-pill--active': mode === 'f2l' }"
                 >F2L</router-link
+              >
+            </li>
+            <li class="nav-item">
+              <router-link
+                class="nav-link rt-nav-pill"
+                to="/advanced-f2l"
+                :class="{ 'rt-nav-pill--active': mode === 'af2l' }"
+                >Advanced F2L</router-link
               >
             </li>
             <li class="nav-item">
@@ -225,8 +242,16 @@
           <router-link class="rt-mmenu-link" to="/">Home</router-link>
         </li>
         <li>
+          <router-link class="rt-mmenu-link" to="/cross">Cross</router-link>
+        </li>
+        <li>
           <router-link class="rt-mmenu-link" to="/f2l" :class="{ 'rt-mmenu-link--active': mode === 'f2l' }"
             >F2L</router-link
+          >
+        </li>
+        <li>
+          <router-link class="rt-mmenu-link" to="/advanced-f2l" :class="{ 'rt-mmenu-link--active': mode === 'af2l' }"
+            >Advanced F2L</router-link
           >
         </li>
         <li>
@@ -448,6 +473,7 @@
                   class="btn"
                   :class="sortMode === 'default' ? 'btn-success' : 'btn-outline-secondary'"
                   @click="setSortMode('default')"
+                  title="Original order"
                 >
                   Default
                 </button>
@@ -456,6 +482,7 @@
                   class="btn"
                   :class="sortMode === 'short' ? 'btn-success' : 'btn-outline-secondary'"
                   @click="setSortMode('short')"
+                  title="Shortest first (spaces and parentheses ignored)"
                 >
                   Short algs
                 </button>
@@ -560,7 +587,7 @@
               class="btn"
               :class="sortMode === 'short' ? 'btn-success' : 'btn-outline-secondary'"
               @click="setSortMode('short')"
-              title="Shortest standard algorithms first"
+              title="Shortest first (spaces and parentheses ignored)"
             >
               Short algs
             </button>
@@ -568,18 +595,14 @@
         </div>
 
         <div class="rt-case-library__groups pb-5">
-          <div
-            v-for="group in groupedVisibleAlgorithms"
-            :key="group.type"
-            class="rt-case-library__group"
-          >
-            <h3 class="rt-case-library__group-heading">{{ group.type }}</h3>
+          <template v-if="sortMode === 'short'">
             <div class="algorithm-grid">
               <AlgorithmCard
-                v-for="algorithm in group.items"
+                v-for="algorithm in visibleAlgorithms"
                 :key="algorithm.id"
                 :algorithm="algorithm"
                 :mode="mode"
+                :path-segment="pathSegment"
                 :learned="isLearned(algorithm.id)"
                 :practicing="isPracticing(algorithm.id)"
                 :my-alg="getMyAlg(algorithm.id)"
@@ -594,7 +617,37 @@
                 class="algorithm-grid-item"
               />
             </div>
-          </div>
+          </template>
+          <template v-else>
+            <div
+              v-for="group in groupedVisibleAlgorithms"
+              :key="group.type"
+              class="rt-case-library__group"
+            >
+              <h3 class="rt-case-library__group-heading">{{ group.type }}</h3>
+              <div class="algorithm-grid">
+                <AlgorithmCard
+                  v-for="algorithm in group.items"
+                  :key="algorithm.id"
+                  :algorithm="algorithm"
+                  :mode="mode"
+                  :path-segment="pathSegment"
+                  :learned="isLearned(algorithm.id)"
+                  :practicing="isPracticing(algorithm.id)"
+                  :my-alg="getMyAlg(algorithm.id)"
+                  :my-name="getMyName(algorithm.id)"
+                  :case-index="visibleCaseNumberById.get(algorithm.id)"
+                  library-layout
+                  @toggle-learned="toggleLearned"
+                  @toggle-practice="togglePractice"
+                  @update-my-alg="setMyAlg"
+                  @update-my-name="setMyName"
+                  @filter-by-type="setActiveType"
+                  class="algorithm-grid-item"
+                />
+              </div>
+            </div>
+          </template>
         </div>
       </section>
     </div>
@@ -643,7 +696,7 @@ const props = defineProps({
   mode: {
     type: String,
     required: true,
-    validator: (value) => ['oll', 'pll', 'f2l'].includes(value),
+    validator: (value) => ['oll', 'pll', 'f2l', 'af2l'].includes(value),
   },
   algorithmId: {
     type: String,
@@ -654,7 +707,10 @@ const props = defineProps({
 const router = useRouter();
 const route = useRoute();
 
-const modeTitle = computed(() => props.mode.toUpperCase());
+/** URL segment for router (e.g. advanced-f2l when mode is af2l). */
+const pathSegment = computed(() => (props.mode === 'af2l' ? 'advanced-f2l' : props.mode));
+
+const modeTitle = computed(() => (props.mode === 'af2l' ? 'Advanced F2L' : props.mode.toUpperCase()));
 
 const { isDark, toggleTheme } = useTheme();
 
@@ -671,13 +727,17 @@ async function getFetchAlgorithms() {
   if (props.mode === 'oll') {
     const ollModule = await import('../data/oll.js');
     return ollModule.fetchAlgorithms;
-  } else if (props.mode === 'pll') {
+  }
+  if (props.mode === 'pll') {
     const pllModule = await import('../data/pll.js');
     return pllModule.fetchAlgorithms;
-  } else {
-    const f2lModule = await import('../data/f2l.js');
-    return f2lModule.fetchAlgorithms;
   }
+  if (props.mode === 'af2l') {
+    const af2lModule = await import('../data/af2l.js');
+    return af2lModule.fetchAlgorithms;
+  }
+  const f2lModule = await import('../data/f2l.js');
+  return f2lModule.fetchAlgorithms;
 }
 
 const algorithms = ref([]);
@@ -772,6 +832,13 @@ const typeCounts = computed(() =>
   }, {}),
 );
 
+/** Length of standard alg for sorting: whitespace and parentheses do not count. */
+function effectiveStandardAlgLength(alg) {
+  return (alg.standardAlg || '')
+    .replace(/\s+/g, '')
+    .replace(/[()]/g, '').length;
+}
+
 const filteredAlgorithms = computed(() => {
   let list = activeType.value
     ? algorithms.value.filter((algorithm) => algorithm.type === activeType.value)
@@ -790,8 +857,8 @@ const visibleAlgorithms = computed(() => {
     return filteredAlgorithms.value;
   }
   const score = (alg) => {
-    const s = (alg.standardAlg || '').replace(/\s+/g, '');
-    return s.length === 0 ? Number.POSITIVE_INFINITY : s.length;
+    const n = effectiveStandardAlgLength(alg);
+    return n === 0 ? Number.POSITIVE_INFINITY : n;
   };
   return [...filteredAlgorithms.value].sort((a, b) => {
     const sa = score(a);
@@ -921,7 +988,7 @@ function startTraining() {
   if (currentTraining.value) {
     previousAlgorithmId = currentTraining.value.id;
     router.push({ 
-      path: `/${props.mode}/${currentTraining.value.id}` 
+      path: `/${pathSegment.value}/${currentTraining.value.id}` 
     });
   }
 }
@@ -933,7 +1000,7 @@ function nextTraining() {
   if (currentTraining.value) {
     previousAlgorithmId = currentTraining.value.id;
     router.push({ 
-      path: `/${props.mode}/${currentTraining.value.id}` 
+      path: `/${pathSegment.value}/${currentTraining.value.id}` 
     });
   }
 }
@@ -945,7 +1012,7 @@ function stopTraining() {
   shouldBlurStandardAlg.value = false;
   // Remove algorithm ID from URL
   router.push({ 
-    path: `/${props.mode}` 
+    path: `/${pathSegment.value}` 
   });
 }
 
@@ -1087,7 +1154,7 @@ function handleContentClick(event) {
     }
     const navbar = document.querySelector('.navbar');
     // Don't close if clicking on algorithm card links or router-links
-    const clickedLink = event.target.closest('a[href*="/oll/"], a[href*="/pll/"], a[href*="/f2l/"], router-link, .router-link, .algorithm-card a, .algorithm-image-container a, .algorithm-title-container a');
+    const clickedLink = event.target.closest('a[href*="/oll/"], a[href*="/pll/"], a[href*="/f2l/"], a[href*="/advanced-f2l/"], router-link, .router-link, .algorithm-card a, .algorithm-image-container a, .algorithm-title-container a');
     const isLink = event.target.tagName === 'A' || event.target.closest('a') || event.target.closest('router-link');
     const isAlgorithmCardClick = event.target.closest('.algorithm-card') && 
       (event.target.closest('.algorithm-image-container') || event.target.closest('.algorithm-title-container'));
@@ -1284,7 +1351,7 @@ watch(() => [route.params.algorithmId, algorithms.value.length], ([algorithmId, 
       isTraining.value = true;
       if (currentTraining.value) {
         router.replace({ 
-          path: `/${props.mode}/${currentTraining.value.id}` 
+          path: `/${pathSegment.value}/${currentTraining.value.id}` 
         });
       }
       previousAlgorithmId = currentTraining.value?.id || null;

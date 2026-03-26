@@ -4,6 +4,7 @@ import App from './App.vue';
 import Home from './views/Home.vue';
 import Trainer from './views/Trainer.vue';
 import Notation from './views/Notation.vue';
+import Cross from './views/Cross.vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'mmenu-js/dist/mmenu.css';
@@ -35,7 +36,13 @@ const router = createRouter({
       component: Trainer, 
       props: (route) => ({ mode: 'f2l', algorithmId: route.params.algorithmId }) 
     },
+    { 
+      path: '/advanced-f2l/:algorithmId?', 
+      component: Trainer, 
+      props: (route) => ({ mode: 'af2l', algorithmId: route.params.algorithmId }) 
+    },
     { path: '/notation', component: Notation },
+    { path: '/cross', component: Cross },
   ],
 });
 

@@ -1,6 +1,6 @@
 /** User training backup (no auth secrets). CSV + # header lines. */
 
-export const TRAINER_MODES = ['oll', 'pll', 'f2l'];
+export const TRAINER_MODES = ['oll', 'pll', 'f2l', 'af2l'];
 
 export const THEME_STORAGE_KEY = 'theme-preference';
 
@@ -97,20 +97,23 @@ function algorithmsToModeCatalog(algorithms) {
  * Catalog for CSV export/import: every id + default (standard) algorithm string per mode.
  */
 export async function fetchAlgorithmExportCatalog() {
-  const [ollModule, pllModule, f2lModule] = await Promise.all([
+  const [ollModule, pllModule, f2lModule, af2lModule] = await Promise.all([
     import('../data/oll.js'),
     import('../data/pll.js'),
     import('../data/f2l.js'),
+    import('../data/af2l.js'),
   ]);
-  const [oll, pll, f2l] = await Promise.all([
+  const [oll, pll, f2l, af2l] = await Promise.all([
     ollModule.fetchAlgorithms(),
     pllModule.fetchAlgorithms(),
     f2lModule.fetchAlgorithms(),
+    af2lModule.fetchAlgorithms(),
   ]);
   return {
     oll: algorithmsToModeCatalog(oll),
     pll: algorithmsToModeCatalog(pll),
     f2l: algorithmsToModeCatalog(f2l),
+    af2l: algorithmsToModeCatalog(af2l),
   };
 }
 

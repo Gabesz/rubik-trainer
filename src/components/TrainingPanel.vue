@@ -259,6 +259,7 @@ function cancelNameEdit() {
 // Trainer mode meghatározása a route-ból
 const trainerMode = computed(() => {
   const path = route.path;
+  if (path.startsWith('/advanced-f2l')) return 'Advanced F2L';
   if (path.startsWith('/f2l')) return 'F2L';
   if (path.startsWith('/oll')) return 'OLL';
   if (path.startsWith('/pll')) return 'PLL';

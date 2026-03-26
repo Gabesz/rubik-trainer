@@ -100,7 +100,7 @@
         </h4>
 
         <div class="text-center my-3 algorithm-image-container">
-          <router-link :to="`/${mode}/${algorithm.id}`" class="d-inline-block">
+          <router-link :to="`/${linkBase}/${algorithm.id}`" class="d-inline-block">
             <img
               :src="algorithm.imageUrl"
               :alt="`Diagram for ${algorithm.name}`"
@@ -207,7 +207,7 @@
 
       <template v-else>
       <div class="text-center mb-3 algorithm-image-container">
-        <router-link :to="`/${mode}/${algorithm.id}`" class="d-inline-block">
+        <router-link :to="`/${linkBase}/${algorithm.id}`" class="d-inline-block">
           <img
             :src="algorithm.imageUrl"
             :alt="`Diagram for ${algorithm.name}`"
@@ -415,7 +415,12 @@ const props = defineProps({
   mode: {
     type: String,
     required: true,
-    validator: (value) => ['oll', 'pll', 'f2l'].includes(value),
+    validator: (value) => ['oll', 'pll', 'f2l', 'af2l'].includes(value),
+  },
+  /** Route path segment when it differs from mode (e.g. advanced-f2l vs af2l). */
+  pathSegment: {
+    type: String,
+    default: null,
   },
   learned: {
     type: Boolean,
@@ -448,6 +453,8 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['toggle-learned', 'toggle-practice', 'update-my-alg', 'update-my-name', 'filter-by-type']);
+
+const linkBase = computed(() => props.pathSegment || props.mode);
 
 const libraryStatusLabel = computed(() => {
   if (props.learned) return 'Learned';
@@ -651,7 +658,7 @@ onMounted(() => {
           link.setAttribute('tabindex', '0');
           
           // Add click handler - always use programmatic navigation as primary method
-          const expectedPath = `/${props.mode}/${props.algorithm.id}`;
+          const expectedPath = `/${linkBase.value}/${props.algorithm.id}`;
           const clickHandler = (event) => {
             // Always use programmatic navigation
             event.preventDefault();

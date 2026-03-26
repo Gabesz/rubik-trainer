@@ -1679,10 +1679,12 @@ section {
   margin-right: 0 !important;
 }
 
-/* F2L specific: override padding for mobile */
+/* F2L / AF2L specific: override padding for mobile */
 @media (max-width: 767.98px) {
   .trainer-f2l.container.training-container,
-  .trainer-f2l .container.training-container {
+  .trainer-af2l.container.training-container,
+  .trainer-f2l .container.training-container,
+  .trainer-af2l .container.training-container {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
   }
@@ -2068,8 +2070,9 @@ html.dark-theme .algorithm-moves-container .algorithm-move {
   height: auto;
 }
 
-/* F2L trainer: larger SVG images */
-.trainer-f2l .algorithm-card img {
+/* F2L / AF2L trainer: larger SVG images */
+.trainer-f2l .algorithm-card img,
+.trainer-af2l .algorithm-card img {
   max-width: 110px;
   max-height: 110px;
   width: 110px;
@@ -2077,12 +2080,14 @@ html.dark-theme .algorithm-moves-container .algorithm-move {
 }
 
 
-.trainer-f2l .training-panel .algorithm-card.display-card .card-body {
+.trainer-f2l .training-panel .algorithm-card.display-card .card-body,
+.trainer-af2l .training-panel .algorithm-card.display-card .card-body {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
 
-.trainer-f2l .display-standard-wrapper {
+.trainer-f2l .display-standard-wrapper,
+.trainer-af2l .display-standard-wrapper {
   margin-left: 0 !important;
   margin-right: 0 !important;
   padding-left: 0 !important;
@@ -2092,49 +2097,57 @@ html.dark-theme .algorithm-moves-container .algorithm-move {
 }
 
 @media (max-width: 767.98px) {
-  .trainer-f2l .algorithm-card.display-card .card-body {
+  .trainer-f2l .algorithm-card.display-card .card-body,
+  .trainer-af2l .algorithm-card.display-card .card-body {
     padding-left: 0.5rem !important;
     padding-right: 0.5rem !important;
   }
   
-  .trainer-f2l .display-standard-wrapper {
+  .trainer-f2l .display-standard-wrapper,
+  .trainer-af2l .display-standard-wrapper {
     margin-left: -0.5rem !important;
     margin-right: -0.5rem !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
   
-  .trainer-f2l .algorithm-card.display-card .card-body .training-panel-buttons {
+  .trainer-f2l .algorithm-card.display-card .card-body .training-panel-buttons,
+  .trainer-af2l .algorithm-card.display-card .card-body .training-panel-buttons {
     gap: 0.4rem !important;
     flex-wrap: nowrap;
     padding-left: 0.25rem;
     padding-right: 0.25rem;
   }
   
-  .trainer-f2l .algorithm-card.display-card .card-body .training-panel-buttons .btn-sm {
+  .trainer-f2l .algorithm-card.display-card .card-body .training-panel-buttons .btn-sm,
+  .trainer-af2l .algorithm-card.display-card .card-body .training-panel-buttons .btn-sm {
     font-size: 0.7rem;
     padding: 0.2rem 0.4rem;
     flex-shrink: 1;
     min-width: 0;
   }
   
-  .trainer-f2l .algorithm-card.display-card .card-body .training-panel-buttons .btn-sm svg {
+  .trainer-f2l .algorithm-card.display-card .card-body .training-panel-buttons .btn-sm svg,
+  .trainer-af2l .algorithm-card.display-card .card-body .training-panel-buttons .btn-sm svg {
     width: 12px;
     height: 12px;
     flex-shrink: 0;
   }
   
-  .trainer-f2l .algorithm-card.display-card .card-body .training-panel-buttons .btn-sm span {
+  .trainer-f2l .algorithm-card.display-card .card-body .training-panel-buttons .btn-sm span,
+  .trainer-af2l .algorithm-card.display-card .card-body .training-panel-buttons .btn-sm span {
     white-space: nowrap;
   }
 }
 
-.trainer-f2l .container.training-container {
+.trainer-f2l .container.training-container,
+.trainer-af2l .container.training-container {
   max-width: 100% !important;
 }
 
 @media (max-width: 767.98px) {
-  .trainer-f2l .container.training-container {
+  .trainer-f2l .container.training-container,
+  .trainer-af2l .container.training-container {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
     max-width: 100% !important;
@@ -2142,19 +2155,22 @@ html.dark-theme .algorithm-moves-container .algorithm-move {
   }
 }
 
-.trainer-f2l .training-panel {
+.trainer-f2l .training-panel,
+.trainer-af2l .training-panel {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
 
-.trainer-f2l .training-only {
+.trainer-f2l .training-only,
+.trainer-af2l .training-only {
   padding-left: 0 !important;
   padding-right: 0 !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
 }
 
-.trainer-f2l .training-panel .card-body {
+.trainer-f2l .training-panel .card-body,
+.trainer-af2l .training-panel .card-body {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }

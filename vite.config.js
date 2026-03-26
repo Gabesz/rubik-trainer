@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => ({
       manifest: {
         name: 'RUBIK TRAINER',
         short_name: 'RUBIK TRAINER',
-        description: "Practice and track Rubik's Cube OLL, PLL, and F2L algorithms.",
+        description: "Practice and track Rubik's Cube OLL, PLL, F2L, and Advanced F2L algorithms.",
         start_url: '/rubik-trainer/',
         scope: '/rubik-trainer/',
         theme_color: '#0d6efd',
