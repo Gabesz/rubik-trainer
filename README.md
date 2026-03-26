@@ -6,10 +6,13 @@ Demo: [https://vps.elisnails.hu/rubik-trainer/](https://vps.elisnails.hu/rubik-t
 
 ## Features
 
-- **Trainers and pages**
-  - **F2L** (41 cases), **OLL** (57 cases), **PLL** (21 cases), and **Advanced F2L** (54 cases) share the universal trainer UI (`Trainer.vue`) with routes `/f2l`, `/oll`, `/pll`, and `/advanced-f2l` (optional `:algorithmId` for training mode).
-  - **Cross** (`/cross`) — dedicated page with reference material for the white-cross phase (intuitive; not a case library like F2L/OLL).
-  - **Notation** (`/notation`) — notation reference with **AnimCube3** (AnimCubeJS) interactive cubes in a two-column layout; theme toggle in the page chrome.
+- **Trainers and pages** (each route is under the app base, e.g. `https://vps.elisnails.hu/rubik-trainer/` + path):
+  - **Cross** — route `/cross` — white-cross phase: reference / tips (no numbered case list).
+  - **F2L** — `/f2l` — 41 cases; universal trainer (`Trainer.vue`).
+  - **Advanced F2L** — `/advanced-f2l` — 54 cases; same trainer UI as F2L, OLL, PLL; training mode: `/advanced-f2l/:algorithmId`.
+  - **OLL** — `/oll` — 57 cases; universal trainer.
+  - **PLL** — `/pll` — 21 cases; universal trainer.
+  - **Notation** — `/notation` — **AnimCube3** (AnimCubeJS) cubes in a two-column layout; theme toggle in the page chrome.
 - **Branding and home** — Landing page titled **RUBIK TRAINER**, methodology section (Cross → F2L → OLL → PLL), links to trainers and Notation, and app version display (from `src/version.js`, bumped on each production build).
 - **Dark theme** — Toggle in the navbar / mobile menu; preference stored in `localStorage`.
 - **Navigation** — Desktop navbar plus **mmenu-js** slide-out menu on small screens (animated hamburger-to-X toggler). Trainer dropdown and full trainer list (Cross through PLL, Notation). Modals such as the 3D cube viewer use Vue `Teleport` to `body` for correct stacking.
