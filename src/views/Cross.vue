@@ -46,7 +46,7 @@
             aria-label="Toggle navigation"
             @click.prevent="openMobileMenu"
           >
-            <span class="navbar-toggler-icon"></span>
+            <AnimatedNavTogglerIcon />
           </button>
         </div>
 
@@ -322,6 +322,7 @@
 <script setup>
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
 import UserIcon from '../components/UserIcon.vue';
+import AnimatedNavTogglerIcon from '../components/AnimatedNavTogglerIcon.vue';
 import { useMmenuNav } from '../composables/useMmenuNav';
 import { useTheme } from '../composables/useTheme';
 

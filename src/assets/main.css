@@ -159,6 +159,49 @@ html.dark-theme .rt-page .navbar.rt-navbar .nav-link.text-danger {
   border-color: color-mix(in srgb, var(--rt-color-on-surface) 22%, transparent);
 }
 
+/* Animated hamburger → X (driven by aria-expanded on .navbar-toggler; set by useMmenuNav) */
+.rt-animated-hamburger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: middle;
+}
+
+.rt-animated-hamburger__svg {
+  display: block;
+  color: inherit;
+}
+
+.rt-animated-hamburger line {
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  fill: none;
+}
+
+.rt-hamburger-line {
+  transition: transform var(--rt-transition-medium), opacity var(--rt-transition-fast);
+  transform-origin: 12px 12px;
+}
+
+.rt-hamburger-line--2 {
+  transition: transform var(--rt-transition-medium), opacity var(--rt-transition-fast);
+}
+
+.navbar-toggler[aria-expanded='true'] .rt-hamburger-line--1 {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.navbar-toggler[aria-expanded='true'] .rt-hamburger-line--2 {
+  opacity: 0;
+}
+
+.navbar-toggler[aria-expanded='true'] .rt-hamburger-line--3 {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
 /* Stitch: F2L Trainer Desktop (Updated Nav) — glass bar, brand, left-aligned pills (content container), icon cluster */
 .rt-page .navbar.rt-navbar.rt-navbar--neon {
   margin-top: 0;

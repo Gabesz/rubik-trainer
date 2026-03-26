@@ -46,7 +46,7 @@
             aria-label="Toggle navigation"
             @click.prevent="openMobileMenu"
           >
-            <span class="navbar-toggler-icon"></span>
+            <AnimatedNavTogglerIcon />
           </button>
         </div>
 
@@ -688,6 +688,7 @@ import { useRouter, useRoute } from 'vue-router';
 import AlgorithmCard from '../components/AlgorithmCard.vue';
 import TrainingPanel from '../components/TrainingPanel.vue';
 import UserIcon from '../components/UserIcon.vue';
+import AnimatedNavTogglerIcon from '../components/AnimatedNavTogglerIcon.vue';
 import { useLearned } from '../composables/useLearned';
 import { useMmenuNav } from '../composables/useMmenuNav';
 import { useTheme } from '../composables/useTheme';
