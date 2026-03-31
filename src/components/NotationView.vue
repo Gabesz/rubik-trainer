@@ -9,7 +9,7 @@
         <div class="notation-buttons-section">
           <h3 class="h5 mb-3">Basic notation</h3>
           <p class="text-muted small mb-3">
-            U (Up), D (Down), L (Left), R (Right), F (Front), B (Back). Each letter = 90° clockwise. Apostrophe = counterclockwise. 2 = 180°.
+            U (Up), D (Down), L (Left), R (Right), F (Front), B (Back), M (middle layer between L and R). Each letter = 90° clockwise. Apostrophe = counterclockwise. 2 = 180°.
           </p>
           <div class="notation-buttons">
             <div class="notation-row">
@@ -125,9 +125,9 @@ const CUBE_ID_BASIC = 'notation-animcube-basic';
 const CUBE_ID_DOUBLE = 'notation-animcube-double';
 const cubeReady = ref(false);
 
-const basicMoves = ['U', 'D', 'L', 'R', 'F', 'B'];
-const basicPrimeMoves = ["U'", "D'", "L'", "R'", "F'", "B'"];
-const basicDoubleMoves = ['U2', 'D2', 'L2', 'R2', 'F2', 'B2'];
+const basicMoves = ['U', 'D', 'L', 'R', 'F', 'B', 'M'];
+const basicPrimeMoves = ["U'", "D'", "L'", "R'", "F'", "B'", "M'"];
+const basicDoubleMoves = ['U2', 'D2', 'L2', 'R2', 'F2', 'B2', 'M2'];
 
 const doubleLayerMoves = ['u', 'd', 'l', 'r', 'f', 'b'];
 const doubleLayerPrimeMoves = ["u'", "d'", "l'", "r'", "f'", "b'"];
