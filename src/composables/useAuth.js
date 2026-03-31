@@ -6,9 +6,14 @@ import {
   onAuthStateChanged,
   updatePassword as firebaseUpdatePassword,
   reauthenticateWithCredential,
-  EmailAuthProvider
+  EmailAuthProvider,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
+
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
 
 const currentUser = ref(null);
 const loading = ref(true);
@@ -59,6 +64,21 @@ export function useAuth() {
     }
   };
 
+  const signInWithGoogle = async () => {
+    try {
+      const userCredential = await signInWithPopup(auth, googleProvider);
+      return { success: true, user: userCredential.user };
+    } catch (error) {
+      if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+        return { success: false, cancelled: true };
+      }
+      return {
+        success: false,
+        error: error.message || 'Failed to sign in with Google',
+      };
+    }
+  };
+
   const updatePassword = async (currentPassword, newPassword) => {
     try {
       const user = auth.currentUser;
@@ -92,6 +112,7 @@ export function useAuth() {
     signIn,
     signUp,
     signOut,
+    signInWithGoogle,
     updatePassword
   };
 }

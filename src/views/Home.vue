@@ -2,13 +2,15 @@
   <main class="rt-landing">
     <div class="rt-landing__ambient" aria-hidden="true" />
 
-    <button
-      type="button"
-      class="rt-theme-toggle"
-      @click="toggleTheme"
-      :title="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
-      aria-label="Toggle theme"
-    >
+    <div class="rt-landing__top-actions">
+      <UserIcon unique-id="home" />
+      <button
+        type="button"
+        class="rt-theme-toggle"
+        @click="toggleTheme"
+        :title="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
+        aria-label="Toggle theme"
+      >
       <svg v-if="isDark" aria-hidden="true" viewBox="0 0 16 16" width="20" height="20">
         <path
           fill="currentColor"
@@ -22,6 +24,7 @@
         />
       </svg>
     </button>
+    </div>
 
     <div class="container rt-landing__wrap py-4 py-md-5">
       <header class="rt-landing__hero rt-landing-reveal">
@@ -241,6 +244,7 @@
 import { onMounted, onBeforeUnmount } from 'vue';
 import { useTheme } from '../composables/useTheme';
 import { APP_VERSION } from '../version';
+import UserIcon from '../components/UserIcon.vue';
 
 const appVersion = APP_VERSION;
 
@@ -292,6 +296,54 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.rt-landing__top-actions {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.rt-landing__top-actions :deep(.user-icon-container) {
+  display: flex;
+  align-items: center;
+}
+
+/* Match glass theme toggle — landing has no blue navbar */
+.rt-landing__top-actions :deep(.user-icon-btn) {
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0.5rem;
+  border: 1px solid var(--rt-glass-border);
+  border-radius: 50%;
+  background: var(--rt-glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: var(--rt-color-on-surface);
+  box-shadow: var(--rt-shadow-card);
+  transition: transform var(--rt-transition-fast), box-shadow var(--rt-transition-fast),
+    border-color var(--rt-transition-fast);
+}
+
+.rt-landing__top-actions :deep(.user-icon-btn.not-logged-in) {
+  border-color: color-mix(in srgb, var(--rt-color-primary) 45%, var(--rt-glass-border));
+  color: var(--rt-color-primary-mid);
+  background: var(--rt-glass-bg);
+}
+
+.rt-landing__top-actions :deep(.user-icon-btn:hover) {
+  transform: scale(1.06);
+  box-shadow: var(--rt-shadow-glow-primary);
+  border-color: var(--rt-color-primary-mid);
+  color: var(--rt-color-primary-mid);
+}
+
+.rt-landing__top-actions :deep(.rt-theme-toggle) {
+  position: static;
+}
+
 .rt-landing {
   position: relative;
   min-height: 100vh;

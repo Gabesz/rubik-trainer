@@ -164,6 +164,25 @@
 
               <!-- Auth Forms (when not logged in) -->
               <div v-else>
+                <div class="mb-3">
+                  <button
+                    type="button"
+                    class="btn auth-btn-google w-100 d-inline-flex align-items-center justify-content-center gap-2"
+                    @click="handleGoogleSignIn"
+                    :disabled="loading || oauthLoading"
+                  >
+                    <span v-if="oauthLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <svg v-else class="auth-btn-google__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20" height="20" aria-hidden="true">
+                      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6C43.98 37.08 46.98 31.38 46.98 24.55z"/>
+                      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.28-13.47-10.07l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                    </svg>
+                    Continue with Google
+                  </button>
+                </div>
+                <p class="text-center text-muted small text-uppercase mb-3 auth-modal-or">or</p>
+
                 <!-- Login Form -->
                 <form v-if="isLoginMode" @submit.prevent="handleSignIn">
                   <div class="mb-3">
@@ -191,7 +210,7 @@
                   <button
                     type="submit"
                     class="btn btn-primary w-100 mb-2"
-                    :disabled="loading"
+                    :disabled="loading || oauthLoading"
                   >
                     <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                     Sign In
@@ -245,7 +264,7 @@
                   <button
                     type="submit"
                     class="btn btn-primary w-100 mb-2"
-                    :disabled="loading || signupPassword !== signupPasswordConfirm"
+                    :disabled="loading || oauthLoading || signupPassword !== signupPasswordConfirm"
                   >
                     <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                     Sign Up
@@ -297,7 +316,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close']);
 
-const { currentUser, signIn, signUp, signOut, updatePassword } = useAuth();
+const { currentUser, signIn, signUp, signOut, signInWithGoogle, updatePassword } = useAuth();
 const { loadFullTrainingData, saveFullTrainingData } = useUserData();
 const { setTheme } = useTheme();
 
@@ -317,6 +336,7 @@ const newPasswordConfirm = ref('');
 const message = ref('');
 const messageType = ref('');
 const loading = ref(false);
+const oauthLoading = ref(false);
 
 // Handle modal open/close - add/remove modal-open class from body
 watch(() => props.show, (newVal) => {
@@ -340,6 +360,7 @@ watch(() => props.show, (newVal) => {
     messageType.value = '';
     isLoginMode.value = true;
     backupBusy.value = '';
+    oauthLoading.value = false;
   }
 });
 
@@ -354,6 +375,24 @@ watch(currentUser, (newUser, oldUser) => {
     }, 1500);
   }
 });
+
+const handleGoogleSignIn = async () => {
+  message.value = '';
+  messageType.value = '';
+  oauthLoading.value = true;
+  try {
+    const result = await signInWithGoogle();
+    if (result.success) {
+      message.value = 'Successfully signed in!';
+      messageType.value = 'success';
+    } else if (!result.cancelled) {
+      message.value = result.error || 'Failed to sign in with Google';
+      messageType.value = 'error';
+    }
+  } finally {
+    oauthLoading.value = false;
+  }
+};
 
 const handleSignIn = async () => {
   message.value = '';
@@ -638,6 +677,47 @@ html.dark-theme .auth-modal-wrapper .form-control:focus {
   background-color: var(--rt-color-surface-low);
   border-color: var(--rt-color-primary-mid);
   color: var(--rt-color-on-surface);
+}
+
+.auth-modal-wrapper .auth-btn-google {
+  font-weight: 600;
+  color: #3c4043;
+  background: #fff;
+  border: 1px solid #dadce0;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.08);
+}
+
+.auth-modal-wrapper .auth-btn-google:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #dadce0;
+  color: #202124;
+}
+
+.auth-modal-wrapper .auth-btn-google:focus-visible {
+  outline: 2px solid rgba(66, 133, 244, 0.5);
+  outline-offset: 2px;
+}
+
+.auth-modal-wrapper .auth-btn-google__icon {
+  flex-shrink: 0;
+}
+
+html[data-bs-theme='dark'] .auth-modal-wrapper .auth-btn-google,
+html.dark-theme .auth-modal-wrapper .auth-btn-google {
+  color: #e8eaed;
+  background: var(--rt-color-surface-low);
+  border-color: var(--rt-glass-border);
+}
+
+html[data-bs-theme='dark'] .auth-modal-wrapper .auth-btn-google:hover:not(:disabled),
+html.dark-theme .auth-modal-wrapper .auth-btn-google:hover:not(:disabled) {
+  background: var(--rt-color-surface-high);
+  color: #fff;
+}
+
+.auth-modal-or {
+  letter-spacing: 0.12em;
+  margin-top: -0.25rem;
 }
 </style>
 
