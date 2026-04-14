@@ -6,6 +6,7 @@
 import { onMounted, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router';
 import { useTheme } from './composables/useTheme';
+import { pulseAppOpenSession } from './push/appOpenPulse';
 
 // Initialize theme - the composable handles everything
 useTheme();
@@ -40,6 +41,7 @@ function cleanupModals() {
 router.afterEach(() => {
   // Small delay to ensure this runs after Vue updates
   setTimeout(cleanupModals, 50);
+  pulseAppOpenSession();
 });
 
 // Clean up on browser back/forward navigation
@@ -47,12 +49,19 @@ function handlePopState() {
   setTimeout(cleanupModals, 50);
 }
 
+function handleVisibilityForPulse() {
+  if (document.visibilityState === 'visible') pulseAppOpenSession();
+}
+
 onMounted(() => {
   window.addEventListener('popstate', handlePopState);
+  document.addEventListener('visibilitychange', handleVisibilityForPulse);
+  pulseAppOpenSession();
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('popstate', handlePopState);
+  document.removeEventListener('visibilitychange', handleVisibilityForPulse);
   cleanupModals();
 });
 </script>

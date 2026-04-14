@@ -1,5 +1,5 @@
 <template>
-  <div class="cross-layout rt-page">
+  <div class="course-shell-layout rt-page">
     <nav
       class="navbar navbar-expand-lg fixed-top rt-navbar rt-navbar--neon border-0"
       :class="isDark ? 'navbar-dark' : 'navbar-light'"
@@ -12,16 +12,24 @@
             <a
               class="nav-link dropdown-toggle py-1 small"
               href="#"
-              id="crossTrainerDropdownMobile"
+              :id="`courseTrainerDropdownMobile-${userIconSuffix}`"
               role="button"
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
               {{ $t('nav.trainers') }}
             </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="crossTrainerDropdownMobile">
+            <ul
+              class="dropdown-menu dropdown-menu-end"
+              :aria-labelledby="`courseTrainerDropdownMobile-${userIconSuffix}`"
+            >
               <li>
-                <router-link to="/cross" class="dropdown-item active">{{ $t('nav.cross') }}</router-link>
+                <router-link to="/course/beginner-cfop" class="dropdown-item active">{{
+                  $t('nav.course')
+                }}</router-link>
+              </li>
+              <li>
+                <router-link to="/cross" class="dropdown-item">{{ $t('nav.cross') }}</router-link>
               </li>
               <li>
                 <router-link to="/f2l" class="dropdown-item">{{ $t('nav.f2l') }}</router-link>
@@ -41,7 +49,7 @@
             ref="mmenuTogglerRef"
             class="navbar-toggler"
             type="button"
-            aria-controls="cross-mmenu"
+            :aria-controls="mmenuId"
             aria-expanded="false"
             :aria-label="$t('common.toggleNav')"
             @click.prevent="openMobileMenu"
@@ -52,7 +60,7 @@
 
         <div
           class="navbar-collapse d-none d-lg-flex align-items-lg-center flex-lg-grow-1 w-100"
-          id="crossNavbarNav"
+          id="courseNavbarNav"
           @click="closeNavbarIfMobile"
         >
           <ul
@@ -62,9 +70,12 @@
               <router-link class="nav-link rt-nav-pill" to="/">{{ $t('nav.home') }}</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link rt-nav-pill rt-nav-pill--active" to="/cross">{{
-                $t('nav.cross')
+              <router-link class="nav-link rt-nav-pill rt-nav-pill--active" to="/course/beginner-cfop">{{
+                $t('nav.course')
               }}</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link class="nav-link rt-nav-pill" to="/cross">{{ $t('nav.cross') }}</router-link>
             </li>
             <li class="nav-item">
               <router-link class="nav-link rt-nav-pill" to="/f2l">{{ $t('nav.f2l') }}</router-link>
@@ -129,7 +140,7 @@
               </button>
             </li>
             <li class="nav-item d-none d-lg-block rt-navbar-user-item">
-              <UserIcon unique-id="cross" />
+              <UserIcon :unique-id="`course-desktop-${userIconSuffix}`" />
             </li>
           </ul>
         </div>
@@ -138,7 +149,7 @@
     </nav>
 
     <nav
-      id="cross-mmenu"
+      :id="mmenuId"
       ref="mmenuNavRef"
       class="rt-mmenu-source"
       aria-hidden="true"
@@ -149,7 +160,12 @@
           <router-link class="rt-mmenu-link" to="/">{{ $t('nav.home') }}</router-link>
         </li>
         <li>
-          <router-link class="rt-mmenu-link rt-mmenu-link--active" to="/cross">{{ $t('nav.cross') }}</router-link>
+          <router-link class="rt-mmenu-link rt-mmenu-link--active" to="/course/beginner-cfop">{{
+            $t('nav.course')
+          }}</router-link>
+        </li>
+        <li>
+          <router-link class="rt-mmenu-link" to="/cross">{{ $t('nav.cross') }}</router-link>
         </li>
         <li>
           <router-link class="rt-mmenu-link" to="/f2l">{{ $t('nav.f2l') }}</router-link>
@@ -169,7 +185,7 @@
         <li>
           <span class="rt-mmenu-user-host">
             <UserIcon
-              unique-id="cross-mobile"
+              :unique-id="`course-mobile-${userIconSuffix}`"
               class="mobile-menu-user-icon"
               :close-mobile-navbar="closeNavbar"
             />
@@ -220,118 +236,27 @@
       </ul>
     </nav>
 
-    <main class="cross-page container py-5 rt-page">
-      <div class="row">
-        <div class="col-12">
-          <h1 class="h2 mb-3">{{ $t('cross.pageTitle') }}</h1>
-          <i18n-t keypath="cross.lead" tag="p" class="text-muted mb-4 cross-page__lead">
-            <template #pieces>
-              <strong>{{ $t('cross.piecesWord') }}</strong>
-            </template>
-          </i18n-t>
-
-          <figure class="cross-page__figure">
-            <img
-              :src="crossImageUrl"
-              :alt="$t('cross.figureAlt')"
-              class="cross-page__img img-fluid rounded"
-              width="640"
-              height="640"
-              loading="lazy"
-            />
-            <figcaption class="cross-page__caption text-muted small mt-2">
-              {{ $t('cross.figureCaption') }}
-            </figcaption>
-          </figure>
-
-          <section class="cross-page__section" aria-labelledby="cross-goal">
-            <h2 id="cross-goal" class="h4 mt-4">{{ $t('cross.goalHeading') }}</h2>
-            <p>
-              {{ $t('cross.goalP') }}
-            </p>
-          </section>
-
-          <section class="cross-page__section" aria-labelledby="cross-daisy">
-            <h2 id="cross-daisy" class="h4 mt-4">{{ $t('cross.daisyHeading') }}</h2>
-            <i18n-t keypath="cross.daisyP1" tag="p">
-              <template #daisy>
-                <strong>{{ $t('cross.daisyWord') }}</strong>
-              </template>
-              <template #yellow>
-                <strong>{{ $t('cross.yellowWord') }}</strong>
-              </template>
-            </i18n-t>
-            <ol class="cross-page__steps">
-              <li v-for="(line, idx) in daisySteps" :key="'daisy-' + idx">{{ line }}</li>
-            </ol>
-          </section>
-
-          <section class="cross-page__section" aria-labelledby="cross-transfer">
-            <h2 id="cross-transfer" class="h4 mt-4">{{ $t('cross.transferHeading') }}</h2>
-            <p>{{ $t('cross.transferIntro') }}</p>
-            <ol class="cross-page__steps">
-              <li v-for="(line, idx) in transferSteps" :key="'tr-' + idx">{{ line }}</li>
-            </ol>
-          </section>
-
-          <section class="cross-page__section" aria-labelledby="cross-flip">
-            <h2 id="cross-flip" class="h4 mt-4">{{ $t('cross.flipHeading') }}</h2>
-            <i18n-t keypath="cross.flipP" tag="p">
-              <template #twisted>
-                <strong>{{ $t('cross.twistedWord') }}</strong>
-              </template>
-            </i18n-t>
-            <p class="cross-page__alg">
-              <code>F' U L' U'</code>
-            </p>
-            <p class="text-muted small">
-              {{ $t('cross.flipHint') }}
-            </p>
-          </section>
-
-          <section class="cross-page__section" aria-labelledby="cross-colors">
-            <h2 id="cross-colors" class="h4 mt-4">{{ $t('cross.colorsHeading') }}</h2>
-            <p>{{ $t('cross.colorsIntro') }}</p>
-            <ul class="cross-page__bullets">
-              <li>{{ $t('cross.colorsLi1') }}</li>
-              <li>{{ $t('cross.colorsLi2') }}</li>
-              <li>
-                {{ $t('cross.colorsLi3') }}
-              </li>
-            </ul>
-          </section>
-
-          <p class="mt-4 mb-0">
-            <router-link to="/f2l" class="cross-page__next">{{ $t('cross.nextF2l') }}</router-link>
-          </p>
-        </div>
-      </div>
+    <main class="course-shell-main container py-5 rt-page">
+      <slot />
     </main>
   </div>
 </template>
 
 <script setup>
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import UserIcon from '../components/UserIcon.vue';
-import AnimatedNavTogglerIcon from '../components/AnimatedNavTogglerIcon.vue';
+import UserIcon from './UserIcon.vue';
+import AnimatedNavTogglerIcon from './AnimatedNavTogglerIcon.vue';
 import { useMmenuNav } from '../composables/useMmenuNav';
 import { useTheme } from '../composables/useTheme';
 
+const props = defineProps({
+  userIconSuffix: {
+    type: String,
+    default: 'default',
+  },
+});
+
 const { isDark, toggleTheme } = useTheme();
-const { tm } = useI18n();
-
-const crossImageUrl = computed(() => `${import.meta.env.BASE_URL}cross/reference.png`);
-
-const daisySteps = computed(() => {
-  const raw = tm('cross.daisyList');
-  return Array.isArray(raw) ? raw : [];
-});
-
-const transferSteps = computed(() => {
-  const raw = tm('cross.transferList');
-  return Array.isArray(raw) ? raw : [];
-});
 
 const mmenuNavRef = ref(null);
 const mmenuTogglerRef = ref(null);
@@ -340,6 +265,8 @@ const { open: openMobileMenu, close: closeMmenu, isOpen: isMobileMenuOpen } = us
   isDark,
   togglerRef: mmenuTogglerRef,
 });
+
+const mmenuId = computed(() => `course-mmenu-${props.userIconSuffix}`);
 
 function handlePrint() {
   window.print();
@@ -377,78 +304,11 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.cross-layout {
+.course-shell-layout {
   padding-top: 5.25rem;
 }
 
-.cross-page {
+.course-shell-main {
   padding-top: 0;
-}
-
-.cross-page__lead {
-  line-height: 1.6;
-}
-
-.cross-page__figure {
-  margin: 1.5rem 0 2rem;
-  text-align: center;
-}
-
-.cross-page__img {
-  max-width: min(100%, 42rem);
-  height: auto;
-  border: 1px solid var(--rt-glass-border);
-  box-shadow: var(--rt-shadow-card);
-}
-
-.cross-page__section p,
-.cross-page__section li {
-  color: var(--rt-color-on-surface-variant);
-  line-height: 1.65;
-}
-
-.cross-page__steps {
-  padding-left: 1.25rem;
-}
-
-.cross-page__steps li {
-  margin-bottom: 0.35rem;
-}
-
-.cross-page__bullets {
-  margin: 0;
-  padding-left: 1.25rem;
-}
-
-.cross-page__code {
-  font-size: 0.95em;
-  padding: 0.1em 0.35em;
-  border-radius: 0.25rem;
-  background: var(--rt-color-surface-high);
-  color: var(--rt-color-on-surface);
-}
-
-.cross-page__alg {
-  margin: 1rem 0;
-}
-
-.cross-page__alg code {
-  font-size: 1.1rem;
-  letter-spacing: 0.04em;
-  padding: 0.5rem 0.85rem;
-  border-radius: var(--rt-radius-md);
-  background: var(--rt-color-surface-high);
-  border: 1px solid var(--rt-glass-border);
-  color: var(--rt-color-primary-mid);
-}
-
-.cross-page__next {
-  font-weight: 600;
-  text-decoration: none;
-  color: var(--rt-color-primary-mid);
-}
-
-.cross-page__next:hover {
-  text-decoration: underline;
 }
 </style>

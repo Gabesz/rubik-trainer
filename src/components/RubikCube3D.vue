@@ -1,6 +1,6 @@
 <template>
   <div class="rubik-cube-container">
-    <div class="algorithm-text mb-2 text-center">
+    <div v-if="showMoveList" class="algorithm-text mb-2 text-center">
       <div v-if="setup" class="setup-text small mb-1">
         <strong>Setup:</strong> 
         <span class="font-monospace">
@@ -23,7 +23,7 @@
         <strong>Algorithm:</strong> 
         <span class="font-monospace">
           <span
-            v-for="(move, index) in algorithmMoves"
+            v-for="(move, index) in algorithmMovesDisplay"
             :key="`alg-${index}`"
             class="algorithm-move"
             :class="{ 
@@ -31,7 +31,7 @@
               'disabled': !isPlayerReady
             }"
             @click="isPlayerReady && jumpToMove('algorithm', index)"
-            :title="isPlayerReady ? `Ugorj erre a lépésre (${index + 1}/${algorithmMoves.length})` : 'Várj, amíg a player betöltődik...'"
+            :title="isPlayerReady ? `Ugorj erre a lépésre (${index + 1}/${algorithmMovesDisplay.length})` : 'Várj, amíg a player betöltődik...'"
           >
             {{ move }}
           </span>
@@ -41,20 +41,24 @@
     <twisty-player
       :key="playerKey"
       ref="twistyPlayerRef"
-      :alg="algorithm"
+      :alg="twistyMainAlg"
       :experimental-setup-alg="setup"
+      :experimental-stickering="twistyStickering"
+      :control-panel="twistyControlPanel"
+      :experimental-drag-input="twistyDragInput"
       puzzle="3x3x3"
       hint-facelets="none"
       background="none"
-      camera-latitude="180"
-     
+      :camera-latitude="twistyCameraLatitude"
+      :camera-longitude="twistyCameraLongitude"
       style="width: 100%; max-width: 500px; height: 500px;"
     ></twisty-player>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, nextTick } from 'vue';
+import { ref, computed, onMounted, watch, nextTick, defineExpose, defineEmits } from 'vue';
+import { cubingMoveDurationMs, cubingDurationMsSlice } from '../utils/cubeParser.js';
 
 /** Twisty internals call random helpers on move lists; empty alg + hidden modals can hit length 0 and throw. */
 const EMPTY_ALG_FALLBACK = "R R'";
@@ -87,12 +91,112 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  /** When false, hide the setup/algorithm move list (e.g. course lesson player). */
+  showMoveList: {
+    type: Boolean,
+    default: true,
+  },
+  /**
+   * When true (default), after setup/algorithm props change the timeline jumps to setup end (trainer UX).
+   * Set false when the parent controls the timeline (step-by-step course).
+   */
+  autoStickToSetupEnd: {
+    type: Boolean,
+    default: true,
+  },
+  /**
+   * When true (default), algorithm/setup prop changes trigger seekAfterUserMoves on the twisty timeline.
+   * Set false when the parent is the only driver (playUserMoveRange / explicit seek), e.g. notation course —
+   * otherwise repeated seeks (incl. 80ms/250ms retries) can race playback and freeze mid-turn.
+   */
+  syncTimelineOnAlgorithmProp: {
+    type: Boolean,
+    default: true,
+  },
+  /**
+   * When true, twisty always receives `${EMPTY_ALG_FALLBACK} ${userAlg}` so the first user move appends
+   * instead of replacing the empty-state placeholder (avoids twisty timeline resets that race playback).
+   */
+  prependNeutralAlgorithmPrefix: {
+    type: Boolean,
+    default: false,
+  },
+  /**
+   * When false, cube is view-only (no drag twists; built-in control panel hidden).
+   * Trainers and modals should keep default true.
+   */
+  interactive: {
+    type: Boolean,
+    default: true,
+  },
+  /**
+   * When false, hide twisty’s bottom control panel (move buttons) but keep drag if `interactive` is true.
+   */
+  showControlPanel: {
+    type: Boolean,
+    default: true,
+  },
+  /**
+   * Passed to twisty `experimental-stickering` when non-empty (e.g. Cross, full).
+   * @see https://experiments.cubing.net/cubing.js/twisty/twisty-player-config.html
+   */
+  experimentalStickering: {
+    type: String,
+    default: '',
+  },
+  /**
+   * When true, emit `mission-interaction` on twisty move/pause so parents can debounce
+   * `getMissionKPattern()` for Cross mission checks.
+   */
+  emitMissionMoves: {
+    type: Boolean,
+    default: false,
+  },
+  /**
+   * Initial polar camera angle (twisty-player). Default 180 matches trainers (white cross / D face framing).
+   * Use 0 for opposite vertical orbit (e.g. Cross mission: white on top in the viewport).
+   */
+  cameraLatitude: {
+    type: [String, Number],
+    default: 180,
+  },
+  /** Optional horizontal orbit (degrees). Omitted when null/undefined. */
+  cameraLongitude: {
+    type: [String, Number],
+    default: undefined,
+  },
 });
+
+const emit = defineEmits(['mission-interaction']);
+
+const twistyStickering = computed(() => {
+  const o = stickeringOverlay.value?.trim();
+  if (o) return o;
+  const s = props.experimentalStickering?.trim();
+  return s || undefined;
+});
+
+const twistyControlPanel = computed(() => {
+  if (!props.interactive || !props.showControlPanel) return 'none';
+  return undefined;
+});
+
+const twistyDragInput = computed(() => (props.interactive ? undefined : 'none'));
+
+const twistyCameraLatitude = computed(() => String(props.cameraLatitude));
+
+const twistyCameraLongitude = computed(() =>
+  props.cameraLongitude === undefined || props.cameraLongitude === null || props.cameraLongitude === ''
+    ? undefined
+    : String(props.cameraLongitude),
+);
 
 const twistyPlayerRef = ref(null);
 const playerKey = ref(0);
 const currentTimestamp = ref(0);
 const isPlayerReady = ref(false);
+/** When set, overrides `experimentalStickering` prop (guided lesson actions). */
+const stickeringOverlay = ref('');
 
 // Setup algoritmus (ha van) - experimental-setup-alg prop-hoz
 // x2 rotáció a legelején: fehér alul, sárga felül orientáció (alapértelmezett: sárga alul, fehér felül)
@@ -101,279 +205,352 @@ const setup = computed(() => {
   return baseSetup ? `x2 ${baseSetup}` : 'x2';
 });
 
+/** Neutral placeholder moves (length 2) — must match EMPTY_ALG_FALLBACK token count. */
+const NEUTRAL_PREFIX_MOVE_COUNT = 2;
+
+const neutralPrefixMoveCount = computed(() =>
+  props.prependNeutralAlgorithmPrefix ? NEUTRAL_PREFIX_MOVE_COUNT : 0,
+);
+
 // Fő algoritmus - alg prop-hoz (never empty — cubing.net twisty randomUIntBelow breaks on 0-length sequences)
-const algorithm = computed(() => {
-  const t = props.algorithm && props.algorithm.trim() ? props.algorithm.trim() : '';
-  return t || EMPTY_ALG_FALLBACK;
+const twistyMainAlg = computed(() => {
+  const user = props.algorithm && props.algorithm.trim() ? props.algorithm.trim() : '';
+  if (props.prependNeutralAlgorithmPrefix) {
+    return user ? `${EMPTY_ALG_FALLBACK} ${user}` : EMPTY_ALG_FALLBACK;
+  }
+  return user || EMPTY_ALG_FALLBACK;
 });
 
-// Setup időtartama másodpercekben (körülbelül 0.5 másodperc per mozgás)
-const setupDuration = computed(() => {
-  if (!setup.value) return 0;
-  const setupMoves = setup.value.split(/\s+/).filter(m => m.trim().length > 0);
-  return setupMoves.length * 0.5;
-});
-
-// Setup mozgások listája
 const setupMoves = computed(() => {
   if (!setup.value) return [];
   return setup.value.split(/\s+/).filter(m => m.trim().length > 0);
 });
 
-// Algoritmus mozgások listája
+// Algoritmus mozgások listája (teljes twisty szekvencia)
 const algorithmMoves = computed(() => {
-  if (!algorithm.value) return [];
-  return algorithm.value.split(/\s+/).filter(m => m.trim().length > 0);
+  if (!twistyMainAlg.value) return [];
+  return twistyMainAlg.value.split(/\s+/).filter(m => m.trim().length > 0);
 });
 
-// Jelenleg aktív lépés indexe (-1 ha nincs aktív)
+/** Move list UI: elrejti a semleges előtagot, ha van. */
+const algorithmMovesDisplay = computed(() => {
+  const p = neutralPrefixMoveCount.value;
+  const all = algorithmMoves.value;
+  return p > 0 ? all.slice(p) : all;
+});
+
+function userAlgTokenList() {
+  const s = props.algorithm?.trim() || '';
+  return s ? s.split(/\s+/).filter(Boolean) : [];
+}
+
 const activeMoveIndex = computed(() => {
   const timestamp = currentTimestamp.value;
-  
-  // Ha a setup-ban vagyunk
-  if (setup.value && timestamp > 0 && timestamp < setupDuration.value) {
-    // A timestamp alapján számoljuk, hogy melyik lépésnél tartunk
-    // Minden lépés kb. 0.5 másodperc, de lehet, hogy változó
-    const moveIndex = Math.min(Math.floor(timestamp / 0.5), setupMoves.value.length - 1);
-    return { type: 'setup', index: moveIndex };
+  if (timestamp < 0) return null;
+
+  const allAlgToks = algorithmMoves.value;
+  const prefixCount = neutralPrefixMoveCount.value;
+  let acc = 0;
+  let moveIdx = -1;
+  for (let i = 0; i < allAlgToks.length; i++) {
+    const moveDur = cubingMoveDurationMs(allAlgToks[i]);
+    if (timestamp < acc + moveDur) {
+      moveIdx = i;
+      break;
+    }
+    acc += moveDur;
   }
-  
-  // Ha az algoritmusban vagyunk
-  if (timestamp >= setupDuration.value) {
-    const algorithmTimestamp = timestamp - setupDuration.value;
-    const moveIndex = Math.min(Math.floor(algorithmTimestamp / 0.5), algorithmMoves.value.length - 1);
-    return { type: 'algorithm', index: moveIndex };
-  }
-  
-  // Ha a setup után vagyunk, de még nem kezdődött el az algoritmus
-  if (setup.value && timestamp >= setupDuration.value && timestamp < setupDuration.value + 0.1) {
-    // Még nem kezdődött el az algoritmus, nincs aktív lépés
-    return null;
-  }
-  
-  return null;
+  if (moveIdx < 0) return null;
+  if (prefixCount > 0 && moveIdx < prefixCount) return null;
+  const userIdx = moveIdx - prefixCount;
+  const userToks = userAlgTokenList();
+  if (userIdx < 0 || userIdx >= userToks.length) return null;
+  return { type: 'algorithm', index: userIdx };
 });
 
-// Ugrás egy adott lépésre
 function jumpToMove(type, index) {
   const player = twistyPlayerRef.value;
-  if (!player) return;
-  
-  // Próbáljuk meg több módon is elérni a timeline-t
-  let timeline = null;
-  
-  if (player.timeline) {
-    timeline = player.timeline;
-  } else if (player.experimentalModel && player.experimentalModel.twistySceneModel) {
-    timeline = player.experimentalModel.twistySceneModel.timeline;
-  }
-  
-  if (!timeline) return;
-  
+  if (!player?.experimentalModel) return;
+
   try {
     let targetTimestamp = 0;
-    
+
     if (type === 'setup') {
-      // Setup lépés: számoljuk a timestamp-et (0.5 másodperc per lépés)
-      targetTimestamp = index * 0.5;
-    } else if (type === 'algorithm') {
-      // Algoritmus lépés: setup időtartama + lépés index * 0.5
-      targetTimestamp = setupDuration.value + (index * 0.5);
-    }
-    
-    // Beállítjuk a timeline-t
-    if (timeline.setTimestamp) {
-      timeline.setTimestamp(targetTimestamp);
-    } else if (timeline.jumpToTimestamp) {
-      timeline.jumpToTimestamp(targetTimestamp);
-    } else {
       return;
+    } else if (type === 'algorithm') {
+      const prefixCount = neutralPrefixMoveCount.value;
+      const allAlgToks = algorithmMoves.value;
+      targetTimestamp = cubingDurationMsSlice(allAlgToks, 0, prefixCount + index);
     }
-    
-    // Frissítjük az aktuális timestamp-et
+
+    player.experimentalModel.timestampRequest.set(targetTimestamp);
     currentTimestamp.value = targetTimestamp;
-    
-    // Ha játszik, folytatjuk
+
     if (player.play) {
       player.play();
     }
-    
   } catch (e) {
-    // Timeline not ready yet
+    /* timeline not ready */
   }
 }
 
-// Beállítja a timeline-t a setup utáni állapotba
-function setToSetupEnd() {
+function seekTimestamp(tsMs) {
   const player = twistyPlayerRef.value;
-  if (!player) return;
-  
-  // Próbáljuk meg több módon is elérni a timeline-t
-  let timeline = null;
-  
-  if (player.timeline) {
-    timeline = player.timeline;
-  } else if (player.experimentalModel && player.experimentalModel.twistySceneModel) {
-    timeline = player.experimentalModel.twistySceneModel.timeline;
-  }
-  
-  if (!timeline) return;
-  
+  if (!player?.experimentalModel) return;
   try {
-    // experimental-setup-alg nélkül experimental-setup-anchor="end" nélkül:
-    // - A timeline 0 időpontja = megoldott állapot
-    // - A setup utáni állapot = setup időtartama
-    // Beállítjuk a timeline-t a setup végére
-    if (setup.value) {
-      timeline.setTimestamp(setupDuration.value);
-    } else {
-      // Nincs setup, csak az elejére állítjuk
-      timeline.setTimestamp(0);
-    }
+    player.experimentalModel.timestampRequest.set(tsMs);
+    currentTimestamp.value = tsMs;
   } catch (e) {
-    // Timeline not ready yet
+    /* timeline not ready */
   }
 }
+
+function isPlayerModelReady() {
+  return !!twistyPlayerRef.value?.experimentalModel;
+}
+
+function setToSetupEnd() {
+  if (!isPlayerModelReady()) return;
+  seekTimestamp(0);
+}
+
+function seekAfterUserMoves(userMoveCount) {
+  if (!isPlayerModelReady()) return;
+  const n = Math.max(0, userMoveCount);
+  const prefixCount = neutralPrefixMoveCount.value;
+  const allAlgToks = algorithmMoves.value;
+  const sliceEnd = Math.min(prefixCount + n, allAlgToks.length);
+  const ts = cubingDurationMsSlice(allAlgToks, 0, sliceEnd);
+  seekTimestamp(ts);
+}
+
+function pausePlayback() {
+  const player = twistyPlayerRef.value;
+  if (player?.pause && typeof player.pause === 'function') {
+    try {
+      player.pause();
+    } catch (e) {
+      /* ignore */
+    }
+  }
+}
+
+function resumePlayback() {
+  const player = twistyPlayerRef.value;
+  if (player?.play && typeof player.play === 'function') {
+    try {
+      player.play();
+    } catch (e) {
+      /* ignore */
+    }
+  }
+}
+
+/** Extra ms after cubing.js move duration so twisty finishes before we pause+seek (avoids mid-turn snap / flicker). */
+const GUIDED_DEMO_TAIL_MS = 520;
+/** Additional safety for U2 / wide moves where player runtime can exceed parsed token duration slightly. */
+const GUIDED_DEMO_EXTRA_BUFFER_MS = 220;
+
+/** Invalidates pending playUserMoveRange timeouts when a new range starts. */
+let playUserMoveRangeGeneration = 0;
+
+/**
+ * Wait until Vue + twisty-player have applied the latest `alg` prop; otherwise seek/play run on a stale timeline
+ * (e.g. still only `R R'`) and playback shows the wrong face (always R).
+ */
+function waitTwistyAlgFlush() {
+  return nextTick().then(
+    () =>
+      new Promise((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(resolve);
+        });
+      }),
+  );
+}
+
+async function waitForTwistyModel(maxWaitMs = 1200) {
+  const t0 = typeof performance !== 'undefined' ? performance.now() : Date.now();
+  for (;;) {
+    if (isPlayerModelReady()) return;
+    const elapsed = (typeof performance !== 'undefined' ? performance.now() : Date.now()) - t0;
+    if (elapsed >= maxWaitMs) return;
+    await new Promise((r) => setTimeout(r, 16));
+  }
+}
+
+/**
+ * Seek to algorithm position after `fromCount` main-alg moves, play until `toCount`, then pause and seek to end state.
+ * Used for guided lessons to animate only the new moves on a step.
+ * @param {() => void} [onComplete] — called when playback finishes or is superseded / fails (Notation course UI unlock).
+ */
+function playUserMoveRange(fromCount, toCount, onComplete) {
+  const onDone = typeof onComplete === 'function' ? onComplete : () => {};
+  const from = Math.max(0, fromCount);
+  const to = Math.max(0, toCount);
+  if (to < from) {
+    onDone();
+    return;
+  }
+  playUserMoveRangeGeneration += 1;
+  const gen = playUserMoveRangeGeneration;
+
+  const run = async () => {
+    await waitTwistyAlgFlush();
+    if (gen !== playUserMoveRangeGeneration) { onDone(); return; }
+    await waitForTwistyModel();
+    if (gen !== playUserMoveRangeGeneration) { onDone(); return; }
+
+    pausePlayback();
+    seekAfterUserMoves(from);
+    const player = twistyPlayerRef.value;
+    if (!player) { onDone(); return; }
+    if (to <= from) {
+      seekAfterUserMoves(to);
+      onDone();
+      return;
+    }
+
+    const prefixCount = neutralPrefixMoveCount.value;
+    const allAlgToks = algorithmMoves.value;
+    const fromIdx = prefixCount + from;
+    const toIdx = prefixCount + to;
+    const cubingMs = cubingDurationMsSlice(allAlgToks, fromIdx, toIdx);
+    const durationMs = Math.max(cubingMs, 1000) + GUIDED_DEMO_TAIL_MS + GUIDED_DEMO_EXTRA_BUFFER_MS;
+
+    await new Promise((r) => setTimeout(r, 50));
+    if (gen !== playUserMoveRangeGeneration) { onDone(); return; }
+
+    try {
+      if (player.controller?.animationController) {
+        player.controller.animationController.play({
+          autoSkipToOtherEndIfStartingAtBoundary: false,
+        });
+      } else if (typeof player.play === 'function') {
+        player.play();
+      }
+    } catch (e) {
+      onDone();
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (gen !== playUserMoveRangeGeneration) { onDone(); return; }
+        window.setTimeout(() => {
+          if (gen !== playUserMoveRangeGeneration) { onDone(); return; }
+          pausePlayback();
+          seekAfterUserMoves(to);
+          onDone();
+        }, durationMs);
+      });
+    });
+  };
+
+  void run();
+}
+
+function setStickeringOverlay(value) {
+  stickeringOverlay.value = value && String(value).trim() ? String(value).trim() : '';
+}
+
+function clearStickeringOverlay() {
+  stickeringOverlay.value = '';
+}
+
+/**
+ * Full puzzle state: experimental-setup-alg + main alg (matches twisty timeline).
+ * @returns {Promise<import('cubing/kpuzzle').KPattern | null>}
+ */
+async function getMissionKPattern() {
+  const player = twistyPlayerRef.value;
+  const em = player?.experimentalModel;
+  if (!em) return null;
+  try {
+    const [{ cube3x3x3 }] = await Promise.all([import('cubing/puzzles')]);
+    const kpuzzle = await cube3x3x3.kpuzzle();
+    const [setupVal, algVal] = await Promise.all([em.setupAlg.get(), em.alg.get()]);
+    const setupStr = setupVal?.alg != null ? String(setupVal.alg) : '';
+    const algStr = algVal?.alg != null ? String(algVal.alg) : '';
+    const combined = [setupStr, algStr].map((s) => s.trim()).filter(Boolean).join(' ');
+    return kpuzzle.defaultPattern().applyAlg(combined);
+  } catch {
+    return null;
+  }
+}
+
+function emitMissionIfNeeded() {
+  if (props.emitMissionMoves) {
+    emit('mission-interaction');
+  }
+}
+
+defineExpose({
+  goToSetupEnd: setToSetupEnd,
+  seekAfterUserMoves,
+  pausePlayback,
+  resumePlayback,
+  playUserMoveRange,
+  setStickeringOverlay,
+  clearStickeringOverlay,
+  getMissionKPattern,
+});
 
 // A beépített vezérlő panel használata, de a reset gombot felülírjuk
 // hogy a setup utáni állapotba állítsa vissza
 
 // Figyeljük az algoritmus változását
 watch(() => [props.algorithm, props.setup], () => {
-  // Amikor az algoritmus vagy a setup változik, beállítjuk a timeline-t a setup utáni állapotba
-  // Próbáljuk meg többször, mert a twisty-player lehet, hogy még nem kész
+  if (!props.syncTimelineOnAlgorithmProp) {
+    return;
+  }
+  if (props.autoStickToSetupEnd) {
+    nextTick(() => {
+      setToSetupEnd();
+      setTimeout(() => setToSetupEnd(), 100);
+      setTimeout(() => setToSetupEnd(), 300);
+    });
+    return;
+  }
+  const n =
+    props.algorithm && props.algorithm.trim()
+      ? props.algorithm.trim().split(/\s+/).filter((m) => m.length > 0).length
+      : 0;
   nextTick(() => {
-    setToSetupEnd();
-    setTimeout(() => setToSetupEnd(), 100);
-    setTimeout(() => setToSetupEnd(), 300);
+    seekAfterUserMoves(n);
+    setTimeout(() => seekAfterUserMoves(n), 80);
+    setTimeout(() => seekAfterUserMoves(n), 250);
   });
 });
 
 onMounted(() => {
-  // Várunk, amíg a twisty-player betöltődik, majd beállítjuk a timeline-t a setup utáni állapotba
-  // Próbáljuk meg többször, mert a twisty-player aszinkron betöltődik
   const trySetInitialState = () => {
     const player = twistyPlayerRef.value;
-    if (player) {
-      // Próbáljuk meg több módon is elérni a timeline-t
-      let timeline = null;
-      
-      if (player.timeline) {
-        timeline = player.timeline;
-      } else if (player.experimentalModel && player.experimentalModel.twistySceneModel) {
-        timeline = player.experimentalModel.twistySceneModel.timeline;
-      }
-      
-      if (timeline) {
-        isPlayerReady.value = true;
-        setToSetupEnd();
-      }
-      
-      // Frissítjük az aktuális timestamp-et
-      const updateTimestamp = () => {
-        if (!timeline) return;
-        
-        try {
-          // Próbáljuk meg több módon is elérni a timestamp-et
-          let timestamp = null;
-          
-          // Először próbáljuk a közvetlen timestamp property-t
-          if (timeline.timestamp !== undefined && timeline.timestamp !== null) {
-            timestamp = timeline.timestamp;
-          }
-          // Ha nincs, próbáljuk a getTimestamp metódust
-          else if (timeline.getTimestamp && typeof timeline.getTimestamp === 'function') {
-            try {
-              timestamp = timeline.getTimestamp();
-            } catch (e) {}
-          }
-          // Ha nincs, próbáljuk a currentTime property-t
-          else if (timeline.currentTime !== undefined && timeline.currentTime !== null) {
-            timestamp = timeline.currentTime;
-          }
-          // Próbáljuk a player-t is
-          else if (player && player.timeline && player.timeline.timestamp !== undefined) {
-            timestamp = player.timeline.timestamp;
-          }
-          
-          if (timestamp !== null && timestamp !== undefined) {
-            const oldTimestamp = currentTimestamp.value;
-            // Mindig frissítjük, még akkor is, ha ugyanaz az érték, hogy a computed property-k újraszámolódjanak
-            currentTimestamp.value = timestamp;
-            
-            // Ha változott a timestamp, kiírjuk az aktuális lépést
-            if (Math.abs(oldTimestamp - timestamp) > 0.01) {
-              // Közvetlenül számoljuk az aktuális lépést
-              let activeMove = null;
-              
-              // Ha a setup-ban vagyunk
-              if (setup.value && timestamp > 0 && timestamp < setupDuration.value) {
-                const moveIndex = Math.min(Math.floor(timestamp / 0.5), setupMoves.value.length - 1);
-                const move = setupMoves.value[moveIndex];
-                if (move) {
-                  activeMove = { type: 'setup', move, index: moveIndex, total: setupMoves.value.length };
-                }
-              }
-              // Ha az algoritmusban vagyunk
-              else if (timestamp >= setupDuration.value) {
-                const algorithmTimestamp = timestamp - setupDuration.value;
-                const moveIndex = Math.min(Math.floor(algorithmTimestamp / 0.5), algorithmMoves.value.length - 1);
-                const move = algorithmMoves.value[moveIndex];
-                if (move) {
-                  activeMove = { type: 'algorithm', move, index: moveIndex, total: algorithmMoves.value.length };
-                }
-              }
-              
-            }
-          }
-        } catch (e) {}
-      };
-      
-      // Először azonnal frissítjük
-      updateTimestamp();
-      
-      // Próbáljuk meg a player eseményeit is figyelni
-      if (player && player.addEventListener) {
-        // Figyeljük a player eseményeit
-        player.addEventListener('move', updateTimestamp);
-        player.addEventListener('play', updateTimestamp);
-        player.addEventListener('pause', updateTimestamp);
-      }
-      
-      // Polling - folyamatosan frissítjük a timestamp-et (gyakoribb, hogy biztosan működjön)
-      const interval = setInterval(() => {
-        if (twistyPlayerRef.value && twistyPlayerRef.value.timeline) {
-          updateTimestamp();
-        } else {
-          clearInterval(interval);
-        }
-      }, 100); // 100ms, hogy ne legyen túl gyakori
-      
-      // Tároljuk az interval-t, hogy törölhessük később
-      if (!window.twistyPlayerIntervals) {
-        window.twistyPlayerIntervals = [];
-      }
-      window.twistyPlayerIntervals.push(interval);
-      
-      // Felülírjuk a beépített reset gomb működését
-      // A reset gomb a setup utáni állapotba állítja vissza a kockát
-      if (player && player.experimentalModel) {
-        // Figyeljük a timeline változásait, és ha a reset gombot nyomják,
-        // beállítjuk a timeline-t a setup utáni állapotba
-        const originalReset = player.restart;
-        if (originalReset) {
-          player.restart = function() {
-            originalReset.call(this);
-            // Várunk egy kicsit, hogy a reset befejeződjön
-            setTimeout(() => {
-              setToSetupEnd();
-            }, 50);
-          };
-        }
-      }
-    } else {
-      // Ha még nincs betöltve, várunk egy kicsit és újra próbáljuk
+    if (!player?.experimentalModel) {
       setTimeout(trySetInitialState, 100);
+      return;
+    }
+
+    isPlayerReady.value = true;
+    if (props.autoStickToSetupEnd) {
+      setToSetupEnd();
+    } else {
+      seekAfterUserMoves(0);
+    }
+
+    if (player.addEventListener) {
+      player.addEventListener('move', () => emitMissionIfNeeded());
+      player.addEventListener('pause', () => emitMissionIfNeeded());
+    }
+
+    if (player.experimentalModel) {
+      const originalRestart = player.restart;
+      if (originalRestart) {
+        player.restart = function () {
+          originalRestart.call(this);
+          setTimeout(() => setToSetupEnd(), 50);
+        };
+      }
     }
   };
 

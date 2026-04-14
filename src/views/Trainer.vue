@@ -5,7 +5,7 @@
       :class="isDark ? 'navbar-dark' : 'navbar-light'"
     >
       <div class="container rt-navbar-inner">
-        <router-link to="/" class="rt-navbar-brand" title="Home">RUBIK TRAINER</router-link>
+        <router-link to="/" class="rt-navbar-brand" :title="$t('nav.home')">RUBIK TRAINER</router-link>
 
         <div class="d-flex align-items-center gap-2 ms-auto d-lg-none">
           <div class="dropdown">
@@ -17,23 +17,31 @@
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              Trainers
+              {{ $t('nav.trainers') }}
             </a>
             <ul class="dropdown-menu dropdown-menu-end" :aria-labelledby="`trainerDropdownMobile-${mode}`">
               <li>
-                <router-link to="/cross" class="dropdown-item">Cross</router-link>
+                <router-link to="/cross" class="dropdown-item">{{ $t('nav.cross') }}</router-link>
               </li>
               <li>
-                <router-link to="/f2l" class="dropdown-item" :class="{ active: mode === 'f2l' }">F2L</router-link>
+                <router-link to="/f2l" class="dropdown-item" :class="{ active: mode === 'f2l' }">{{
+                  $t('nav.f2l')
+                }}</router-link>
               </li>
               <li>
-                <router-link to="/advanced-f2l" class="dropdown-item" :class="{ active: mode === 'af2l' }">Advanced F2L</router-link>
+                <router-link to="/advanced-f2l" class="dropdown-item" :class="{ active: mode === 'af2l' }">{{
+                  $t('nav.advancedF2l')
+                }}</router-link>
               </li>
               <li>
-                <router-link to="/oll" class="dropdown-item" :class="{ active: mode === 'oll' }">OLL</router-link>
+                <router-link to="/oll" class="dropdown-item" :class="{ active: mode === 'oll' }">{{
+                  $t('nav.oll')
+                }}</router-link>
               </li>
               <li>
-                <router-link to="/pll" class="dropdown-item" :class="{ active: mode === 'pll' }">PLL</router-link>
+                <router-link to="/pll" class="dropdown-item" :class="{ active: mode === 'pll' }">{{
+                  $t('nav.pll')
+                }}</router-link>
               </li>
             </ul>
           </div>
@@ -43,7 +51,7 @@
             type="button"
             aria-controls="trainer-mmenu"
             aria-expanded="false"
-            aria-label="Toggle navigation"
+            :aria-label="$t('common.toggleNav')"
             @click.prevent="openMobileMenu"
           >
             <AnimatedNavTogglerIcon />
@@ -59,17 +67,17 @@
             class="navbar-nav rt-navbar-pills align-items-lg-center flex-column flex-lg-row gap-1 gap-lg-3 py-3 py-lg-0"
           >
             <li class="nav-item">
-              <router-link class="nav-link rt-nav-pill" to="/">Home</router-link>
+              <router-link class="nav-link rt-nav-pill" to="/">{{ $t('nav.home') }}</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link rt-nav-pill" to="/cross">Cross</router-link>
+              <router-link class="nav-link rt-nav-pill" to="/cross">{{ $t('nav.cross') }}</router-link>
             </li>
             <li class="nav-item">
               <router-link
                 class="nav-link rt-nav-pill"
                 to="/f2l"
                 :class="{ 'rt-nav-pill--active': mode === 'f2l' }"
-                >F2L</router-link
+                >{{ $t('nav.f2l') }}</router-link
               >
             </li>
             <li class="nav-item">
@@ -77,7 +85,7 @@
                 class="nav-link rt-nav-pill"
                 to="/advanced-f2l"
                 :class="{ 'rt-nav-pill--active': mode === 'af2l' }"
-                >Advanced F2L</router-link
+                >{{ $t('nav.advancedF2l') }}</router-link
               >
             </li>
             <li class="nav-item">
@@ -85,7 +93,7 @@
                 class="nav-link rt-nav-pill"
                 to="/oll"
                 :class="{ 'rt-nav-pill--active': mode === 'oll' }"
-                >OLL</router-link
+                >{{ $t('nav.oll') }}</router-link
               >
             </li>
             <li class="nav-item">
@@ -93,11 +101,11 @@
                 class="nav-link rt-nav-pill"
                 to="/pll"
                 :class="{ 'rt-nav-pill--active': mode === 'pll' }"
-                >PLL</router-link
+                >{{ $t('nav.pll') }}</router-link
               >
             </li>
             <li class="nav-item">
-              <router-link class="nav-link rt-nav-pill" to="/notation">Notation</router-link>
+              <router-link class="nav-link rt-nav-pill" to="/notation">{{ $t('nav.notation') }}</router-link>
             </li>
           </ul>
 
@@ -108,7 +116,7 @@
                   <svg class="d-lg-none" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
                     <path fill="currentColor" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
                   </svg>
-                  <span>Back</span>
+                  <span>{{ $t('nav.back') }}</span>
                 </a>
               </li>
               <li class="nav-item">
@@ -121,7 +129,7 @@
                   <svg class="d-lg-none" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
                     <path fill="currentColor" d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
                   </svg>
-                  <span>New Training</span>
+                  <span>{{ $t('nav.newTraining') }}</span>
                 </a>
               </li>
             </template>
@@ -136,7 +144,7 @@
                   <svg class="d-lg-none" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
                     <path fill="currentColor" d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
                   </svg>
-                  <span>Reset algs</span>
+                  <span>{{ $t('nav.resetAlgs') }}</span>
                   <span
                     class="position-absolute badge rounded-pill bg-danger"
                   >
@@ -154,7 +162,7 @@
                   <svg class="d-lg-none" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
                     <path fill="currentColor" d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"/>
                   </svg>
-                  <span>Reset Progress</span>
+                  <span>{{ $t('nav.resetProgress') }}</span>
                 </a>
               </li>
               <li class="nav-item">
@@ -168,7 +176,7 @@
                     <path fill="currentColor" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                     <path fill="currentColor" d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.255 1.287-.39 1.287-1.243 0-1.08-.92-1.144-1.416-.165a.75.75 0 0 1-1.25.154z"/>
                   </svg>
-                  <span>Training</span>
+                  <span>{{ $t('nav.training') }}</span>
                   <span
                     class="position-absolute badge rounded-pill bg-success"
                   >
@@ -184,8 +192,8 @@
                 type="button"
                 class="btn rt-navbar-icon-btn"
                 @click="toggleTheme"
-                :title="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
-                aria-label="Toggle theme"
+                :title="isDark ? $t('theme.switchToLight') : $t('theme.switchToDark')"
+                :aria-label="$t('theme.toggle')"
               >
                 <svg v-if="isDark" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
                   <path
@@ -206,8 +214,8 @@
                 type="button"
                 class="btn rt-navbar-icon-btn"
                 @click="handlePrint"
-                title="Print"
-                aria-label="Print"
+                :title="$t('common.print')"
+                :aria-label="$t('common.print')"
               >
                 <svg aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
                   <path
@@ -239,33 +247,33 @@
     >
       <ul>
         <li>
-          <router-link class="rt-mmenu-link" to="/">Home</router-link>
+          <router-link class="rt-mmenu-link" to="/">{{ $t('nav.home') }}</router-link>
         </li>
         <li>
-          <router-link class="rt-mmenu-link" to="/cross">Cross</router-link>
+          <router-link class="rt-mmenu-link" to="/cross">{{ $t('nav.cross') }}</router-link>
         </li>
         <li>
           <router-link class="rt-mmenu-link" to="/f2l" :class="{ 'rt-mmenu-link--active': mode === 'f2l' }"
-            >F2L</router-link
+            >{{ $t('nav.f2l') }}</router-link
           >
         </li>
         <li>
           <router-link class="rt-mmenu-link" to="/advanced-f2l" :class="{ 'rt-mmenu-link--active': mode === 'af2l' }"
-            >Advanced F2L</router-link
+            >{{ $t('nav.advancedF2l') }}</router-link
           >
         </li>
         <li>
           <router-link class="rt-mmenu-link" to="/oll" :class="{ 'rt-mmenu-link--active': mode === 'oll' }"
-            >OLL</router-link
+            >{{ $t('nav.oll') }}</router-link
           >
         </li>
         <li>
           <router-link class="rt-mmenu-link" to="/pll" :class="{ 'rt-mmenu-link--active': mode === 'pll' }"
-            >PLL</router-link
+            >{{ $t('nav.pll') }}</router-link
           >
         </li>
         <li>
-          <router-link class="rt-mmenu-link" to="/notation">Notation</router-link>
+          <router-link class="rt-mmenu-link" to="/notation">{{ $t('nav.notation') }}</router-link>
         </li>
         <li>
           <span class="rt-mmenu-user-host">
@@ -285,7 +293,7 @@
                   d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"
                 />
               </svg>
-              <span>Back</span>
+              <span>{{ $t('nav.back') }}</span>
             </a>
           </li>
           <li>
@@ -301,7 +309,7 @@
                   d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"
                 />
               </svg>
-              <span>New Training</span>
+              <span>{{ $t('nav.newTraining') }}</span>
             </a>
           </li>
         </template>
@@ -319,7 +327,7 @@
                   d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"
                 />
               </svg>
-              <span>Reset algs</span>
+              <span>{{ $t('nav.resetAlgs') }}</span>
               <span class="badge rounded-pill bg-danger rt-mmenu-badge">{{ editedCount }}</span>
             </a>
           </li>
@@ -336,7 +344,7 @@
                   d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"
                 />
               </svg>
-              <span>Reset Progress</span>
+              <span>{{ $t('nav.resetProgress') }}</span>
             </a>
           </li>
           <li>
@@ -356,7 +364,7 @@
                   d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.255 1.287-.39 1.287-1.243 0-1.08-.92-1.144-1.416-.165a.75.75 0 0 1-1.25.154z"
                 />
               </svg>
-              <span>Training</span>
+              <span>{{ $t('nav.training') }}</span>
               <span class="badge rounded-pill bg-success rt-mmenu-badge">{{ learnedCount }}</span>
             </a>
           </li>
@@ -366,7 +374,7 @@
             class="rt-mmenu-link"
             href="#"
             @click.prevent="handleNavClick(toggleTheme)"
-            :title="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
+            :title="isDark ? $t('theme.switchToLight') : $t('theme.switchToDark')"
           >
             <svg v-if="isDark" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
               <path
@@ -380,7 +388,7 @@
                 d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"
               />
             </svg>
-            <span>{{ isDark ? 'Light theme' : 'Dark theme' }}</span>
+            <span>{{ isDark ? $t('theme.light') : $t('theme.dark') }}</span>
           </a>
         </li>
         <li>
@@ -388,7 +396,7 @@
             class="rt-mmenu-link"
             href="#"
             @click.prevent="handleNavClick(handlePrint)"
-            title="Print"
+            :title="$t('common.print')"
           >
             <svg aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
               <path
@@ -400,7 +408,7 @@
                 d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2V7zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"
               />
             </svg>
-            <span>Print</span>
+            <span>{{ $t('common.print') }}</span>
           </a>
         </li>
       </ul>
@@ -415,8 +423,13 @@
         :aria-labelledby="`filterOffcanvasLabel-${mode}`"
       >
         <div class="offcanvas-header">
-          <h5 class="offcanvas-title" :id="`filterOffcanvasLabel-${mode}`">Filters & Sorting</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          <h5 class="offcanvas-title" :id="`filterOffcanvasLabel-${mode}`">{{ $t('trainer.filtersSorting') }}</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="offcanvas"
+            :aria-label="$t('common.close')"
+          ></button>
         </div>
         <div class="offcanvas-body">
           <div class="mb-3">
@@ -428,7 +441,7 @@
                 @click="setAllFilter"
                 data-bs-dismiss="offcanvas"
               >
-                <span class="label">All</span>
+                <span class="label">{{ $t('trainer.filterAll') }}</span>
                 <span class="count">{{ algorithms.length }}</span>
               </button>
               <button
@@ -438,7 +451,7 @@
                 @click="toggleLearnedFilter"
                 data-bs-dismiss="offcanvas"
               >
-                <span class="label">Learned</span>
+                <span class="label">{{ $t('trainer.filterLearned') }}</span>
                 <span class="count">{{ learnedCount }}</span>
               </button>
               <button
@@ -448,7 +461,7 @@
                 @click="togglePracticingFilter"
                 data-bs-dismiss="offcanvas"
               >
-                <span class="label">Practicing</span>
+                <span class="label">{{ $t('trainer.filterPracticing') }}</span>
                 <span class="count">{{ practiceCount }}</span>
               </button>
               <button
@@ -467,24 +480,24 @@
           </div>
           <div>
             <div class="d-flex justify-content-start">
-              <div class="btn-group btn-group-sm" role="group" aria-label="Sort algorithms">
+              <div class="btn-group btn-group-sm" role="group" :aria-label="$t('trainer.sortGroupAria')">
                 <button
                   type="button"
                   class="btn"
                   :class="sortMode === 'default' ? 'btn-success' : 'btn-outline-secondary'"
                   @click="setSortMode('default')"
-                  title="Original order"
+                  :title="$t('trainer.sortTitleDefault')"
                 >
-                  Default
+                  {{ $t('trainer.sortDefault') }}
                 </button>
                 <button
                   type="button"
                   class="btn"
                   :class="sortMode === 'short' ? 'btn-success' : 'btn-outline-secondary'"
                   @click="setSortMode('short')"
-                  title="Shortest first (spaces and parentheses ignored)"
+                  :title="$t('trainer.sortTitleShort')"
                 >
-                  Short algs
+                  {{ $t('trainer.sortShort') }}
                 </button>
               </div>
             </div>
@@ -507,7 +520,7 @@
 
       <section v-else-if="loading" class="text-center py-5">
         <div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
-        <p class="mt-3 text-muted">Loading algorithms…</p>
+        <p class="mt-3 text-muted">{{ $t('trainer.loading') }}</p>
       </section>
 
       <section v-else-if="error" class="alert alert-danger" role="alert">
@@ -516,14 +529,16 @@
 
       <section v-else class="rt-case-library">
         <header class="rt-case-library__header">
-          <p class="rt-case-library__eyebrow">Algorithm library</p>
-          <h2 class="rt-case-library__title">{{ modeTitle }} cases</h2>
+          <p class="rt-case-library__eyebrow">{{ $t('trainer.algorithmLibrary') }}</p>
+          <h2 class="rt-case-library__title">{{ $t('trainer.modeCases', { mode: modeTitleLabel }) }}</h2>
           <p class="rt-case-library__stats">
-            <span>{{ algorithms.length }} total</span>
-            <span class="rt-case-library__stats-sep" aria-hidden="true">·</span>
-            <span>{{ learnedCount }} learned</span>
-            <span class="rt-case-library__stats-sep" aria-hidden="true">·</span>
-            <span>{{ practiceCount }} practicing</span>
+            {{
+              $t('trainer.statsLine', {
+                total: algorithms.length,
+                learned: learnedCount,
+                practicing: practiceCount,
+              })
+            }}
           </p>
         </header>
 
@@ -534,7 +549,7 @@
             :class="{ active: activeType === null && !activeLearnedOnly && !activePracticingOnly }"
             @click="setAllFilter"
           >
-            <span class="label">All</span>
+            <span class="label">{{ $t('trainer.filterAll') }}</span>
             <span class="count">{{ algorithms.length }}</span>
           </button>
           <button
@@ -543,7 +558,7 @@
             :class="{ active: activeLearnedOnly }"
             @click="toggleLearnedFilter"
           >
-            <span class="label">Learned</span>
+            <span class="label">{{ $t('trainer.filterLearned') }}</span>
             <span class="count">{{ learnedCount }}</span>
           </button>
           <button
@@ -552,7 +567,7 @@
             :class="{ active: activePracticingOnly }"
             @click="togglePracticingFilter"
           >
-            <span class="label">Practicing</span>
+            <span class="label">{{ $t('trainer.filterPracticing') }}</span>
             <span class="count">{{ practiceCount }}</span>
           </button>
           <button
@@ -571,25 +586,25 @@
           <div
             class="btn-group btn-group-sm rt-case-library__sort"
             role="group"
-            aria-label="Sort algorithms"
+            :aria-label="$t('trainer.sortGroupAria')"
           >
             <button
               type="button"
               class="btn"
               :class="sortMode === 'default' ? 'btn-success' : 'btn-outline-secondary'"
               @click="setSortMode('default')"
-              title="Original order"
+              :title="$t('trainer.sortTitleDefault')"
             >
-              Default
+              {{ $t('trainer.sortDefault') }}
             </button>
             <button
               type="button"
               class="btn"
               :class="sortMode === 'short' ? 'btn-success' : 'btn-outline-secondary'"
               @click="setSortMode('short')"
-              title="Shortest first (spaces and parentheses ignored)"
+              :title="$t('trainer.sortTitleShort')"
             >
-              Short algs
+              {{ $t('trainer.sortShort') }}
             </button>
           </div>
         </div>
@@ -656,7 +671,7 @@
       type="button"
       class="btn btn-primary scroll-top-btn"
       @click="scrollToTop"
-      aria-label="Scroll to top"
+      :aria-label="$t('trainer.scrollTop')"
     >
       <svg aria-hidden="true" viewBox="0 0 16 16">
         <path
@@ -672,8 +687,8 @@
       :data-bs-toggle="'offcanvas'"
       :data-bs-target="`#filterOffcanvas-${mode}`"
       :aria-controls="`filterOffcanvas-${mode}`"
-      title="Show filters"
-      aria-label="Show filters"
+      :title="$t('trainer.showFilters')"
+      :aria-label="$t('trainer.showFilters')"
     >
       <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16">
         <path fill="currentColor" d="M6 10.5V15l4-2v-2.5l4.854-4.854A.5.5 0 0 0 14.5 4h-13a.5.5 0 0 0-.354.854z"/>
@@ -689,6 +704,7 @@ import AlgorithmCard from '../components/AlgorithmCard.vue';
 import TrainingPanel from '../components/TrainingPanel.vue';
 import UserIcon from '../components/UserIcon.vue';
 import AnimatedNavTogglerIcon from '../components/AnimatedNavTogglerIcon.vue';
+import { useI18n } from 'vue-i18n';
 import { useLearned } from '../composables/useLearned';
 import { useMmenuNav } from '../composables/useMmenuNav';
 import { useTheme } from '../composables/useTheme';
@@ -707,11 +723,16 @@ const props = defineProps({
 
 const router = useRouter();
 const route = useRoute();
+const { t } = useI18n();
 
 /** URL segment for router (e.g. advanced-f2l when mode is af2l). */
 const pathSegment = computed(() => (props.mode === 'af2l' ? 'advanced-f2l' : props.mode));
 
-const modeTitle = computed(() => (props.mode === 'af2l' ? 'Advanced F2L' : props.mode.toUpperCase()));
+const modeTitleLabel = computed(() => {
+  if (props.mode === 'af2l') return t('nav.advancedF2l');
+  if (props.mode === 'f2l') return t('nav.f2l');
+  return props.mode.toUpperCase();
+});
 
 const { isDark, toggleTheme } = useTheme();
 

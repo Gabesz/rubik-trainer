@@ -5,7 +5,7 @@
       :class="isDark ? 'navbar-dark' : 'navbar-light'"
     >
       <div class="container rt-navbar-inner">
-        <router-link to="/" class="rt-navbar-brand" title="Home">RUBIK TRAINER</router-link>
+        <router-link to="/" class="rt-navbar-brand" :title="$t('nav.home')">RUBIK TRAINER</router-link>
 
         <div class="d-flex align-items-center gap-2 ms-auto d-lg-none">
           <div class="dropdown">
@@ -17,23 +17,23 @@
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              Trainers
+              {{ $t('nav.trainers') }}
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notationTrainerDropdownMobile">
               <li>
-                <router-link to="/cross" class="dropdown-item">Cross</router-link>
+                <router-link to="/cross" class="dropdown-item">{{ $t('nav.cross') }}</router-link>
               </li>
               <li>
-                <router-link to="/f2l" class="dropdown-item">F2L</router-link>
+                <router-link to="/f2l" class="dropdown-item">{{ $t('nav.f2l') }}</router-link>
               </li>
               <li>
-                <router-link to="/advanced-f2l" class="dropdown-item">Advanced F2L</router-link>
+                <router-link to="/advanced-f2l" class="dropdown-item">{{ $t('nav.advancedF2l') }}</router-link>
               </li>
               <li>
-                <router-link to="/oll" class="dropdown-item">OLL</router-link>
+                <router-link to="/oll" class="dropdown-item">{{ $t('nav.oll') }}</router-link>
               </li>
               <li>
-                <router-link to="/pll" class="dropdown-item">PLL</router-link>
+                <router-link to="/pll" class="dropdown-item">{{ $t('nav.pll') }}</router-link>
               </li>
             </ul>
           </div>
@@ -43,7 +43,7 @@
             type="button"
             aria-controls="notation-mmenu"
             aria-expanded="false"
-            aria-label="Toggle navigation"
+            :aria-label="$t('common.toggleNav')"
             @click.prevent="openMobileMenu"
           >
             <AnimatedNavTogglerIcon />
@@ -59,25 +59,27 @@
             class="navbar-nav rt-navbar-pills align-items-lg-center flex-column flex-lg-row gap-1 gap-lg-3 py-3 py-lg-0"
           >
             <li class="nav-item">
-              <router-link class="nav-link rt-nav-pill" to="/">Home</router-link>
+              <router-link class="nav-link rt-nav-pill" to="/">{{ $t('nav.home') }}</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link rt-nav-pill" to="/cross">Cross</router-link>
+              <router-link class="nav-link rt-nav-pill" to="/cross">{{ $t('nav.cross') }}</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link rt-nav-pill" to="/f2l">F2L</router-link>
+              <router-link class="nav-link rt-nav-pill" to="/f2l">{{ $t('nav.f2l') }}</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link rt-nav-pill" to="/advanced-f2l">Advanced F2L</router-link>
+              <router-link class="nav-link rt-nav-pill" to="/advanced-f2l">{{ $t('nav.advancedF2l') }}</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link rt-nav-pill" to="/oll">OLL</router-link>
+              <router-link class="nav-link rt-nav-pill" to="/oll">{{ $t('nav.oll') }}</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link rt-nav-pill" to="/pll">PLL</router-link>
+              <router-link class="nav-link rt-nav-pill" to="/pll">{{ $t('nav.pll') }}</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link rt-nav-pill rt-nav-pill--active" to="/notation">Notation</router-link>
+              <router-link class="nav-link rt-nav-pill rt-nav-pill--active" to="/notation">{{
+                $t('nav.notation')
+              }}</router-link>
             </li>
           </ul>
 
@@ -89,8 +91,8 @@
                 type="button"
                 class="btn rt-navbar-icon-btn"
                 @click="toggleTheme"
-                :title="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
-                aria-label="Toggle theme"
+                :title="isDark ? $t('theme.switchToLight') : $t('theme.switchToDark')"
+                :aria-label="$t('theme.toggle')"
               >
                 <svg v-if="isDark" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
                   <path
@@ -111,8 +113,8 @@
                 type="button"
                 class="btn rt-navbar-icon-btn"
                 @click="handlePrint"
-                title="Print"
-                aria-label="Print"
+                :title="$t('common.print')"
+                :aria-label="$t('common.print')"
               >
                 <svg aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
                   <path
@@ -144,25 +146,27 @@
     >
       <ul>
         <li>
-          <router-link class="rt-mmenu-link" to="/">Home</router-link>
+          <router-link class="rt-mmenu-link" to="/">{{ $t('nav.home') }}</router-link>
         </li>
         <li>
-          <router-link class="rt-mmenu-link" to="/cross">Cross</router-link>
+          <router-link class="rt-mmenu-link" to="/cross">{{ $t('nav.cross') }}</router-link>
         </li>
         <li>
-          <router-link class="rt-mmenu-link" to="/f2l">F2L</router-link>
+          <router-link class="rt-mmenu-link" to="/f2l">{{ $t('nav.f2l') }}</router-link>
         </li>
         <li>
-          <router-link class="rt-mmenu-link" to="/advanced-f2l">Advanced F2L</router-link>
+          <router-link class="rt-mmenu-link" to="/advanced-f2l">{{ $t('nav.advancedF2l') }}</router-link>
         </li>
         <li>
-          <router-link class="rt-mmenu-link" to="/oll">OLL</router-link>
+          <router-link class="rt-mmenu-link" to="/oll">{{ $t('nav.oll') }}</router-link>
         </li>
         <li>
-          <router-link class="rt-mmenu-link" to="/pll">PLL</router-link>
+          <router-link class="rt-mmenu-link" to="/pll">{{ $t('nav.pll') }}</router-link>
         </li>
         <li>
-          <router-link class="rt-mmenu-link rt-mmenu-link--active" to="/notation">Notation</router-link>
+          <router-link class="rt-mmenu-link rt-mmenu-link--active" to="/notation">{{
+            $t('nav.notation')
+          }}</router-link>
         </li>
         <li>
           <span class="rt-mmenu-user-host">
@@ -178,7 +182,7 @@
             class="rt-mmenu-link"
             href="#"
             @click.prevent="handleNavClick(toggleTheme)"
-            :title="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
+            :title="isDark ? $t('theme.switchToLight') : $t('theme.switchToDark')"
           >
             <svg v-if="isDark" aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
               <path
@@ -192,7 +196,7 @@
                 d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"
               />
             </svg>
-            <span>{{ isDark ? 'Light theme' : 'Dark theme' }}</span>
+            <span>{{ isDark ? $t('theme.light') : $t('theme.dark') }}</span>
           </a>
         </li>
         <li>
@@ -200,7 +204,7 @@
             class="rt-mmenu-link"
             href="#"
             @click.prevent="handleNavClick(handlePrint)"
-            title="Print"
+            :title="$t('common.print')"
           >
             <svg aria-hidden="true" viewBox="0 0 16 16" width="18" height="18">
               <path
@@ -212,7 +216,7 @@
                 d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2V7zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"
               />
             </svg>
-            <span>Print</span>
+            <span>{{ $t('common.print') }}</span>
           </a>
         </li>
       </ul>
@@ -221,9 +225,9 @@
     <main class="notation-page container py-5 rt-page">
       <div class="row justify-content-center">
         <div class="col-lg-10">
-          <h1 class="h2 mb-3">Notation</h1>
+          <h1 class="h2 mb-3">{{ $t('notation.pageTitle') }}</h1>
           <p class="text-muted mb-4">
-            Learn the Rubik's cube notation. Click the buttons to see how each move affects a solved cube.
+            {{ $t('notation.pageLead') }}
           </p>
           <NotationView />
         </div>

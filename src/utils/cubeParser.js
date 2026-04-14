@@ -37,7 +37,7 @@ export function parseAlgorithm(algorithm) {
  * - M, E, S (középső réteg)
  * - x, y, z (kocka forgatás)
  */
-function parseMove(token) {
+export function parseMove(token) {
   if (!token || token.length === 0) {
     return null;
   }
@@ -139,5 +139,61 @@ function parseMove(token) {
     direction,
     count,
   };
+}
+
+/** Twisty timeline: egy token hány „quarter-turn” lépés (pl. U2/D2 → 2×0,5 időegység). */
+export function moveQuantumCount(token) {
+  const m = parseMove(String(token).trim());
+  return m?.count && m.count > 0 ? m.count : 1;
+}
+
+export function quantumDurationUnits(tokens) {
+  if (!tokens?.length) return 0;
+  return tokens.reduce((s, t) => s + moveQuantumCount(t), 0);
+}
+
+/** Összeg: tokens[start .. endExclusive) kvantumai. */
+export function quantumSumSlice(tokens, start, endExclusive) {
+  if (!tokens?.length) return 0;
+  let s = 0;
+  const lo = Math.max(0, start);
+  const hi = Math.min(endExclusive, tokens.length);
+  for (let i = lo; i < hi; i++) {
+    s += moveQuantumCount(tokens[i]);
+  }
+  return s;
+}
+
+/**
+ * cubing.js `defaultDurationForAmount` — milliseconds allocated per animated move on the twisty-player timeline.
+ * Must stay in sync with the cubing library's internal timing.
+ */
+export function cubingMoveDurationMs(token) {
+  const m = parseMove(String(token).trim());
+  const amount = Math.abs(m?.count ?? 1);
+  switch (amount) {
+    case 0: return 0;
+    case 1: return 1000;
+    case 2: return 1500;
+    default: return 2000;
+  }
+}
+
+/** Sum of cubing.js timeline durations (ms) for a token array slice. */
+export function cubingDurationMsSlice(tokens, start, endExclusive) {
+  if (!tokens?.length) return 0;
+  let s = 0;
+  const lo = Math.max(0, start);
+  const hi = Math.min(endExclusive, tokens.length);
+  for (let i = lo; i < hi; i++) {
+    s += cubingMoveDurationMs(tokens[i]);
+  }
+  return s;
+}
+
+/** Total cubing.js timeline duration (ms) for a token array. */
+export function cubingDurationMsTotal(tokens) {
+  if (!tokens?.length) return 0;
+  return tokens.reduce((s, t) => s + cubingMoveDurationMs(t), 0);
 }
 

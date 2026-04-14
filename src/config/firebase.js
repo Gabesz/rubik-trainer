@@ -1,6 +1,12 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { setLogLevel } from '@firebase/logger';
+
+const firebaseLogLevel = import.meta.env.VITE_FIREBASE_LOG_LEVEL?.trim()?.toLowerCase();
+if (firebaseLogLevel === 'error' || firebaseLogLevel === 'silent') {
+  setLogLevel(firebaseLogLevel);
+}
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,

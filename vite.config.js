@@ -7,7 +7,7 @@ import { dirname, resolve } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig(() => ({
   base: '/rubik-trainer/',
   root: __dirname,
   build: {
@@ -27,7 +27,14 @@ export default defineConfig(({ mode }) => ({
       },
     }),
     VitePWA({
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.js',
       registerType: 'autoUpdate',
+      injectManifest: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest,json}'],
+        globIgnores: ['**/node_modules/**/*', 'sw.js', 'workbox-*.js'],
+      },
       includeAssets: ['oll/svg/Oll-1.svg'],
       manifest: {
         name: 'RUBIK TRAINER',
@@ -50,37 +57,6 @@ export default defineConfig(({ mode }) => ({
           },
         ],
       },
-      ...(mode === 'production' && {
-        workbox: {
-          globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest,json}'],
-          globIgnores: ['**/node_modules/**/*', 'sw.js', 'workbox-*.js'],
-          runtimeCaching: [
-            {
-              urlPattern: /\/.*\/algorithms\.json$/,
-              handler: 'NetworkFirst',
-              options: {
-                cacheName: 'algorithms-cache',
-                expiration: {
-                  maxEntries: 3,
-                  maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
-                },
-                networkTimeoutSeconds: 3,
-              },
-            },
-            {
-              urlPattern: /\/.*\/svg\/.*\.svg$/,
-              handler: 'CacheFirst',
-              options: {
-                cacheName: 'svg-cache',
-                expiration: {
-                  maxEntries: 200,
-                  maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
-                },
-              },
-            },
-          ],
-        },
-      }),
       devOptions: {
         enabled: true,
         type: 'module',
@@ -88,4 +64,3 @@ export default defineConfig(({ mode }) => ({
     }),
   ],
 }));
-

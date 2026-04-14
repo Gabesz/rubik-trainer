@@ -1,0 +1,21 @@
+// The notationMoveAiCache rules are merged into the repo root `firestore.rules` (deploy that file).
+// Previously: merge this block into your existing rules. Deploy: `firebase deploy --only firestore:rules`.
+// Without this, clients get permission-denied on `notationMoveAiCache` and the Firebase SDK logs BatchGet warnings.
+// Or disable the feature in dev: VITE_NOTATION_AI_CACHE=0 in .env (no Firestore reads/writes for this cache).
+
+    match /notationMoveAiCache/{docId} {
+      allow read: if true;
+      allow create: if !exists(/databases/$(database)/documents/notationMoveAiCache/$(docId))
+        && request.resource.data.keys().hasAll(['text', 'move', 'locale', 'promptVersion', 'updatedAt'])
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 2000
+        && request.resource.data.move is string
+        && request.resource.data.move.size() <= 32
+        && request.resource.data.locale is string
+        && request.resource.data.locale.size() >= 2
+        && request.resource.data.locale.size() <= 16
+        && request.resource.data.promptVersion == '2'
+        && request.resource.data.updatedAt is timestamp;
+      allow update, delete: if false;
+    }

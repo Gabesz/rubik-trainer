@@ -41,7 +41,12 @@
               <div v-if="currentUser" class="profile-view">
                 <div class="mb-3">
                   <p class="mb-1"><strong>Email:</strong></p>
-                  <p class="text-muted">{{ currentUser.email }}</p>
+                  <p class="text-muted">{{ currentUser.email || '—' }}</p>
+                </div>
+
+                <div class="auth-modal-preferences auth-modal-preferences--profile mb-3">
+                  <LanguageSwitcher variant="profile" :id-suffix="`auth-inprofile-${uniqueId}`" />
+                  <DailyNudgeOptIn variant="profile" class="mt-3" />
                 </div>
 
                 <!-- Change Password Section -->
@@ -149,11 +154,9 @@
                   />
                 </div>
 
-                <hr />
-
                 <button
                   type="button"
-                  class="btn btn-danger w-100"
+                  class="btn btn-danger w-100 mt-2"
                   @click="handleSignOut"
                   :disabled="loading"
                 >
@@ -277,6 +280,11 @@
                     Already have an account? Sign in
                   </button>
                 </form>
+
+                <div class="auth-modal-preferences auth-modal-preferences--guest">
+                  <LanguageSwitcher variant="profile" :id-suffix="`auth-guest-${uniqueId}`" />
+                  <DailyNudgeOptIn variant="profile" class="mt-3" />
+                </div>
               </div>
             </div>
           </div>
@@ -289,6 +297,8 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { useAuth } from '../composables/useAuth';
+import DailyNudgeOptIn from './DailyNudgeOptIn.vue';
+import LanguageSwitcher from './LanguageSwitcher.vue';
 import { useUserData } from '../composables/useUserData';
 import { useTheme } from '../composables/useTheme';
 import {
@@ -718,6 +728,21 @@ html.dark-theme .auth-modal-wrapper .auth-btn-google:hover:not(:disabled) {
 .auth-modal-or {
   letter-spacing: 0.12em;
   margin-top: -0.25rem;
+}
+
+.auth-modal-wrapper .auth-modal-preferences--profile {
+  padding-top: 0;
+}
+
+.auth-modal-wrapper .auth-modal-preferences--guest {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--bs-border-color);
+}
+
+html[data-bs-theme='dark'] .auth-modal-wrapper .auth-modal-preferences--guest,
+html.dark-theme .auth-modal-wrapper .auth-modal-preferences--guest {
+  border-top-color: var(--rt-glass-border);
 }
 </style>
 

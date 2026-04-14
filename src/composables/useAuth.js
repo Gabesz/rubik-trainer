@@ -11,6 +11,7 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
+import { clearEngagementOnSignOut } from '../push/dailyNudgeFirestore';
 
 const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: 'select_account' });
@@ -54,6 +55,7 @@ export function useAuth() {
 
   const signOut = async () => {
     try {
+      await clearEngagementOnSignOut();
       await firebaseSignOut(auth);
       return { success: true };
     } catch (error) {

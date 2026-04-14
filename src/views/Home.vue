@@ -8,8 +8,8 @@
         type="button"
         class="rt-theme-toggle"
         @click="toggleTheme"
-        :title="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
-        aria-label="Toggle theme"
+        :title="isDark ? $t('theme.switchToLight') : $t('theme.switchToDark')"
+        :aria-label="$t('theme.toggle')"
       >
       <svg v-if="isDark" aria-hidden="true" viewBox="0 0 16 16" width="20" height="20">
         <path
@@ -33,63 +33,66 @@
           <span class="rt-landing__title-line rt-landing__title-line--accent">TRAINER</span>
         </h1>
         <p class="rt-landing__lead">
-          Master the architecture of speed. Advanced algorithmic training for the next generation of
-          speedcubers — F2L, Advanced F2L, OLL, and PLL with SVG cases, progress tracking, and 3D animations.
+          {{ $t('home.lead') }}
         </p>
         <div class="rt-landing__hero-actions">
           <button type="button" class="rt-landing__cta-primary" @click="scrollToCoreTrainers">
-            Start solving
+            {{ $t('home.ctaStart') }}
           </button>
+          <router-link to="/course/beginner-cfop" class="rt-landing__hero-course-cta">
+            {{ $t('home.courseCta') }}
+            <span class="rt-landing__link-arrow-icon" aria-hidden="true">→</span>
+          </router-link>
           <span class="rt-landing__version">v{{ appVersion }}</span>
         </div>
       </header>
 
       <section class="rt-landing__methodology rt-landing-reveal rt-landing-reveal--delay-2" aria-labelledby="method-heading">
         <div class="rt-landing__section-head">
-          <h2 id="method-heading" class="rt-landing__section-title">Methodology</h2>
+          <h2 id="method-heading" class="rt-landing__section-title">{{ $t('home.methodology') }}</h2>
           <router-link to="/notation" class="rt-landing__link-arrow">
-            Notation
+            {{ $t('nav.notation') }}
             <span class="rt-landing__link-arrow-icon" aria-hidden="true">→</span>
           </router-link>
         </div>
         <div class="rt-landing__phases">
           <article class="rt-landing__phase">
-            <span class="rt-landing__phase-label">Phase 01</span>
+            <span class="rt-landing__phase-label">{{ $t('home.phase01') }}</span>
             <h3 class="rt-landing__phase-title">
               <a href="#trainer-cross" class="rt-landing__phase-link" @click.prevent="scrollToTrainer('cross')"
                 >Cross</a
               >
             </h3>
             <p class="rt-landing__phase-desc">
-              Foundational four-edge alignment on the base layer (intuitive).
+              {{ $t('home.crossDesc') }}
             </p>
           </article>
           <article class="rt-landing__phase">
-            <span class="rt-landing__phase-label">Phase 02</span>
+            <span class="rt-landing__phase-label">{{ $t('home.phase02') }}</span>
             <h3 class="rt-landing__phase-title">
               <a href="#trainer-f2l" class="rt-landing__phase-link" @click.prevent="scrollToTrainer('f2l')"
                 >F2L</a
               >
             </h3>
-            <p class="rt-landing__phase-desc">First two layers — pair and insert corner–edge pairs.</p>
+            <p class="rt-landing__phase-desc">{{ $t('home.f2lDesc') }}</p>
           </article>
           <article class="rt-landing__phase">
-            <span class="rt-landing__phase-label">Phase 03</span>
+            <span class="rt-landing__phase-label">{{ $t('home.phase03') }}</span>
             <h3 class="rt-landing__phase-title">
               <a href="#trainer-oll" class="rt-landing__phase-link" @click.prevent="scrollToTrainer('oll')"
                 >OLL</a
               >
             </h3>
-            <p class="rt-landing__phase-desc">Orient last layer — all 57 cases.</p>
+            <p class="rt-landing__phase-desc">{{ $t('home.ollDesc') }}</p>
           </article>
           <article class="rt-landing__phase">
-            <span class="rt-landing__phase-label">Phase 04</span>
+            <span class="rt-landing__phase-label">{{ $t('home.phase04') }}</span>
             <h3 class="rt-landing__phase-title">
               <a href="#trainer-pll" class="rt-landing__phase-link" @click.prevent="scrollToTrainer('pll')"
                 >PLL</a
               >
             </h3>
-            <p class="rt-landing__phase-desc">Permute last layer — 21 permutations.</p>
+            <p class="rt-landing__phase-desc">{{ $t('home.pllDesc') }}</p>
           </article>
         </div>
       </section>
@@ -99,28 +102,41 @@
       >
         <div class="col-12 col-lg-7">
           <section class="rt-landing__cfop rt-landing__cfop--split h-100" aria-labelledby="cfop-heading">
-            <h2 id="cfop-heading" class="rt-landing__cfop-title">What is the Fridrich / CFOP method?</h2>
-            <p class="rt-landing__cfop-text">
-              Popularized by Jessica Fridrich (1997), CFOP remains the dominant speedsolving approach:
-              <router-link to="/cross">Cross</router-link>,
-              <a href="#trainer-f2l" @click.prevent="scrollToTrainer('f2l')">F2L</a>,
-              <a href="#trainer-af2l" @click.prevent="scrollToTrainer('af2l')">Advanced F2L</a>,
-              <a href="#trainer-oll" @click.prevent="scrollToTrainer('oll')">OLL</a>, and
-              <a href="#trainer-pll" @click.prevent="scrollToTrainer('pll')">PLL</a>.
-            </p>
-            <p class="rt-landing__cfop-text">
-              The last layer needs up to 78 algorithms total — <strong>57 OLL</strong> and
-              <strong>21 PLL</strong>. This app includes a Cross guide plus F2L, Advanced F2L, OLL, and PLL trainers.
-            </p>
-            <h3 class="rt-landing__cfop-subtitle">The four steps</h3>
+            <h2 id="cfop-heading" class="rt-landing__cfop-title">{{ $t('home.cfopHeading') }}</h2>
+            <i18n-t keypath="home.cfopLineLinks" tag="p" class="rt-landing__cfop-text">
+              <template #cross>
+                <router-link to="/cross">{{ $t('nav.cross') }}</router-link>
+              </template>
+              <template #f2l>
+                <a href="#trainer-f2l" @click.prevent="scrollToTrainer('f2l')">{{ $t('nav.f2l') }}</a>
+              </template>
+              <template #af2l>
+                <a href="#trainer-af2l" @click.prevent="scrollToTrainer('af2l')">{{ $t('nav.advancedF2l') }}</a>
+              </template>
+              <template #oll>
+                <a href="#trainer-oll" @click.prevent="scrollToTrainer('oll')">{{ $t('nav.oll') }}</a>
+              </template>
+              <template #pll>
+                <a href="#trainer-pll" @click.prevent="scrollToTrainer('pll')">{{ $t('nav.pll') }}</a>
+              </template>
+            </i18n-t>
+            <i18n-t keypath="home.cfopP2" tag="p" class="rt-landing__cfop-text">
+              <template #oll>
+                <strong>{{ $t('home.cfopOllStrong') }}</strong>
+              </template>
+              <template #pll>
+                <strong>{{ $t('home.cfopPllStrong') }}</strong>
+              </template>
+            </i18n-t>
+            <h3 class="rt-landing__cfop-subtitle">{{ $t('home.cfopFourSteps') }}</h3>
             <ol class="rt-landing__cfop-list">
               <li>
-                <router-link to="/cross" class="text-decoration-none"><strong>C</strong>ross</router-link> — bottom
-                cross
+                <router-link to="/cross" class="text-decoration-none"><strong>C</strong>ross</router-link> —
+                {{ $t('home.cfopStepCross') }}
               </li>
-              <li><strong>F</strong>2L — first two layers</li>
-              <li><strong>O</strong>LL — orient last layer</li>
-              <li><strong>P</strong>LL — permute last layer</li>
+              <li><strong>F</strong>2L — {{ $t('home.cfopStepF2l') }}</li>
+              <li><strong>O</strong>LL — {{ $t('home.cfopStepOll') }}</li>
+              <li><strong>P</strong>LL — {{ $t('home.cfopStepPll') }}</li>
             </ol>
           </section>
         </div>
@@ -130,13 +146,12 @@
             aria-labelledby="notation-heading"
           >
             <div class="rt-landing__panel-inner rt-landing__panel-inner--aside">
-              <h2 id="notation-heading" class="rt-landing__panel-title">Notation</h2>
+              <h2 id="notation-heading" class="rt-landing__panel-title">{{ $t('home.notationAsideTitle') }}</h2>
               <p class="rt-landing__panel-text">
-                Learn U, D, L, R, F, B and their variations. Tap through moves to see how each turn
-                affects a solved cube.
+                {{ $t('home.notationAsideText') }}
               </p>
               <router-link to="/notation" class="rt-landing__btn-secondary rt-landing__btn-secondary--aside">
-                Open notation
+                {{ $t('home.notationAsideCta') }}
               </router-link>
             </div>
           </section>
@@ -144,95 +159,100 @@
       </div>
 
       <h2 id="rt-core-trainers" class="rt-landing__section-title rt-landing__trainers-heading rt-landing-reveal">
-        Core trainers
+        {{ $t('home.trainersHeading') }}
       </h2>
       <p class="rt-landing__trainers-sub text-center mb-4 rt-landing-reveal">
-        Learn algorithms, track progress, and watch interactive 3D animations.
+        {{ $t('home.trainersSub') }}
       </p>
 
       <div class="row g-4 justify-content-center row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-5">
         <div class="col rt-landing-reveal" id="trainer-cross">
           <div class="rt-landing__card">
-            <h3 class="rt-landing__card-title">Cross</h3>
-            <p class="rt-landing__card-desc">White cross — CFOP step 1</p>
+            <h3 class="rt-landing__card-title">{{ $t('home.cardCrossTitle') }}</h3>
+            <p class="rt-landing__card-desc">{{ $t('home.cardCrossDesc') }}</p>
             <p class="rt-landing__card-body">
-              Build the bottom cross intuitively: daisy method, aligning edges to centers, and a short fix for a
-              flipped front edge.
+              {{ $t('home.cardCrossBody') }}
             </p>
             <ul class="rt-landing__card-list">
-              <li>Beginner-friendly walkthrough</li>
-              <li>Reference illustration</li>
-              <li>Leads into F2L</li>
+              <li>{{ $t('home.cardCrossLi1') }}</li>
+              <li>{{ $t('home.cardCrossLi2') }}</li>
+              <li>{{ $t('home.cardCrossLi3') }}</li>
             </ul>
-            <router-link to="/cross" class="rt-landing__card-cta rt-landing__card-cta--outline">Open guide</router-link>
+            <router-link to="/cross" class="rt-landing__card-cta rt-landing__card-cta--outline">{{
+              $t('home.cardCrossCta')
+            }}</router-link>
           </div>
         </div>
 
         <div class="col rt-landing-reveal rt-landing-reveal--delay-1" id="trainer-f2l">
           <div class="rt-landing__card">
-            <h3 class="rt-landing__card-title">F2L trainer</h3>
-            <p class="rt-landing__card-desc">41 intuitive &amp; algorithmic cases</p>
+            <h3 class="rt-landing__card-title">{{ $t('home.cardF2lTitle') }}</h3>
+            <p class="rt-landing__card-desc">{{ $t('home.cardF2lDesc') }}</p>
             <p class="rt-landing__card-body">
-              First two layers — SVG diagrams, filters, learned tracking, custom alg notes, and 3D
-              animations. SpeedCubeDB data source.
+              {{ $t('home.cardF2lBody') }}
             </p>
             <ul class="rt-landing__card-list">
-              <li>41 F2L cases</li>
-              <li>Interactive 3D animations</li>
-              <li>Separate progress tracking</li>
+              <li>{{ $t('home.cardF2lLi1') }}</li>
+              <li>{{ $t('home.cardF2lLi2') }}</li>
+              <li>{{ $t('home.cardF2lLi3') }}</li>
             </ul>
-            <router-link to="/f2l" class="rt-landing__card-cta rt-landing__card-cta--outline">Open trainer</router-link>
+            <router-link to="/f2l" class="rt-landing__card-cta rt-landing__card-cta--outline">{{
+              $t('home.cardF2lCta')
+            }}</router-link>
           </div>
         </div>
 
         <div class="col rt-landing-reveal rt-landing-reveal--delay-2" id="trainer-af2l">
           <div class="rt-landing__card">
-            <h3 class="rt-landing__card-title">Advanced F2L trainer</h3>
-            <p class="rt-landing__card-desc">54 trickier pair situations</p>
+            <h3 class="rt-landing__card-title">{{ $t('home.cardAf2lTitle') }}</h3>
+            <p class="rt-landing__card-desc">{{ $t('home.cardAf2lDesc') }}</p>
             <p class="rt-landing__card-body">
-              Trapped corners and edges, both pieces stuck — same trainer UX as F2L with SVG cases and 3D
-              playback.
+              {{ $t('home.cardAf2lBody') }}
             </p>
             <ul class="rt-landing__card-list">
-              <li>54 Advanced F2L cases</li>
-              <li>Filter by case type</li>
-              <li>Progress per case</li>
+              <li>{{ $t('home.cardAf2lLi1') }}</li>
+              <li>{{ $t('home.cardAf2lLi2') }}</li>
+              <li>{{ $t('home.cardAf2lLi3') }}</li>
             </ul>
-            <router-link to="/advanced-f2l" class="rt-landing__card-cta rt-landing__card-cta--outline"
-              >Open trainer</router-link
-            >
+            <router-link to="/advanced-f2l" class="rt-landing__card-cta rt-landing__card-cta--outline">{{
+              $t('home.cardAf2lCta')
+            }}</router-link>
           </div>
         </div>
 
         <div class="col rt-landing-reveal rt-landing-reveal--delay-3" id="trainer-oll">
           <div class="rt-landing__card rt-landing__card--elevated">
-            <h3 class="rt-landing__card-title">OLL trainer</h3>
-            <p class="rt-landing__card-desc">57 top-layer orientations</p>
+            <h3 class="rt-landing__card-title">{{ $t('home.cardOllTitle') }}</h3>
+            <p class="rt-landing__card-desc">{{ $t('home.cardOllDesc') }}</p>
             <p class="rt-landing__card-body">
-              Practice every OLL case — filters, custom algs, focused training mode, and 3D playback.
+              {{ $t('home.cardOllBody') }}
             </p>
             <ul class="rt-landing__card-list">
-              <li>57 OLL cases</li>
-              <li>Filter by type or learned</li>
-              <li>Custom algorithm editor</li>
+              <li>{{ $t('home.cardOllLi1') }}</li>
+              <li>{{ $t('home.cardOllLi2') }}</li>
+              <li>{{ $t('home.cardOllLi3') }}</li>
             </ul>
-            <router-link to="/oll" class="rt-landing__card-cta rt-landing__card-cta--primary">Open trainer</router-link>
+            <router-link to="/oll" class="rt-landing__card-cta rt-landing__card-cta--primary">{{
+              $t('home.cardOllCta')
+            }}</router-link>
           </div>
         </div>
 
         <div class="col rt-landing-reveal rt-landing-reveal--delay-4" id="trainer-pll">
           <div class="rt-landing__card">
-            <h3 class="rt-landing__card-title">PLL trainer</h3>
-            <p class="rt-landing__card-desc">21 edge &amp; corner permutations</p>
+            <h3 class="rt-landing__card-title">{{ $t('home.cardPllTitle') }}</h3>
+            <p class="rt-landing__card-desc">{{ $t('home.cardPllDesc') }}</p>
             <p class="rt-landing__card-body">
-              Drill PLL with the same UX — SVG cases, learned state, custom algs, and animations.
+              {{ $t('home.cardPllBody') }}
             </p>
             <ul class="rt-landing__card-list">
-              <li>21 PLL cases</li>
-              <li>Case-type filters</li>
-              <li>Progress per case</li>
+              <li>{{ $t('home.cardPllLi1') }}</li>
+              <li>{{ $t('home.cardPllLi2') }}</li>
+              <li>{{ $t('home.cardPllLi3') }}</li>
             </ul>
-            <router-link to="/pll" class="rt-landing__card-cta rt-landing__card-cta--tertiary">Open trainer</router-link>
+            <router-link to="/pll" class="rt-landing__card-cta rt-landing__card-cta--tertiary">{{
+              $t('home.cardPllCta')
+            }}</router-link>
           </div>
         </div>
       </div>
@@ -245,7 +265,6 @@ import { onMounted, onBeforeUnmount } from 'vue';
 import { useTheme } from '../composables/useTheme';
 import { APP_VERSION } from '../version';
 import UserIcon from '../components/UserIcon.vue';
-
 const appVersion = APP_VERSION;
 
 const { isDark, toggleTheme } = useTheme();
@@ -442,6 +461,26 @@ html.dark-theme .rt-landing__title-line--accent {
 
 .rt-landing__cta-primary:hover {
   filter: brightness(1.05);
+}
+
+.rt-landing__hero-course-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--rt-font-display);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: var(--rt-color-primary);
+  padding: 0.65rem 1rem;
+  border-radius: var(--rt-radius-lg);
+  border: 1px solid color-mix(in srgb, var(--rt-color-primary) 35%, transparent);
+  transition: background var(--rt-transition-fast), border-color var(--rt-transition-fast);
+}
+
+.rt-landing__hero-course-cta:hover {
+  color: var(--rt-color-primary);
+  background: color-mix(in srgb, var(--rt-color-primary) 8%, transparent);
 }
 
 .rt-landing__version {
